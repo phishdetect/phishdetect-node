@@ -33,9 +33,34 @@ type AddIndicatorsRequest struct {
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Received request to fetch indicators")
 
+	db, err := NewDatabase()
+	if err != nil {
+		log.Error("Failed to connect to database:", err.Error())
+		http.Error(w, "Failed to connect to database", http.StatusInternalServerError)
+	}
+	defer db.Close()
+
+	iocs, err := db.GetIndicators()
+	if err != nil {
+		log.Error("Failed to fetch indicators from database:", err.Error())
+		http.Error(w, "Failed to fetch indicators from database", http.StatusInternalServerError)
+	}
+
+	var senders []string
+	var domains []string
+
+	for _, ioc := range iocs {
+		switch ioc.Type{
+		case "email":
+			senders = append(senders, ioc.Hashed)
+		case "domain":
+			domains = append(domains, ioc.Hashed)
+		}
+	}
+
 	indicators := map[string][]string{
-		"senders": []string{"0AD6FDDB0A6CDE372FD895DB5E1B97B1EF986BE414C6890C5D7089EE80399B1E"},
-		"domains": []string{"5D977F4D473900F405E5319857534A57F2D4F00630029949B458FB149F08069C"},
+		"senders": senders,
+		"domains": domains,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -61,7 +86,6 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 
 	addedCounter := 0
 	for _, ioc := range req.Indicators {
-		log.Debug("Processing indicator", ioc)
 		err = db.AddIndicator(req.Type, ioc, req.Tags)
 		if err != nil {
 			log.Warning("Failed to add indicator to database: ", err.Error())

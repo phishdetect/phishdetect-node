@@ -62,13 +62,23 @@ func (d *Database) Close() {
 }
 
 func (d *Database) GetIndicators() ([]Indicator, error) {
+	var iocs []Indicator
 	coll := d.DB.Collection("indicators")
-	_, err := coll.Find(context.Background(), nil)
+	// TODO: Need to filter output just to the bare minimum.
+	cur, err := coll.Find(context.Background(), nil)
 	if err != nil {
 		return nil, err
 	}
+	defer cur.Close(context.Background())
 
-	var iocs []Indicator
+	for cur.Next(context.Background()) {
+		var ioc Indicator
+		if err := cur.Decode(&ioc); err != nil {
+			continue
+		}
+		iocs = append(iocs, ioc)
+	}
+
 	return iocs, nil
 }
 

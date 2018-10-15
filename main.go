@@ -88,7 +88,7 @@ func init() {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Debug(r.RequestURI)
+		log.Debug("Received request to: ", r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
 }
