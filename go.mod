@@ -1,4 +1,4 @@
-module "https://github.com/phishdetect/phishdetect-node"
+module github.com/phishdetect/phishdetect-node
 
 require (
 	github.com/flosch/pongo2 v0.0.0-20180809100617-24195e6d38b0
