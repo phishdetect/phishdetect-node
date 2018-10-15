@@ -89,9 +89,10 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 		err = db.AddIndicator(req.Type, ioc, req.Tags)
 		if err != nil {
 			log.Warning("Failed to add indicator to database: ", err.Error())
-		} else {
-			addedCounter++
+			continue
 		}
+
+		addedCounter++
 	}
 
 	w.Header().Set("Content-Type", "application/json")
