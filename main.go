@@ -39,6 +39,9 @@ var (
 	apiVersion   string
 	safeBrowsing string
 
+	disableAPI   bool
+	disableWeb   bool
+
 	templatesBox packr.Box
 	staticBox    packr.Box
 
@@ -55,6 +58,8 @@ func init() {
 	flag.StringVar(&portNumber, "port", "7856", "Specify which port number to bind the service on")
 	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use (default: 1.37)")
 	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default: disabled)")
+	flag.BoolVar(&disableAPI, "disable-api", false, "Disable the API routes")
+	flag.BoolVar(&disableWeb, "disable-web", false, "Disable the Web GUI")
 	flag.Parse()
 
 	if *debug {
@@ -112,20 +117,24 @@ func main() {
 	router.Use(loggingMiddleware)
 
 	// Graphical interface routes.
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-	router.HandleFunc("/", interfaceIndex)
-	router.HandleFunc("/check/", interfaceCheck)
-	router.HandleFunc(fmt.Sprintf("/check/{url:%s}", urlRegex), interfaceCheck).Methods("GET", "POST")
-	router.HandleFunc("/analyze/", interfaceAnalyze).Methods("POST")
+	if disableWeb == false {
+		router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
+		router.HandleFunc("/", interfaceIndex)
+		router.HandleFunc("/check/", interfaceCheck)
+		router.HandleFunc(fmt.Sprintf("/check/{url:%s}", urlRegex), interfaceCheck).Methods("GET", "POST")
+		router.HandleFunc("/analyze/", interfaceAnalyze).Methods("POST")		
+	}
 
 	// REST API routes.
-	router.HandleFunc("/api/analyze/link/", apiAnalyzeLink).Methods("POST")
-	router.HandleFunc("/api/analyze/domain/", apiAnalyzeDomain).Methods("POST")
-	router.HandleFunc("/api/analyze/html/", apiAnalyzeHTML).Methods("POST")
-	router.HandleFunc("/api/indicators/fetch/", apiIndicatorsFetch).Methods("GET")
-	router.HandleFunc("/api/indicators/add/", apiIndicatorsAdd).Methods("POST")
-	// router.HandleFunc("/api/events/fetch/", apiEventsFetch).Methods("POST")
-	// router.HandleFunc("/api/events/add/", apiEventsAdd).Methods("POST")
+	if disableAPI == false {
+		router.HandleFunc("/api/analyze/link/", apiAnalyzeLink).Methods("POST")
+		router.HandleFunc("/api/analyze/domain/", apiAnalyzeDomain).Methods("POST")
+		router.HandleFunc("/api/analyze/html/", apiAnalyzeHTML).Methods("POST")
+		router.HandleFunc("/api/indicators/fetch/", apiIndicatorsFetch).Methods("GET")
+		router.HandleFunc("/api/indicators/add/", apiIndicatorsAdd).Methods("POST")
+		// router.HandleFunc("/api/events/fetch/", apiEventsFetch).Methods("POST")
+		// router.HandleFunc("/api/events/add/", apiEventsAdd).Methods("POST")		
+	}
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// http.ServeFile(w, r, "static/404.html")
