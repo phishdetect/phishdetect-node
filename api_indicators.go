@@ -17,8 +17,8 @@
 package main
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"

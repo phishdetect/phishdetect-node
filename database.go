@@ -17,8 +17,8 @@
 package main
 
 import (
-    "fmt"
 	"context"
+	"fmt"
 	"time"
 
 	// "github.com/mongodb/mongo-go-driver/bson"
@@ -83,13 +83,17 @@ func (d *Database) AddIndicator(indicatorType string, indicator string, tags []s
 
 	coll := d.DB.Collection("indicators")
 
-    var curIoc Indicator
-    err := coll.FindOne(context.Background(), map[string]string{"original": indicator}).Decode(curIoc)
-    if err == nil {
-        return fmt.Errorf("This is an already known indicator")
-    } else {
-        return err
-    }
+	var iocFind Indicator
+	err := coll.FindOne(context.Background(), map[string]string{"original": indicator}).Decode(&iocFind)
+	if err != nil {
+		switch err {
+		case mongo.ErrNoDocuments:
+		default:
+			return err
+		}
+	} else {
+		return fmt.Errorf("This is an already known indicator")
+	}
 
 	_, err = coll.InsertOne(context.Background(), ioc)
 	return err
