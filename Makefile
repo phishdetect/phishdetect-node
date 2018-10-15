@@ -21,8 +21,8 @@ deps:
 linux:
 	@mkdir -p $(BUILD_FOLDER)/linux
 
-	@echo "[builder] Building Linux CLI executable"
-	@cd cli; $(FLAGS_LINUX) go build --ldflags '-s -w -extldflags "-static"' -o $(BUILD_FOLDER)/linux/phishdetect-cli
+	# @echo "[builder] Building Linux CLI executable"
+	# @cd cli; $(FLAGS_LINUX) go build --ldflags '-s -w -extldflags "-static"' -o $(BUILD_FOLDER)/linux/phishdetect-cli
 
 	@echo "[builder] Building Linux Web executable"
 	$(FLAGS_LINUX) packr build --ldflags '-s -w -extldflags "-static"' -o $(BUILD_FOLDER)/linux/phishdetect-node
@@ -32,8 +32,8 @@ linux:
 darwin:
 	@mkdir -p $(BUILD_FOLDER)/darwin
 
-	@echo "[builder] Building Darwin CLI executable"
-	@cd cli; $(FLAGS_DARWIN) go build --ldflags '-s -w -extldflags "-static"' -o $(BUILD_FOLDER)/darwin/phishdetect-cli
+	# @echo "[builder] Building Darwin CLI executable"
+	# @cd cli; $(FLAGS_DARWIN) go build --ldflags '-s -w -extldflags "-static"' -o $(BUILD_FOLDER)/darwin/phishdetect-cli
 
 	@echo "[builder] Building Darwin Web executable"
 	$(FLAGS_DARWIN) packr build --ldflags '-s -w -extldflags "-static"' -o $(BUILD_FOLDER)/darwin/phishdetect-node
@@ -43,8 +43,8 @@ darwin:
 windows:
 	@mkdir -p $(BUILD_FOLDER)/windows
 
-	@echo "[builder] Building Windows CLI executable"
-	@cd cli; $(FLAGS_WINDOWS) go build --ldflags '-s -w -extldflags "-static"' -o $(BUILD_FOLDER)/windows/phishdetect-cli.exe
+	# @echo "[builder] Building Windows CLI executable"
+	# @cd cli; $(FLAGS_WINDOWS) go build --ldflags '-s -w -extldflags "-static"' -o $(BUILD_FOLDER)/windows/phishdetect-cli.exe
 
 	@echo "[builder] Building Windows Web executable"
 	$(FLAGS_WINDOWS) packr build --ldflags '-s -w -extldflags "-static"' -o $(BUILD_FOLDER)/windows/phishdetect-node.exe

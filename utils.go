@@ -18,6 +18,7 @@ package main
 
 import (
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
 
 	"github.com/phishdetect/phishdetect"
@@ -38,6 +39,12 @@ func validateURL(url string) bool {
 
 func encodeSHA1(target string) string {
 	h := sha1.New()
+	h.Write([]byte(target))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+func encodeSHA256(target string) string {
+	h := sha256.New()
 	h.Write([]byte(target))
 	return hex.EncodeToString(h.Sum(nil))
 }

@@ -17,26 +17,59 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
 	"encoding/json"
+	"net/http"
 
-	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
 )
 
-type Indicators struct {
-	Senders []string `json:"senders"`
-	Domains []string `json:"domains"`
+type AddIndicatorsRequest struct {
+	Type       string   `json:"type"`
+	Indicators []string `json:"indicators"`
+	Tags       []string `json:"tags"`
 }
 
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Received request to fetch indicators")
 
-	indicators := Indicators{
-		Senders: []string{"0AD6FDDB0A6CDE372FD895DB5E1B97B1EF986BE414C6890C5D7089EE80399B1E"},
-		Domains: []string{"5D977F4D473900F405E5319857534A57F2D4F00630029949B458FB149F08069C"},
+	indicators := map[string][]string{
+		"senders": []string{"0AD6FDDB0A6CDE372FD895DB5E1B97B1EF986BE414C6890C5D7089EE80399B1E"},
+		"domains": []string{"5D977F4D473900F405E5319857534A57F2D4F00630029949B458FB149F08069C"},
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(indicators)
+}
+
+func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
+	log.Debug("Received request to add indicators")
+
+	decoder := json.NewDecoder(r.Body)
+	var req AddIndicatorsRequest
+	err := decoder.Decode(&req)
+	if err != nil {
+		http.Error(w, "Unable to parse request to add indicator", http.StatusInternalServerError)
+	}
+
+	db, err := NewDatabase()
+	if err != nil {
+		log.Error("Failed to connect to database:", err.Error())
+		http.Error(w, "Failed to connect to database", http.StatusInternalServerError)
+	}
+	defer db.Close()
+
+	addedCounter := 0
+	for _, ioc := range req.Indicators {
+		log.Debug("Processing indicator", ioc)
+		err = db.AddIndicator(req.Type, ioc, req.Tags)
+		if err != nil {
+			log.Warning("Failed to add indicator to database: ", err.Error())
+		} else {
+			addedCounter++
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"msg": fmt.Sprintf("Added %d indicators", addedCounter)})
 }
