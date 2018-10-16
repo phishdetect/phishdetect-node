@@ -33,22 +33,24 @@ type AddIndicatorsRequest struct {
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Received request to fetch indicators")
 
+	// TODO: Move this connection elsewhere.
 	db, err := NewDatabase()
 	if err != nil {
-		log.Error("Failed to connect to database:", err.Error())
-		http.Error(w, "Failed to connect to database", http.StatusInternalServerError)
+		errorWithJSON(w, "Failed to connect to database", http.StatusInternalServerError, err)
+		return
 	}
 	defer db.Close()
 
+	// We get the indicators from the DB.
 	iocs, err := db.GetIndicators()
 	if err != nil {
-		log.Error("Failed to fetch indicators from database:", err.Error())
-		http.Error(w, "Failed to fetch indicators from database", http.StatusInternalServerError)
+		errorWithJSON(w, "Failed to fetch indicators from database", http.StatusInternalServerError, err)
+		return
 	}
 
+	// We loop through the list of indicators and generate the response.
 	var senders []string
 	var domains []string
-
 	for _, ioc := range iocs {
 		switch ioc.Type{
 		case "email":
@@ -57,7 +59,7 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 			domains = append(domains, ioc.Hashed)
 		}
 	}
-
+	// We assemble the response.
 	indicators := map[string][]string{
 		"senders": senders,
 		"domains": domains,
@@ -70,20 +72,24 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Received request to add indicators")
 
+	// We decode the request to an AddIndicatorsRequest.
 	decoder := json.NewDecoder(r.Body)
 	var req AddIndicatorsRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		http.Error(w, "Unable to parse request to add indicator", http.StatusInternalServerError)
+		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)
+		return
 	}
 
+	// TODO: We need to move this connection elsewhere.
 	db, err := NewDatabase()
 	if err != nil {
-		log.Error("Failed to connect to database:", err.Error())
-		http.Error(w, "Failed to connect to database", http.StatusInternalServerError)
+		errorWithJSON(w, "Failed to connect to database", http.StatusInternalServerError, err)
+		return
 	}
 	defer db.Close()
 
+	// We loop through the submitted indicators and try to add them to the DB.
 	addedCounter := 0
 	for _, ioc := range req.Indicators {
 		err = db.AddIndicator(req.Type, ioc, req.Tags)
@@ -91,7 +97,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 			log.Warning("Failed to add indicator to database: ", err.Error())
 			continue
 		}
-
+		// If the addition was successful, we increase the counter.
 		addedCounter++
 	}
 

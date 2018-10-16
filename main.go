@@ -122,7 +122,7 @@ func main() {
 		router.HandleFunc("/", interfaceIndex)
 		router.HandleFunc("/check/", interfaceCheck)
 		router.HandleFunc(fmt.Sprintf("/check/{url:%s}", urlRegex), interfaceCheck).Methods("GET", "POST")
-		router.HandleFunc("/analyze/", interfaceAnalyze).Methods("POST")		
+		router.HandleFunc("/analyze/", interfaceAnalyze).Methods("POST")
 	}
 
 	// REST API routes.
@@ -133,12 +133,12 @@ func main() {
 		router.HandleFunc("/api/indicators/fetch/", apiIndicatorsFetch).Methods("GET")
 		router.HandleFunc("/api/indicators/add/", apiIndicatorsAdd).Methods("POST")
 		// router.HandleFunc("/api/events/fetch/", apiEventsFetch).Methods("POST")
-		// router.HandleFunc("/api/events/add/", apiEventsAdd).Methods("POST")		
+		// router.HandleFunc("/api/events/add/", apiEventsAdd).Methods("POST")
 	}
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// http.ServeFile(w, r, "static/404.html")
-		log.Warning(r.RequestURI)
+		log.Warning("File not found: ", r.RequestURI)
+		errorWithJSON(w, "File not found", http.StatusNotFound, nil)
 	})
 
 	hostPort := fmt.Sprintf("127.0.0.1:%s", portNumber)

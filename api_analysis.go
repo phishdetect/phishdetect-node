@@ -50,8 +50,8 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		// Couldn't parse request.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Invalid request", http.StatusBadRequest, err)
+		return
 	}
 
 	log.Debug("Received request to statically analyze domain: ", req.URL)
@@ -60,15 +60,15 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	urlFinal := urlNormalized
 
 	if !validateURL(urlNormalized) {
-		// Invalid URL.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Invalid URL", http.StatusBadRequest, nil)
+		return
 	}
 
 	analysis := phishdetect.NewAnalysis(urlFinal, "")
 	err = analysis.AnalyzeDomain()
 	if err != nil {
-		// Analysis failed.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		return
 	}
 	brand := analysis.Brands.GetBrand()
 
@@ -96,8 +96,8 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		// Couldn't parse request.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Invalid request", http.StatusBadRequest, err)
+		return
 	}
 
 	log.Debug("Received request to dynamically analyze link: ", req.URL)
@@ -109,8 +109,8 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	var screenshot string
 
 	if !validateURL(urlNormalized) {
-		// Invalid URL.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Invalid URL", http.StatusBadRequest, nil)
+		return
 	}
 
 	// Setting Docker API version.
@@ -119,8 +119,8 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	browser := phishdetect.NewBrowser(urlNormalized, "", false, "")
 	err = browser.Run()
 	if err != nil {
-		// Browser launch failed.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		return
 	}
 	html = browser.HTML
 	urlFinal = browser.FinalURL
@@ -129,13 +129,13 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	analysis := phishdetect.NewAnalysis(urlFinal, html)
 	err = analysis.AnalyzeHTML()
 	if err != nil {
-		// Analysis failed.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		return
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		// Analysis failed.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		return
 	}
 	brand := analysis.Brands.GetBrand()
 
@@ -163,8 +163,8 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		// Couldn't parse request.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Invalid request", http.StatusBadRequest, err)
+		return
 	}
 
 	log.Debug("Received request to statically analyze HTML from URL: ", req.URL)
@@ -173,32 +173,32 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	urlFinal := url
 
 	if !validateURL(url) {
-		// Invalid URL.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Invalid URL", http.StatusBadRequest, nil)
+		return
 	}
 
 	if req.HTML == "" {
-		// Invalid HTML.
-		http.Error(w, "Invalid HTML", http.StatusInternalServerError)
+		errorWithJSON(w, "Invalid HTML", http.StatusBadRequest, nil)
+		return
 	}
 
 	htmlData, err := base64.StdEncoding.DecodeString(req.HTML)
 	if err != nil {
-		// Invalid HTML.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Invalid HTML", http.StatusBadRequest, nil)
+		return
 	}
 	html := string(htmlData)
 
 	analysis := phishdetect.NewAnalysis(urlFinal, html)
 	err = analysis.AnalyzeHTML()
 	if err != nil {
-		// Analysis failed.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		return
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		// Analysis failed.
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		return
 	}
 	brand := analysis.Brands.GetBrand()
 
