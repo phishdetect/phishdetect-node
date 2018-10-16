@@ -16,28 +16,25 @@
 
 package main
 
-import (
-	// "encoding/json"
-	"fmt"
-	"net/http"
-
-	log "github.com/sirupsen/logrus"
-)
-
-func errorWithJSON(w http.ResponseWriter, message string, code int, err error) {
+func getUserFromKey(key string) *User {
+	// TODO: Move this connection elsewhere.
+	db, err := NewDatabase()
 	if err != nil {
-		log.Error(message, ": ", err.Error())
-	} else {
-		log.Error(message)
+		return nil
+	}
+	defer db.Close()
+
+	// We get the indicators from the DB.
+	users, err := db.GetUsers()
+	if err != nil {
+		return nil
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(code)
-	fmt.Fprintf(w, "{error: %q}", message)
-}
+	for _, user := range users {
+		if user.Key == key {
+			return &user
+		}
+	}
 
-// func responseWithJSON(w http.ResponseWriter, json []byte, code int) {
-// 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-// 	w.WriteHeader(code)
-// 	w.Write(json)
-// }
+	return nil
+}

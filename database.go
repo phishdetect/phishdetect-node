@@ -40,6 +40,12 @@ type Indicator struct {
 	Datetime time.Time `json:"datetime"`
 }
 
+type User struct {
+	Name string `json:"name"`
+	Email string `json:"email"`
+	Key string `json:"key"`
+}
+
 func NewDatabase() (*Database, error) {
 	client, err := mongo.NewClient("mongodb://localhost:27017")
 	if err != nil {
@@ -59,6 +65,26 @@ func NewDatabase() (*Database, error) {
 
 func (d *Database) Close() {
 	d.Client.Disconnect(context.Background())
+}
+
+func (d *Database) GetUsers() ([]User, error) {
+	var users []User
+	coll := d.DB.Collection("users")
+	cur, err := coll.Find(context.Background(), nil)
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(context.Background())
+
+	for cur.Next(context.Background()) {
+		var user User
+		if err := cur.Decode(&user); err != nil {
+			continue
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
 }
 
 func (d *Database) GetIndicators() ([]Indicator, error) {
