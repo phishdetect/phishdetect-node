@@ -38,6 +38,7 @@ type Indicator struct {
 	Hashed   string    `json:"hashed"`
 	Tags     []string  `json:"tags"`
 	Datetime time.Time `json:"datetime"`
+	Owner    string    `json:"owner"`
 }
 
 type User struct {
