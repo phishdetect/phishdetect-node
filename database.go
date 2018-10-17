@@ -42,9 +42,9 @@ type Indicator struct {
 }
 
 type User struct {
-	Name string `json:"name"`
+	Name  string `json:"name"`
 	Email string `json:"email"`
-	Key string `json:"key"`
+	Key   string `json:"key"`
 }
 
 func NewDatabase() (*Database, error) {

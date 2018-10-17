@@ -52,7 +52,7 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	var senders []string
 	var domains []string
 	for _, ioc := range iocs {
-		switch ioc.Type{
+		switch ioc.Type {
 		case "email":
 			senders = append(senders, ioc.Hashed)
 		case "domain":

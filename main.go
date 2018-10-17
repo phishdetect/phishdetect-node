@@ -39,8 +39,8 @@ var (
 	apiVersion   string
 	safeBrowsing string
 
-	disableAPI   bool
-	disableWeb   bool
+	disableAPI bool
+	disableWeb bool
 
 	templatesBox packr.Box
 	staticBox    packr.Box
