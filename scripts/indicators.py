@@ -26,10 +26,9 @@ def main():
     parser.add_argument('--url', default='http://127.0.0.1:7856', help="URL to the PhishDetect Node")
     parser.add_argument('--key', required=True, help="The API key for your PhishDetect Node user")
     parser.add_argument('--type', required=True, help="The type of indicator (\"domain\" or \"email\")")
-    parser.add_argument('--single', action='store_true', help="The argument is a single indicator")
-    parser.add_argument('--file', action='store_true', help="The argument is a text file containing a list of indicators")
     parser.add_argument('--tags', help="Comma separated list of tags to to mark the indicator")
-    parser.add_argument('ioc', help="The indicator / indicators file")
+    parser.add_argument('--single', metavar="IOC", help="Send this single indicator to PhishDetect Node")
+    parser.add_argument('--file', metavar="FILE", help="Send all indicators contained in this file to PhishDetect Node")
     args = parser.parse_args()
 
     if not args.single and not args.file:
@@ -43,11 +42,11 @@ def main():
 
     indicators = []
     if args.file:
-        if not os.path.exists(args.ioc):
-            print("ERROR: The file you specified at path {} does not exist.".format(args.ioc))
+        if not os.path.exists(args.file):
+            print("ERROR: The file you specified at path {} does not exist.".format(args.file))
             sys.exit(-1)
 
-        with open(args.ioc, 'r') as handle:
+        with open(args.file, 'r') as handle:
             for line in handle:
                 line = line.strip()
                 if line == '':
@@ -57,7 +56,7 @@ def main():
                     print("Adding indicator: {}".format(line))
                     indicators.append(line)
     elif args.single:
-        ioc = args.ioc.strip()
+        ioc = args.single.strip()
         if ioc not in indicators:
             print("Adding indicator: {}".format(ioc))
             indicators.append(ioc)
