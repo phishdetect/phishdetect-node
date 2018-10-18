@@ -122,7 +122,7 @@ func (d *Database) AddIndicator(indicatorType string, indicator string, hashed s
 	coll := d.DB.Collection("indicators")
 
 	var iocFind Indicator
-	err := coll.FindOne(context.Background(), map[string]string{"original": indicator}).Decode(&iocFind)
+	err := coll.FindOne(context.Background(), map[string]string{"hashed": hashed}).Decode(&iocFind)
 	if err != nil {
 		switch err {
 		case mongo.ErrNoDocuments:
