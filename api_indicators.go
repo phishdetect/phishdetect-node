@@ -99,7 +99,16 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	// We loop through the submitted indicators and try to add them to the DB.
 	addedCounter := 0
 	for _, ioc := range req.Indicators {
-		err = db.AddIndicator(req.Type, ioc, req.Tags, user.Name)
+		// Check if we received an already hashed IOC.
+		var hashed string
+		if validateSHA256(ioc) {
+			hashed = ioc
+			ioc = ""
+		} else {
+			hashed = encodeSHA256(ioc)
+		}
+
+		err = db.AddIndicator(req.Type, ioc, hashed, req.Tags, user.Name)
 		if err != nil {
 			log.Warning("Failed to add indicator to database: ", err.Error())
 			continue

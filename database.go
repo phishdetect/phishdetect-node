@@ -109,11 +109,11 @@ func (d *Database) GetIndicators() ([]Indicator, error) {
 	return iocs, nil
 }
 
-func (d *Database) AddIndicator(indicatorType string, indicator string, tags []string, owner string) error {
+func (d *Database) AddIndicator(indicatorType string, indicator string, hashed string, tags []string, owner string) error {
 	ioc := Indicator{
 		Type:     indicatorType,
 		Original: indicator,
-		Hashed:   encodeSHA256(indicator),
+		Hashed:   hashed,
 		Tags:     tags,
 		Datetime: time.Now().UTC(),
 		Owner:    owner,
