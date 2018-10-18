@@ -16,13 +16,36 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
+import secrets
 from pymongo import MongoClient
 
 client = MongoClient()
 db = client.phishdetect
 
 def main():
-    
+    parser = argparse.ArgumentParser(description="Add a user to the database")
+    parser.add_argument('name', type=str, help="Name of the user")
+    parser.add_argument('email', type=str, help="Email of the user")
+    args = parser.parse_args()
 
-if __name__ == 'main':
+    name = args.name
+    email = args.email
+
+    key = secrets.token_urlsafe(16)
+
+    user = db.users.find_one({'email': email})
+    if user:
+        print("The user \"{}\" already exists with API key: {}".format(
+            user['name'], user['key']))
+        return
+
+    db.users.insert_one({
+        'name': name,
+        'email': email,
+        'key': key,
+    })
+    print("User \"{}\" added!".format(name))
+    print("The API key is: {}".format(key))
+
+if __name__ == '__main__':
     main()
