@@ -35,14 +35,6 @@ type AddIndicatorsRequest struct {
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Received request to fetch indicators")
 
-	// TODO: Move this connection elsewhere.
-	db, err := NewDatabase()
-	if err != nil {
-		errorWithJSON(w, "Failed to connect to database", http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
-
 	// We get the indicators from the DB.
 	iocs, err := db.GetIndicators()
 	if err != nil {
@@ -88,14 +80,6 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 		errorWithJSON(w, "You are not authorized to perform this operation", http.StatusUnauthorized, nil)
 		return
 	}
-
-	// TODO: We need to move this connection elsewhere.
-	db, err := NewDatabase()
-	if err != nil {
-		errorWithJSON(w, "Failed to connect to database", http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
 
 	// We loop through the submitted indicators and try to add them to the DB.
 	addedCounter := 0

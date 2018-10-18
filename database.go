@@ -25,8 +25,6 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
-// var db *Database
-
 type Database struct {
 	Client *mongo.Client
 	DB     *mongo.Database

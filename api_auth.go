@@ -17,13 +17,6 @@
 package main
 
 func getUserFromKey(key string) *User {
-	// TODO: Move this connection elsewhere.
-	db, err := NewDatabase()
-	if err != nil {
-		return nil
-	}
-	defer db.Close()
-
 	// We get the indicators from the DB.
 	users, err := db.GetUsers()
 	if err != nil {

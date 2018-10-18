@@ -42,6 +42,8 @@ var (
 	disableAPI bool
 	disableWeb bool
 
+	db *Database
+
 	templatesBox packr.Box
 	staticBox    packr.Box
 
@@ -67,6 +69,14 @@ func init() {
 	}
 	log.SetFormatter(&log.TextFormatter{ForceColors: true})
 	log.SetOutput(colorable.NewColorableStdout())
+
+	// Initiate connection to database.
+	var err error
+	db, err = NewDatabase()
+	if err != nil {
+		log.Fatal("Failed connection to database: ", err.Error())
+		return
+	}
 
 	if safeBrowsing != "" {
 		if _, err := os.Stat(safeBrowsing); err == nil {
