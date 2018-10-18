@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -98,17 +99,29 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 
 	// We loop through the submitted indicators and try to add them to the DB.
 	addedCounter := 0
-	for _, ioc := range req.Indicators {
-		// Check if we received an already hashed IOC.
+	for _, indicator := range req.Indicators {
 		var hashed string
-		if validateSHA256(ioc) {
-			hashed = ioc
-			ioc = ""
+		// Check if we received an already hashed IOC.
+		if validateSHA256(indicator) {
+			// If we do, the indicator is already the hashed version.
+			hashed = indicator
+			// And the original indicator value shall be blank.
+			indicator = ""
 		} else {
-			hashed = encodeSHA256(ioc)
+			// Otherwise, we just hash the original indicator.
+			hashed = encodeSHA256(indicator)
 		}
 
-		err = db.AddIndicator(req.Type, ioc, hashed, req.Tags, user.Name)
+		ioc := Indicator{
+			Type:     req.Type,
+			Original: indicator,
+			Hashed:   hashed,
+			Tags:     req.Tags,
+			Datetime: time.Now().UTC(),
+			Owner:    user.Name,
+		}
+
+		err = db.AddIndicator(ioc)
 		if err != nil {
 			log.Warning("Failed to add indicator to database: ", err.Error())
 			continue

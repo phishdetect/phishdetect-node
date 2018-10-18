@@ -109,20 +109,11 @@ func (d *Database) GetIndicators() ([]Indicator, error) {
 	return iocs, nil
 }
 
-func (d *Database) AddIndicator(indicatorType string, indicator string, hashed string, tags []string, owner string) error {
-	ioc := Indicator{
-		Type:     indicatorType,
-		Original: indicator,
-		Hashed:   hashed,
-		Tags:     tags,
-		Datetime: time.Now().UTC(),
-		Owner:    owner,
-	}
-
+func (d *Database) AddIndicator(ioc Indicator) error {
 	coll := d.DB.Collection("indicators")
 
 	var iocFind Indicator
-	err := coll.FindOne(context.Background(), map[string]string{"hashed": hashed}).Decode(&iocFind)
+	err := coll.FindOne(context.Background(), map[string]string{"hashed": ioc.Hashed}).Decode(&iocFind)
 	if err != nil {
 		switch err {
 		case mongo.ErrNoDocuments:
