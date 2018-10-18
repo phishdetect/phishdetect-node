@@ -28,6 +28,7 @@ type AddIndicatorsRequest struct {
 	Type       string   `json:"type"`
 	Indicators []string `json:"indicators"`
 	Tags       []string `json:"tags"`
+	Key        string   `json:"key"`
 }
 
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
@@ -81,6 +82,12 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := getUserFromKey(req.Key)
+	if user == nil {
+		errorWithJSON(w, "You are not authorized to perform this operation", http.StatusUnauthorized, nil)
+		return
+	}
+
 	// TODO: We need to move this connection elsewhere.
 	db, err := NewDatabase()
 	if err != nil {
@@ -92,7 +99,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	// We loop through the submitted indicators and try to add them to the DB.
 	addedCounter := 0
 	for _, ioc := range req.Indicators {
-		err = db.AddIndicator(req.Type, ioc, req.Tags)
+		err = db.AddIndicator(req.Type, ioc, req.Tags, user.Name)
 		if err != nil {
 			log.Warning("Failed to add indicator to database: ", err.Error())
 			continue

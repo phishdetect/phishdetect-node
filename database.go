@@ -109,13 +109,14 @@ func (d *Database) GetIndicators() ([]Indicator, error) {
 	return iocs, nil
 }
 
-func (d *Database) AddIndicator(indicatorType string, indicator string, tags []string) error {
+func (d *Database) AddIndicator(indicatorType string, indicator string, tags []string, owner string) error {
 	ioc := Indicator{
 		Type:     indicatorType,
 		Original: indicator,
 		Hashed:   encodeSHA256(indicator),
 		Tags:     tags,
 		Datetime: time.Now().UTC(),
+		Owner:    owner,
 	}
 
 	coll := d.DB.Collection("indicators")
