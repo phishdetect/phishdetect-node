@@ -22,7 +22,7 @@ import requests
 import traceback
 
 def main():
-    parser = argparse.ArgumentParser(description="Add a user to the database")
+    parser = argparse.ArgumentParser(description="Send indicators to the PhishDetect Node")
     parser.add_argument('--url', default='http://127.0.0.1:7856', help="URL to the PhishDetect Node")
     parser.add_argument('--key', required=True, help="The API key for your PhishDetect Node user")
     parser.add_argument('--type', required=True, help="The type of indicator (\"domain\" or \"email\")")

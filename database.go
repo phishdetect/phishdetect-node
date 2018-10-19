@@ -30,6 +30,12 @@ type Database struct {
 	DB     *mongo.Database
 }
 
+type User struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Key   string `json:"key"`
+}
+
 type Indicator struct {
 	Type     string    `json:"type"`
 	Original string    `json:"original"`
@@ -39,10 +45,12 @@ type Indicator struct {
 	Owner    string    `json:"owner"`
 }
 
-type User struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Key   string `json:"key"`
+type Event struct {
+	Type        string    `json:"type"`
+	Indicator   string    `json:"indicator"`
+	Hashed      string    `json:"hashed"`
+	TargetEmail string    `json:"target_email"`
+	Datetime    time.Time `json:"datetime"`
 }
 
 func NewDatabase() (*Database, error) {
@@ -126,10 +134,30 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 	return err
 }
 
-func GetEvents() {
+func (d *Database) GetEvents() ([]Event, error) {
+	coll := d.DB.Collection("events")
 
+	cur, err := coll.Find(context.Background(), nil)
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(context.Background())
+
+	var events []Event
+	for cur.Next(context.Background()) {
+		var event Event
+		if err := cur.Decode(&event); err != nil {
+			continue
+		}
+		events = append(events, event)
+	}
+
+	return events, nil
 }
 
-func AddEvent() {
+func (d *Database) AddEvent(event Event) error {
+	coll := d.DB.Collection("events")
 
+	_, err := coll.InsertOne(context.Background(), event)
+	return err
 }
