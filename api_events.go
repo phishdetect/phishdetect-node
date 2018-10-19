@@ -25,7 +25,7 @@ import (
 )
 
 type FetchEventsRequest struct {
-	Key        string   `json:"key"`
+	Key string `json:"key"`
 }
 
 func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
