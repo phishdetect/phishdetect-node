@@ -20,8 +20,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type FetchEventsRequest struct {
@@ -29,8 +27,6 @@ type FetchEventsRequest struct {
 }
 
 func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
-	log.Debug("Received request to fetch events")
-
 	// We decode the request to an Event.
 	decoder := json.NewDecoder(r.Body)
 	var req FetchEventsRequest
@@ -58,8 +54,6 @@ func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiEventsAdd(w http.ResponseWriter, r *http.Request) {
-	log.Debug("Received request to add a new event")
-
 	// We decode the request to an Event.
 	decoder := json.NewDecoder(r.Body)
 	var event Event

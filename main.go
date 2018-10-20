@@ -103,7 +103,7 @@ func init() {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Debug("Received request to: ", r.RequestURI)
+		log.Debug(r.RemoteAddr, " ", r.Method, " ", r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
 }

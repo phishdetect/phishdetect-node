@@ -24,7 +24,6 @@ import (
 	"os"
 
 	"github.com/phishdetect/phishdetect"
-	log "github.com/sirupsen/logrus"
 )
 
 // AnalysisRequest contains the information required to start an analysis.
@@ -53,8 +52,6 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 		errorWithJSON(w, "Invalid request", http.StatusBadRequest, err)
 		return
 	}
-
-	log.Debug("Received request to statically analyze domain: ", req.URL)
 
 	urlNormalized := phishdetect.NormalizeURL(req.URL)
 	urlFinal := urlNormalized
@@ -99,8 +96,6 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 		errorWithJSON(w, "Invalid request", http.StatusBadRequest, err)
 		return
 	}
-
-	log.Debug("Received request to dynamically analyze link: ", req.URL)
 
 	urlNormalized := phishdetect.NormalizeURL(req.URL)
 	urlFinal := urlNormalized
@@ -166,8 +161,6 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 		errorWithJSON(w, "Invalid request", http.StatusBadRequest, err)
 		return
 	}
-
-	log.Debug("Received request to statically analyze HTML from URL: ", req.URL)
 
 	url := req.URL
 	urlFinal := url

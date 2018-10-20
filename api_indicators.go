@@ -33,8 +33,6 @@ type AddIndicatorsRequest struct {
 }
 
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
-	log.Debug("Received request to fetch indicators")
-
 	// We get the indicators from the DB.
 	iocs, err := db.GetIndicators()
 	if err != nil {
@@ -64,8 +62,6 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
-	log.Debug("Received request to add indicators")
-
 	// We decode the request to an AddIndicatorsRequest.
 	decoder := json.NewDecoder(r.Body)
 	var req AddIndicatorsRequest
