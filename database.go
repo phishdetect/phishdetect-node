@@ -46,11 +46,11 @@ type Indicator struct {
 }
 
 type Event struct {
-	Type        string    `json:"type"`
-	Indicator   string    `json:"indicator"`
-	Hashed      string    `json:"hashed"`
-	TargetEmail string    `json:"target_email"`
-	Datetime    time.Time `json:"datetime"`
+	Type          string    `json:"type"`
+	Indicator     string    `json:"indicator"`
+	Hashed        string    `json:"hashed"`
+	TargetContact string    `json:"target_contact"`
+	Datetime      time.Time `json:"datetime"`
 }
 
 func NewDatabase() (*Database, error) {

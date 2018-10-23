@@ -49,7 +49,7 @@ def main():
         print("Type: {}".format(event['type']))
         print("Indicator: {}".format(event['indicator']))
         print("Hashed: {}".format(event['hashed']))
-        print("Target Email: {}".format(event['target_email']))
+        print("Target Contact: {}".format(event['target_contact']))
         print("")
 
 if __name__ == '__main__':
