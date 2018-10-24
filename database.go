@@ -51,7 +51,7 @@ type Event struct {
 	Hashed        string    `json:"hashed"`
 	TargetContact string    `json:"target_contact"`
 	Datetime      time.Time `json:"datetime"`
-	UUID string `json:"uuid"`
+	UUID          string    `json:"uuid"`
 }
 
 func NewDatabase() (*Database, error) {
