@@ -50,6 +50,7 @@ def main():
         print("Indicator: {}".format(event['indicator']))
         print("Hashed: {}".format(event['hashed']))
         print("Target Contact: {}".format(event['target_contact']))
+        print("UUID: {}".format(event['uuid']))
         print("")
 
 if __name__ == '__main__':

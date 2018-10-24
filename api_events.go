@@ -20,6 +20,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
+	"github.com/nu7hatch/gouuid"
 )
 
 type FetchEventsRequest struct {
@@ -64,6 +66,9 @@ func apiEventsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	event.Datetime = time.Now().UTC()
+
+	u4, _ := uuid.NewV4()
+	event.UUID = u4.String()
 
 	err = db.AddEvent(event)
 	if err != nil {

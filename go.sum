@@ -53,6 +53,8 @@ github.com/mongodb/mongo-go-driver v0.0.16 h1:iL03HLzhBj4ymNeAT1GdFQe6AUF4dr3h4w
 github.com/mongodb/mongo-go-driver v0.0.16/go.mod h1:NK/HWDIIZkaYsnYa0hmtP443T5ELr0KDecmIioVuuyU=
 github.com/mozillazg/go-unidecode v0.1.0 h1:wAIMDf/yTexXKxT5TkctLwmClGSyuoJaZDRMclFNq8U=
 github.com/mozillazg/go-unidecode v0.1.0/go.mod h1:fYMdhyjni9ZeEmS6OE/GJHDLsF8TQvIVDwYR/drR26Q=
+github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d h1:VhgPp6v9qf9Agr/56bj7Y/xa04UccTW04VP0Qed4vnQ=
+github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d/go.mod h1:YUTz3bUH2ZwIWBy3CJBeOBEugqcmXREj14T+iG/4k4U=
 github.com/olekukonko/tablewriter v0.0.0-20180912035003-be2c049b30cc h1:rQ1O4ZLYR2xXHXgBCCfIIGnuZ0lidMQw2S5n1oOv+Wg=
 github.com/olekukonko/tablewriter v0.0.0-20180912035003-be2c049b30cc/go.mod h1:vsDQFd/mU46D+Z4whnwzcISnGGzXWMclvtLoiIKAKIo=
 github.com/phishdetect/phishdetect v0.0.0-20181015101735-77557cf0ea81 h1:6Ys9QNLPnXaPd2qTPEuOT3ZTRZo4ShmalKc43wiuZf8=
