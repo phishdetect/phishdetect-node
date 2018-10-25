@@ -23,9 +23,11 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	pongo "github.com/flosch/pongo2"
 	"github.com/gorilla/mux"
+	"github.com/nu7hatch/gouuid"
 	"github.com/phishdetect/phishdetect"
 	log "github.com/sirupsen/logrus"
 )
@@ -189,6 +191,21 @@ func interfaceAnalyze(w http.ResponseWriter, r *http.Request) {
 		}
 		// At this point we return or the function will continue.
 		return
+	}
+
+	// We store a record in the database.
+	u4, _ := uuid.NewV4()
+	event := Event{
+		Type:          "analysis",
+		Indicator:     url,
+		Hashed:        "",
+		TargetContact: "",
+		Datetime:      time.Now().UTC(),
+		UUID:          u4.String(),
+	}
+	err = db.AddEvent(event)
+	if err != nil {
+		log.Error(err)
 	}
 
 	// Otherwise we show the warning.
