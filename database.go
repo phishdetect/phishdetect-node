@@ -138,6 +138,8 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 func (d *Database) GetEvents() ([]Event, error) {
 	coll := d.DB.Collection("events")
 
+	// TODO: Fix sorting.
+	// sortBy := []string{"-datetime", "indicator"}
 	cur, err := coll.Find(context.Background(), nil)
 	if err != nil {
 		return nil, err
