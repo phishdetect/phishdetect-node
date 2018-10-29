@@ -17,7 +17,6 @@
 package main
 
 func getUserFromKey(key string) *User {
-	// We get the indicators from the DB.
 	users, err := db.GetUsers()
 	if err != nil {
 		return nil
