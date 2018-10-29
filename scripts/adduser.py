@@ -24,9 +24,9 @@ db = client.phishdetect
 
 def main():
     parser = argparse.ArgumentParser(description="Add a user to the database")
+    parser.add_argument('--admin', action='store_true', help="Enable if the user is an administrator")
     parser.add_argument('name', type=str, help="Name of the user")
     parser.add_argument('email', type=str, help="Email of the user")
-    parser.add_argument('admin', action='store_true', "Enable if the user is an administrator")
     args = parser.parse_args()
 
     name = args.name
