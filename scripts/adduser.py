@@ -26,10 +26,15 @@ def main():
     parser = argparse.ArgumentParser(description="Add a user to the database")
     parser.add_argument('name', type=str, help="Name of the user")
     parser.add_argument('email', type=str, help="Email of the user")
+    parser.add_argument('admin', action='store_true', "Enable if the user is an administrator")
     args = parser.parse_args()
 
     name = args.name
     email = args.email
+
+    role = 'submitter'
+    if args.admin:
+        role = 'admin'
 
     key = secrets.token_urlsafe(16)
 
@@ -43,6 +48,7 @@ def main():
         'name': name,
         'email': email,
         'key': key,
+        'role': role,
     })
     print("User \"{}\" added!".format(name))
     print("The API key is: {}".format(key))

@@ -40,7 +40,7 @@ func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
 
 	// First we check if the user is allowed to fetch the events.
 	user := getUserFromKey(req.Key)
-	if user == nil {
+	if user == nil || user.Role != "admin" {
 		errorWithJSON(w, "You are not authorized to perform this operation", http.StatusUnauthorized, nil)
 		return
 	}

@@ -34,6 +34,7 @@ type User struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
 	Key   string `json:"key"`
+	Role  string `json:"role"`
 }
 
 type Indicator struct {
