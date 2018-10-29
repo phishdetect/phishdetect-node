@@ -17,8 +17,7 @@
 package main
 
 import (
-	// "encoding/json"
-	"fmt"
+	"encoding/json"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
@@ -32,8 +31,7 @@ func errorWithJSON(w http.ResponseWriter, message string, code int, err error) {
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(code)
-	fmt.Fprintf(w, "{error: %q}", message)
+	json.NewEncoder(w).Encode(map[string]string{"error": message})
 }
 
 // func responseWithJSON(w http.ResponseWriter, json []byte, code int) {
