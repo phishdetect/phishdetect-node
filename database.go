@@ -47,12 +47,12 @@ type Indicator struct {
 }
 
 type Event struct {
-	Type          string    `json:"type"`
-	Indicator     string    `json:"indicator"`
-	Hashed        string    `json:"hashed"`
-	TargetContact string    `json:"target_contact"`
-	Datetime      time.Time `json:"datetime"`
-	UUID          string    `json:"uuid"`
+	Type        string    `json:"type"`
+	Indicator   string    `json:"indicator"`
+	Hashed      string    `json:"hashed"`
+	UserContact string    `json:"user_contact"`
+	Datetime    time.Time `json:"datetime"`
+	UUID        string    `json:"uuid"`
 }
 
 func NewDatabase() (*Database, error) {

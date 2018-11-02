@@ -196,12 +196,12 @@ func interfaceAnalyze(w http.ResponseWriter, r *http.Request) {
 	// We store a record in the database.
 	u4, _ := uuid.NewV4()
 	event := Event{
-		Type:          "analysis",
-		Indicator:     url,
-		Hashed:        "",
-		TargetContact: "",
-		Datetime:      time.Now().UTC(),
-		UUID:          u4.String(),
+		Type:        "analysis",
+		Indicator:   url,
+		Hashed:      "",
+		UserContact: "",
+		Datetime:    time.Now().UTC(),
+		UUID:        u4.String(),
 	}
 	err = db.AddEvent(event)
 	if err != nil {
