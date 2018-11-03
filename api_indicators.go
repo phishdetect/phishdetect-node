@@ -41,8 +41,8 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// We loop through the list of indicators and generate the response.
-	var senders []string
-	var domains []string
+	senders := []string{}
+	domains := []string{}
 	for _, ioc := range iocs {
 		switch ioc.Type {
 		case "email":
