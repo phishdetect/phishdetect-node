@@ -77,7 +77,7 @@ func (d *Database) Close() {
 }
 
 func (d *Database) GetUsers() ([]User, error) {
-	users := []User{}
+	var users []User
 	coll := d.DB.Collection("users")
 	cur, err := coll.Find(context.Background(), nil)
 	if err != nil {
