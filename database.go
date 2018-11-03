@@ -77,7 +77,7 @@ func (d *Database) Close() {
 }
 
 func (d *Database) GetUsers() ([]User, error) {
-	var users []User
+	users := []User{}
 	coll := d.DB.Collection("users")
 	cur, err := coll.Find(context.Background(), nil)
 	if err != nil {
@@ -147,7 +147,7 @@ func (d *Database) GetEvents() ([]Event, error) {
 	}
 	defer cur.Close(context.Background())
 
-	var events []Event
+	events := []Event{}
 	for cur.Next(context.Background()) {
 		var event Event
 		if err := cur.Decode(&event); err != nil {
