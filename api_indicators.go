@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -80,6 +81,9 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	// We loop through the submitted indicators and try to add them to the DB.
 	addedCounter := 0
 	for _, indicator := range req.Indicators {
+		// Make the indicator lowercase.
+		indicator = strings.ToLower(indicator)
+
 		var hashed string
 		// Check if we received an already hashed IOC.
 		if validateSHA256(indicator) {
