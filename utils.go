@@ -21,6 +21,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"regexp"
+	"strings"
 
 	"github.com/phishdetect/phishdetect"
 )
@@ -53,4 +54,17 @@ func encodeSHA256(target string) string {
 func validateSHA256(target string) bool {
 	rxp := regexp.MustCompile(`[a-fA-F0-9]{64}`)
 	return rxp.MatchString(target)
+}
+
+func cleanIndicator(indicator string) string {
+	indicator = strings.TrimSpace(indicator)
+	indicator = strings.ToLower(indicator)
+	indicator = strings.Replace(indicator, "[@]", "@", -1)
+	indicator = strings.Replace(indicator, "[.]", ".", -1)
+
+	if !strings.Contains(indicator, "@") && strings.HasPrefix(indicator, "www.") {
+		indicator = indicator[4:]
+	}
+
+	return indicator
 }

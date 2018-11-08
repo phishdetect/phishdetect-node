@@ -20,7 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -81,9 +80,6 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	// We loop through the submitted indicators and try to add them to the DB.
 	addedCounter := 0
 	for _, indicator := range req.Indicators {
-		// Make the indicator lowercase.
-		indicator = strings.ToLower(indicator)
-
 		var hashed string
 		// Check if we received an already hashed IOC.
 		if validateSHA256(indicator) {
@@ -92,7 +88,9 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 			// And the original indicator value shall be blank.
 			indicator = ""
 		} else {
-			// Otherwise, we just hash the original indicator.
+			// Otherwise, we first clean the indicator...
+			indicator = cleanIndicator(indicator)
+			// ... then we hash the original indicator.
 			hashed = encodeSHA256(indicator)
 		}
 
