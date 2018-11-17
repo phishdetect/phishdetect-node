@@ -31,6 +31,7 @@ func errorWithJSON(w http.ResponseWriter, message string, code int, err error) {
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(code)
 	json.NewEncoder(w).Encode(map[string]string{"error": message})
 }
 

@@ -41,6 +41,7 @@ var (
 
 	disableAPI bool
 	disableWeb bool
+	disableAnalysis bool
 
 	db *Database
 
@@ -62,6 +63,7 @@ func init() {
 	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default: disabled)")
 	flag.BoolVar(&disableAPI, "disable-api", false, "Disable the API routes")
 	flag.BoolVar(&disableWeb, "disable-web", false, "Disable the Web GUI")
+	flag.BoolVar(&disableAnalysis, "disable-analysis", false, "Disable the ability to analyze links and pages")
 	flag.Parse()
 
 	if *debug {

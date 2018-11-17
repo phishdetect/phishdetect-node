@@ -45,6 +45,11 @@ type AnalysisResults struct {
 }
 
 func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
+	if disableAnalysis == true {
+		errorWithJSON(w, "Analysis was disabled by administrator", http.StatusForbidden, nil)
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
@@ -89,6 +94,11 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
+	if disableAnalysis == true {
+		errorWithJSON(w, "Analysis was disabled by administrator", http.StatusForbidden, nil)
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
@@ -154,6 +164,11 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
+	if disableAnalysis == true {
+		errorWithJSON(w, "Analysis was disabled by administrator", http.StatusForbidden, nil)
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
 	var req AnalysisRequest
 	err := decoder.Decode(&req)

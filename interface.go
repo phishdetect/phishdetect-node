@@ -41,6 +41,11 @@ func interfaceIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func interfaceCheck(w http.ResponseWriter, r *http.Request) {
+	if disableAnalysis == true {
+		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
+		return
+	}
+
 	vars := mux.Vars(r)
 	urlEncoded := vars["url"]
 
@@ -106,6 +111,11 @@ func interfaceCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func interfaceAnalyze(w http.ResponseWriter, r *http.Request) {
+	if disableAnalysis == true {
+		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
+		return
+	}
+
 	r.ParseForm()
 	url := r.PostFormValue("url")
 	urlSHA1 := encodeSHA1(url)
