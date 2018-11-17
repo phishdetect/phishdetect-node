@@ -48,8 +48,8 @@ type Indicator struct {
 
 type Event struct {
 	Type        string    `json:"type"`
+	Match       string    `json:"match"`
 	Indicator   string    `json:"indicator"`
-	Hashed      string    `json:"hashed"`
 	UserContact string    `json:"user_contact"`
 	Datetime    time.Time `json:"datetime"`
 	UUID        string    `json:"uuid"`

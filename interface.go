@@ -197,8 +197,8 @@ func interfaceAnalyze(w http.ResponseWriter, r *http.Request) {
 	u4, _ := uuid.NewV4()
 	event := Event{
 		Type:        "analysis",
-		Indicator:   url,
-		Hashed:      "",
+		Match:       url,
+		Indicator:   "",
 		UserContact: "",
 		Datetime:    time.Now().UTC(),
 		UUID:        u4.String(),
