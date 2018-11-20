@@ -59,8 +59,8 @@ var (
 func init() {
 	debug := flag.Bool("debug", false, "Enable debug logging")
 	flag.StringVar(&portNumber, "port", "7856", "Specify which port number to bind the service on")
-	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use (default: 1.37)")
-	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default: disabled)")
+	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use")
+	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
 	flag.BoolVar(&disableAPI, "disable-api", false, "Disable the API routes")
 	flag.BoolVar(&disableWeb, "disable-web", false, "Disable the Web GUI")
 	flag.BoolVar(&disableAnalysis, "disable-analysis", false, "Disable the ability to analyze links and pages")
@@ -95,12 +95,23 @@ func init() {
 	templatesBox = packr.NewBox("templates")
 	staticBox = packr.NewBox("static")
 
-	tmplIndex = pongo.Must(pongo.FromString(templatesBox.String("index.html")))
-	tmplError = pongo.Must(pongo.FromString(templatesBox.String("error.html")))
-	tmplSubmit = pongo.Must(pongo.FromString(templatesBox.String("submit.html")))
-	tmplCheck = pongo.Must(pongo.FromString(templatesBox.String("check.html")))
-	tmplRedirect = pongo.Must(pongo.FromString(templatesBox.String("redirect.html")))
-	tmplWarning = pongo.Must(pongo.FromString(templatesBox.String("warning.html")))
+	strIndex, _ := templatesBox.FindString("index.html")
+	tmplIndex = pongo.Must(pongo.FromString(strIndex))
+
+	strError, _ := templatesBox.FindString("error.html")
+	tmplError = pongo.Must(pongo.FromString(strError))
+
+	strSubmit, _ := templatesBox.FindString("submit.html")
+	tmplSubmit = pongo.Must(pongo.FromString(strSubmit))
+
+	strCheck, _ := templatesBox.FindString("check.html")
+	tmplCheck = pongo.Must(pongo.FromString(strCheck))
+
+	strRedirect, _ := templatesBox.FindString("redirect.html")
+	tmplRedirect = pongo.Must(pongo.FromString(strRedirect))
+
+	strWarning, _ := templatesBox.FindString("warning.html")
+	tmplWarning = pongo.Must(pongo.FromString(strWarning))
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
