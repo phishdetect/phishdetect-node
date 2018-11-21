@@ -113,5 +113,5 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"msg": fmt.Sprintf("Added %d indicators", addedCounter), "counter": string(addedCounter)})
+	json.NewEncoder(w).Encode(map[string]interface{}{"msg": fmt.Sprintf("Added %d indicators", addedCounter), "counter": addedCounter})
 }
