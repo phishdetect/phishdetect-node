@@ -8,3 +8,5 @@ This is the server component of PhishDetect, normally referred to as PhishDetect
 ## License
 
 PhishDetect Node is released under GNU Affero General Public License 3.0 and is copyrighted to Claudio Guarnieri.
+
+The hook icon was created by Alex Fuller from Noun Project.
