@@ -36,7 +36,7 @@
     $("#submitForm").submit(function(event) {
         event.preventDefault();
         var url = document.forms["submitForm"]["url"].value;
-        var tor = document.forms["submitForm"]["tor"];
+        // var tor = document.forms["submitForm"]["tor"];
 
         if (url == "") {
             $("#errorMsg").hide();
@@ -47,9 +47,9 @@
         } else {
             var checkUrl = "/check/" + btoa(url);
             var args = [];
-            if (tor.checked) {
-                args.push("tor=1");
-            }
+            // if (tor.checked) {
+            //     args.push("tor=1");
+            // }
             if (args.length > 0) {
                 checkUrl = checkUrl + "?" + args.join("&");
             }
