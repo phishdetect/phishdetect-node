@@ -32,6 +32,11 @@ type RequestAddIndicators struct {
 	Key        string   `json:"key"`
 }
 
+type RequestIndicatorsDetails struct {
+	Indicator string `json:"indicator"`
+	Key string `json:"key"`
+}
+
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	// We get the indicators from the DB.
 	iocs, err := db.GetIndicators()
@@ -114,4 +119,28 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{"msg": fmt.Sprintf("Added %d indicators", addedCounter), "counter": addedCounter})
+}
+
+func apiIndicatorsDetails(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var req RequestIndicatorsDetails
+	err := decoder.Decode(&req);
+	if err != nil {
+		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)
+		return
+	}
+
+	user := getUserFromKey(req.Key)
+	if user == nil {
+		errorWithJSON(w, "You are not authorized to perform this operation", http.StatusUnauthorized, nil)
+		return
+	}
+
+	ioc, err := db.GetIndicatorByHash(req.Indicator)
+	if err != nil {
+		errorWithJSON(w, "Failed to fetch indicator from database", http.StatusInternalServerError, err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(ioc)
 }

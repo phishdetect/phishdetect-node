@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"time"
 
-	// "github.com/mongodb/mongo-go-driver/bson"
+	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
@@ -79,7 +79,7 @@ func (d *Database) Close() {
 func (d *Database) GetUsers() ([]User, error) {
 	var users []User
 	coll := d.DB.Collection("users")
-	cur, err := coll.Find(context.Background(), nil)
+	cur, err := coll.Find(context.Background(), bson.D{})
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (d *Database) GetIndicators() ([]Indicator, error) {
 	var iocs []Indicator
 	coll := d.DB.Collection("indicators")
 	// TODO: Need to filter output just to the bare minimum.
-	cur, err := coll.Find(context.Background(), nil)
+	cur, err := coll.Find(context.Background(), bson.D{})
 	if err != nil {
 		return nil, err
 	}
@@ -117,11 +117,23 @@ func (d *Database) GetIndicators() ([]Indicator, error) {
 	return iocs, nil
 }
 
+func (d *Database) GetIndicatorByHash(hash string) (Indicator, error) {
+	coll := d.DB.Collection("indicators")
+
+	var ioc Indicator
+	err := coll.FindOne(context.Background(), bson.D{{"hashed", hash}}).Decode(&ioc)
+	if err != nil {
+		return Indicator{}, err
+	}
+
+	return ioc, nil
+}
+
 func (d *Database) AddIndicator(ioc Indicator) error {
 	coll := d.DB.Collection("indicators")
 
 	var iocFind Indicator
-	err := coll.FindOne(context.Background(), map[string]string{"hashed": ioc.Hashed}).Decode(&iocFind)
+	err := coll.FindOne(context.Background(), bson.D{{"hashed", ioc.Hashed}}).Decode(&iocFind)
 	if err != nil {
 		switch err {
 		case mongo.ErrNoDocuments:
@@ -141,7 +153,7 @@ func (d *Database) GetEvents() ([]Event, error) {
 
 	// TODO: Fix sorting.
 	// sortBy := []string{"-datetime", "indicator"}
-	cur, err := coll.Find(context.Background(), nil)
+	cur, err := coll.Find(context.Background(), bson.D{})
 	if err != nil {
 		return nil, err
 	}
