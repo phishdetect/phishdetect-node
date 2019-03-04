@@ -55,6 +55,12 @@ type Event struct {
 	UUID        string    `json:"uuid"`
 }
 
+type Raw struct {
+	Type     string    `json:"type"`
+	Content  string    `json:"content"`
+	Datetime time.Time `json:"datetime"`
+}
+
 func NewDatabase() (*Database, error) {
 	client, err := mongo.NewClient("mongodb://localhost:27017")
 	if err != nil {
@@ -175,5 +181,12 @@ func (d *Database) AddEvent(event Event) error {
 	coll := d.DB.Collection("events")
 
 	_, err := coll.InsertOne(context.Background(), event)
+	return err
+}
+
+func (d *Database) AddRaw(raw Raw) error {
+	coll := d.DB.Collection("raw")
+
+	_, err := coll.InsertOne(context.Background(), raw)
 	return err
 }

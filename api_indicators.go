@@ -34,7 +34,7 @@ type RequestAddIndicators struct {
 
 type RequestIndicatorsDetails struct {
 	Indicator string `json:"indicator"`
-	Key string `json:"key"`
+	Key       string `json:"key"`
 }
 
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
@@ -124,7 +124,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 func apiIndicatorsDetails(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var req RequestIndicatorsDetails
-	err := decoder.Decode(&req);
+	err := decoder.Decode(&req)
 	if err != nil {
 		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)
 		return
