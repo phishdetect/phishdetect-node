@@ -56,9 +56,10 @@ type Event struct {
 }
 
 type Raw struct {
-	Type     string    `json:"type"`
-	Content  string    `json:"content"`
-	Datetime time.Time `json:"datetime"`
+	Type        string    `json:"type"`
+	Content     string    `json:"content"`
+	UserContact string    `json:"user_contact"`
+	Datetime    time.Time `json:"datetime"`
 }
 
 func NewDatabase() (*Database, error) {
