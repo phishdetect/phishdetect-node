@@ -20,6 +20,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
+	"github.com/nu7hatch/gouuid"
 )
 
 func apiRawAdd(w http.ResponseWriter, r *http.Request) {
@@ -33,6 +35,9 @@ func apiRawAdd(w http.ResponseWriter, r *http.Request) {
 
 	raw.Datetime = time.Now().UTC()
 
+	u4, _ := uuid.NewV4()
+	raw.UUID = u4.String()
+
 	err = db.AddRaw(raw)
 	if err != nil {
 		errorWithJSON(w, "Unable to store raw message in database", http.StatusInternalServerError, err)
@@ -40,5 +45,5 @@ func apiRawAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"msg": "Raw message added successfully"})
+	json.NewEncoder(w).Encode(map[string]string{"msg": "Raw message added successfully", "uuid": raw.UUID})
 }

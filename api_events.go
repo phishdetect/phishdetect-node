@@ -77,5 +77,5 @@ func apiEventsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"msg": "Event added successfully"})
+	json.NewEncoder(w).Encode(map[string]string{"msg": "Event added successfully", "uuid": event.UUID})
 }
