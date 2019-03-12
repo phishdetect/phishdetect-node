@@ -50,8 +50,8 @@ var (
 
 	tmplIndex    *pongo.Template
 	tmplError    *pongo.Template
-	tmplSubmit   *pongo.Template
 	tmplCheck    *pongo.Template
+	tmplLink     *pongo.Template
 	tmplRedirect *pongo.Template
 	tmplWarning  *pongo.Template
 )
@@ -101,11 +101,11 @@ func init() {
 	strError, _ := templatesBox.FindString("error.html")
 	tmplError = pongo.Must(pongo.FromString(strError))
 
-	strSubmit, _ := templatesBox.FindString("submit.html")
-	tmplSubmit = pongo.Must(pongo.FromString(strSubmit))
-
 	strCheck, _ := templatesBox.FindString("check.html")
 	tmplCheck = pongo.Must(pongo.FromString(strCheck))
+
+	strLink, _ := templatesBox.FindString("link.html")
+	tmplLink = pongo.Must(pongo.FromString(strLink))
 
 	strRedirect, _ := templatesBox.FindString("redirect.html")
 	tmplRedirect = pongo.Must(pongo.FromString(strRedirect))
@@ -142,10 +142,10 @@ func main() {
 	// Graphical interface routes.
 	if disableWeb == false {
 		router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-		router.HandleFunc("/", interfaceIndex)
-		router.HandleFunc("/check/", interfaceCheck)
-		router.HandleFunc(fmt.Sprintf("/check/{url:%s}", urlRegex), interfaceCheck).Methods("GET", "POST")
-		router.HandleFunc("/analyze/", interfaceAnalyze).Methods("POST")
+		router.HandleFunc("/", guiIndex)
+		router.HandleFunc("/check/", guiCheck)
+		router.HandleFunc("/link/analyze/", guiLinkAnalyze).Methods("POST")
+		router.HandleFunc(fmt.Sprintf("/link/{url:%s}", urlRegex), guiLinkCheck).Methods("GET", "POST")
 	}
 
 	// REST API routes.

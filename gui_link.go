@@ -32,15 +32,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func interfaceIndex(w http.ResponseWriter, r *http.Request) {
-	err := tmplIndex.ExecuteWriter(nil, w)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-func interfaceCheck(w http.ResponseWriter, r *http.Request) {
+func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
 	if disableAnalysis == true {
 		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
 		return
@@ -49,68 +41,63 @@ func interfaceCheck(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	urlEncoded := vars["url"]
 
-	// If no url was specified, we show the submit form.
+	// If no url was specified, we give an error.
 	if urlEncoded == "" {
-		err := tmplSubmit.ExecuteWriter(nil, w)
-		if err != nil {
-			log.Error(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		// If a url was specified, we determine how to analyze it.
-	} else {
-		data, err := base64.StdEncoding.DecodeString(urlEncoded)
-		if err != nil {
-			log.Error(err)
-			errorPage(w, "You submitted an invalid URL argument. I expect a base64 encoded URL.")
-			return
-		}
+		errorPage(w, "You didn't specify a valid URL")
+		return
+	}
 
-		// The url is normally send base64-encoded.
-		urlDecoded := string(data)
-		log.Info("Received analysis request for ", urlDecoded)
+	data, err := base64.StdEncoding.DecodeString(urlEncoded)
+	if err != nil {
+		log.Error(err)
+		errorPage(w, "You submitted an invalid URL argument. I expect a base64 encoded URL.")
+		return
+	}
 
-		// Check for "tor" query value.
-		tor := ""
-		torS, ok := r.URL.Query()["tor"]
-		if ok {
-			tor = torS[0]
-		}
-		// Check for "force" query value.
-		force := ""
-		forceS, ok := r.URL.Query()["force"]
-		if ok {
-			force = forceS[0]
-		}
+	// The url is normally send base64-encoded.
+	urlDecoded := string(data)
+	log.Info("Received analysis request for ", urlDecoded)
 
-		// These options are used if the user sent an HTML page from the
-		// browser extension.
-		html := ""
-		screenshot := ""
-		if r.Method == "POST" {
-			r.ParseForm()
-			// We get the base64 encoded HTML page.
-			html = r.PostFormValue("html")
-			// We are gonna display the screenshot sent by the browser.
-			screenshot = r.PostFormValue("screenshot")
-		}
+	// Check for "tor" query value.
+	tor := ""
+	torS, ok := r.URL.Query()["tor"]
+	if ok {
+		tor = torS[0]
+	}
+	// Check for "force" query value.
+	force := ""
+	forceS, ok := r.URL.Query()["force"]
+	if ok {
+		force = forceS[0]
+	}
 
-		err = tmplCheck.ExecuteWriter(pongo.Context{
-			"url":        urlDecoded,
-			"html":       html,
-			"screenshot": screenshot,
-			"tor":        tor,
-			"force":      force,
-		}, w)
-		if err != nil {
-			log.Error(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	// These options are used if the user sent an HTML page from the
+	// browser extension.
+	html := ""
+	screenshot := ""
+	if r.Method == "POST" {
+		r.ParseForm()
+		// We get the base64 encoded HTML page.
+		html = r.PostFormValue("html")
+		// We are gonna display the screenshot sent by the browser.
+		screenshot = r.PostFormValue("screenshot")
+	}
+
+	err = tmplLink.ExecuteWriter(pongo.Context{
+		"url":        urlDecoded,
+		"html":       html,
+		"screenshot": screenshot,
+		"tor":        tor,
+		"force":      force,
+	}, w)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
 
-func interfaceAnalyze(w http.ResponseWriter, r *http.Request) {
+func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	if disableAnalysis == true {
 		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
 		return

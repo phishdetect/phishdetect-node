@@ -60,7 +60,7 @@ type Raw struct {
 	Content     string    `json:"content"`
 	UserContact string    `json:"user_contact"`
 	Datetime    time.Time `json:"datetime"`
-	UUID string `json:"uuid"`
+	UUID        string    `json:"uuid"`
 }
 
 func NewDatabase() (*Database, error) {
