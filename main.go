@@ -33,6 +33,7 @@ import (
 )
 
 const urlRegex string = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
+const uuidRegex string = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
 
 var (
 	portNumber   string
@@ -54,6 +55,7 @@ var (
 	tmplLink     *pongo.Template
 	tmplRedirect *pongo.Template
 	tmplWarning  *pongo.Template
+	tmplEmail    *pongo.Template
 )
 
 func init() {
@@ -112,6 +114,9 @@ func init() {
 
 	strWarning, _ := templatesBox.FindString("warning.html")
 	tmplWarning = pongo.Must(pongo.FromString(strWarning))
+
+	strEmail, _ := templatesBox.FindString("email.html")
+	tmplEmail = pongo.Must(pongo.FromString(strEmail))
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -146,6 +151,7 @@ func main() {
 		router.HandleFunc("/check/", guiCheck)
 		router.HandleFunc("/link/analyze/", guiLinkAnalyze).Methods("POST")
 		router.HandleFunc(fmt.Sprintf("/link/{url:%s}", urlRegex), guiLinkCheck).Methods("GET", "POST")
+		router.HandleFunc(fmt.Sprintf("/email/{uuid:%s}", uuidRegex), guiEmail).Methods("GET", "POST")
 	}
 
 	// REST API routes.

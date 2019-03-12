@@ -192,3 +192,15 @@ func (d *Database) AddRaw(raw Raw) error {
 	_, err := coll.InsertOne(context.Background(), raw)
 	return err
 }
+
+func (d *Database) GetRawByUUID(uuid string) (Raw, error) {
+	coll := d.DB.Collection("raw")
+
+	var raw Raw
+	err := coll.FindOne(context.Background(), bson.D{{"uuid", uuid}}).Decode(&raw)
+	if err != nil {
+		return Raw{}, err
+	}
+
+	return raw, nil
+}
