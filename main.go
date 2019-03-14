@@ -41,7 +41,7 @@ var (
 	safeBrowsing string
 
 	disableAPI      bool
-	disableWeb      bool
+	disableGUI      bool
 	disableAnalysis bool
 
 	db *Database
@@ -64,7 +64,7 @@ func init() {
 	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use")
 	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
 	flag.BoolVar(&disableAPI, "disable-api", false, "Disable the API routes")
-	flag.BoolVar(&disableWeb, "disable-web", false, "Disable the Web GUI")
+	flag.BoolVar(&disableGUI, "disable-web", false, "Disable the Web GUI")
 	flag.BoolVar(&disableAnalysis, "disable-analysis", false, "Disable the ability to analyze links and pages")
 	flag.Parse()
 
@@ -145,7 +145,7 @@ func main() {
 	router.Use(loggingMiddleware)
 
 	// Graphical interface routes.
-	if disableWeb == false {
+	if disableGUI == false {
 		router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 		router.HandleFunc("/", guiIndex)
 		router.HandleFunc("/check/", guiCheck)
