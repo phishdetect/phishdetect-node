@@ -29,12 +29,11 @@ type RequestFetchEvents struct {
 }
 
 func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
-	// We decode the request to an Event.
 	decoder := json.NewDecoder(r.Body)
 	var req RequestFetchEvents
 	err := decoder.Decode(&req)
 	if err != nil {
-		errorWithJSON(w, "Unable to parse event", http.StatusBadRequest, err)
+		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)
 		return
 	}
 
@@ -45,7 +44,7 @@ func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	events, err := db.GetEvents()
+	events, err := db.GetAllEvents()
 	if err != nil {
 		errorWithJSON(w, "Failed to fetch events from database", http.StatusInternalServerError, err)
 		return

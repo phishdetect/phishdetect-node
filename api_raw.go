@@ -24,6 +24,40 @@ import (
 	"github.com/nu7hatch/gouuid"
 )
 
+type RequestRawFetch struct {
+	Key string `json:"key"`
+}
+
+type RequestRawDetails struct {
+	Key string `json:"key"`
+	UUID string `json:"uuid"`
+}
+
+func apiRawFetch(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var req RequestRawFetch
+	err := decoder.Decode(&req)
+	if err != nil {
+		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)
+		return
+	}
+
+	user := getUserFromKey(req.Key)
+	if user == nil || user.Role != "admin" {
+		errorWithJSON(w, "You are not authorized to perform this operation", http.StatusUnauthorized, nil)
+		return
+	}
+
+	rawMessages, err := db.GetAllRaw()
+	if err != nil {
+		errorWithJSON(w, "Failed to fetch raw messages from database", http.StatusInternalServerError, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(rawMessages)
+}
+
 func apiRawAdd(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var raw Raw
@@ -46,4 +80,29 @@ func apiRawAdd(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"msg": "Raw message added successfully", "uuid": raw.UUID})
+}
+
+func apiRawDetails(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var req RequestRawDetails
+	err := decoder.Decode(&req)
+	if err != nil {
+		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)
+		return
+	}
+
+	user := getUserFromKey(req.Key)
+	if user == nil || user.Role != "admin" {
+		errorWithJSON(w, "You are not authorized to perform this operation", http.StatusUnauthorized, nil)
+		return
+	}
+
+	raw, err := db.GetRawByUUID(req.UUID)
+	if err != nil {
+		errorWithJSON(w, "Failed to fetch raw message from database", http.StatusInternalServerError, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(raw)
 }

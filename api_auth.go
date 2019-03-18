@@ -17,7 +17,7 @@
 package main
 
 func getUserFromKey(key string) *User {
-	users, err := db.GetUsers()
+	users, err := db.GetAllUsers()
 	if err != nil {
 		return nil
 	}

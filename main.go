@@ -164,7 +164,9 @@ func main() {
 		router.HandleFunc("/api/indicators/details/", apiIndicatorsDetails).Methods("POST")
 		router.HandleFunc("/api/events/fetch/", apiEventsFetch).Methods("POST")
 		router.HandleFunc("/api/events/add/", apiEventsAdd).Methods("POST")
+		router.HandleFunc("/api/raw/fetch/", apiRawFetch).Methods("POST")
 		router.HandleFunc("/api/raw/add/", apiRawAdd).Methods("POST")
+		router.HandleFunc("/api/raw/details/", apiRawDetails).Methods("POST")
 	}
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

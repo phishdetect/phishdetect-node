@@ -63,6 +63,13 @@ type Raw struct {
 	UUID        string    `json:"uuid"`
 }
 
+type RawListItem struct {
+	Type        string    `json:"type"`
+	UserContact string    `json:"user_contact"`
+	Datetime    time.Time `json:"datetime"`
+	UUID        string    `json:"uuid"`
+}
+
 func NewDatabase() (*Database, error) {
 	client, err := mongo.NewClient("mongodb://localhost:27017")
 	if err != nil {
@@ -84,7 +91,7 @@ func (d *Database) Close() {
 	d.Client.Disconnect(context.Background())
 }
 
-func (d *Database) GetUsers() ([]User, error) {
+func (d *Database) GetAllUsers() ([]User, error) {
 	var users []User
 	coll := d.DB.Collection("users")
 	cur, err := coll.Find(context.Background(), bson.D{})
@@ -104,7 +111,7 @@ func (d *Database) GetUsers() ([]User, error) {
 	return users, nil
 }
 
-func (d *Database) GetIndicators() ([]Indicator, error) {
+func (d *Database) GetAllIndicators() ([]Indicator, error) {
 	var iocs []Indicator
 	coll := d.DB.Collection("indicators")
 	// TODO: Need to filter output just to the bare minimum.
@@ -156,7 +163,7 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 	return err
 }
 
-func (d *Database) GetEvents() ([]Event, error) {
+func (d *Database) GetAllEvents() ([]Event, error) {
 	coll := d.DB.Collection("events")
 
 	// TODO: Fix sorting.
@@ -184,6 +191,27 @@ func (d *Database) AddEvent(event Event) error {
 
 	_, err := coll.InsertOne(context.Background(), event)
 	return err
+}
+
+func (d *Database) GetAllRaw() ([]RawListItem, error) {
+	coll := d.DB.Collection("raw")
+
+	cur, err := coll.Find(context.Background(), bson.D{})
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(context.Background())
+
+	rawMessages := []RawListItem{}
+	for cur.Next(context.Background()) {
+		var raw RawListItem
+		if err := cur.Decode(&raw); err != nil {
+			continue
+		}
+		rawMessages = append(rawMessages, raw)
+	}
+
+	return rawMessages, nil
 }
 
 func (d *Database) AddRaw(raw Raw) error {

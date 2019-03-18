@@ -39,7 +39,7 @@ type RequestIndicatorsDetails struct {
 
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	// We get the indicators from the DB.
-	iocs, err := db.GetIndicators()
+	iocs, err := db.GetAllIndicators()
 	if err != nil {
 		errorWithJSON(w, "Failed to fetch indicators from database", http.StatusInternalServerError, err)
 		return
