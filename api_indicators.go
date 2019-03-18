@@ -25,7 +25,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type RequestAddIndicators struct {
+type RequestIndicatorsAdd struct {
 	Type       string   `json:"type"`
 	Indicators []string `json:"indicators"`
 	Tags       []string `json:"tags"`
@@ -67,9 +67,9 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
-	// We decode the request to an RequestAddIndicators.
+	// We decode the request to an RequestIndicatorsAdd.
 	decoder := json.NewDecoder(r.Body)
-	var req RequestAddIndicators
+	var req RequestIndicatorsAdd
 	err := decoder.Decode(&req)
 	if err != nil {
 		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)

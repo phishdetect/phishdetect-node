@@ -24,13 +24,13 @@ import (
 	"github.com/nu7hatch/gouuid"
 )
 
-type RequestFetchEvents struct {
+type RequestEventsFetch struct {
 	Key string `json:"key"`
 }
 
 func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var req RequestFetchEvents
+	var req RequestEventsFetch
 	err := decoder.Decode(&req)
 	if err != nil {
 		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)
