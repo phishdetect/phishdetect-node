@@ -39,6 +39,7 @@ var (
 	portNumber   string
 	apiVersion   string
 	safeBrowsing string
+	brandsPath   string
 
 	disableAPI      bool
 	disableGUI      bool
@@ -63,6 +64,7 @@ func init() {
 	flag.StringVar(&portNumber, "port", "7856", "Specify which port number to bind the service on")
 	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use")
 	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
+	flag.StringVar(&brandsPath, "brands", "", "Specify a folder containing YAML files with Brand specifications")
 	flag.BoolVar(&disableAPI, "disable-api", false, "Disable the API routes")
 	flag.BoolVar(&disableGUI, "disable-web", false, "Disable the Web GUI")
 	flag.BoolVar(&disableAnalysis, "disable-analysis", false, "Disable the ability to analyze links and pages")
