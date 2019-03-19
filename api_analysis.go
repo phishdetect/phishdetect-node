@@ -67,6 +67,8 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	analysis := phishdetect.NewAnalysis(urlFinal, "")
+	loadBrands(*analysis)
+
 	err = analysis.AnalyzeDomain()
 	if err != nil {
 		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
@@ -132,6 +134,8 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
 
 	analysis := phishdetect.NewAnalysis(urlFinal, html)
+	loadBrands(*analysis)
+
 	err = analysis.AnalyzeHTML()
 	if err != nil {
 		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
@@ -198,6 +202,8 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	html := string(htmlData)
 
 	analysis := phishdetect.NewAnalysis(urlFinal, html)
+	loadBrands(*analysis)
+
 	err = analysis.AnalyzeHTML()
 	if err != nil {
 		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)

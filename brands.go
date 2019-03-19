@@ -20,13 +20,15 @@ import (
 	"os"
 	"path/filepath"
 	"io/ioutil"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+	"github.com/phishdetect/phishdetect"
 	"github.com/phishdetect/phishdetect/brand"
 )
 
-func loadBrands() (brands []*brand.Brand) {
+func loadBrands(analysis phishdetect.Analysis) {
 	if brandsPath == "" {
 		return
 	}
@@ -36,16 +38,29 @@ func loadBrands() (brands []*brand.Brand) {
 		return
 	}
 
+	filePaths := []string{}
 	filepath.Walk(brandsPath, func(path string, info os.FileInfo, err error) error {
-		brand := &brand.Brand{}
-		yamlFile, err := ioutil.ReadFile(path)
-		err = yaml.Unmarshal(yamlFile, brand)
-		if err != nil {
-			return err
+		ext := filepath.Ext(strings.ToLower(path))
+		if ext == ".yaml" || ext == ".yml" {
+			filePaths = append(filePaths, path)
 		}
-		brands = append(brands, brand)
 		return nil
 	})
 
-	return brands
+	for _, path := range filePaths {
+		log.Debug("Trying to load custom brand file at path ", path)
+		brand := brand.Brand{}
+		yamlFile, err := ioutil.ReadFile(path)
+		err = yaml.Unmarshal(yamlFile, &brand)
+		if err != nil {
+			log.Warning("Failed to load brand file: ", err.Error())
+			continue
+		}
+
+		log.Debug("Loaded custom brand with name: ", brand.Name)
+
+		analysis.Brands.AddBrand(&brand)
+	}
+
+	return
 }
