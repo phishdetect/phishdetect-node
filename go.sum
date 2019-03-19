@@ -97,8 +97,8 @@ github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d h1:VhgPp6v9qf9Agr/
 github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d/go.mod h1:YUTz3bUH2ZwIWBy3CJBeOBEugqcmXREj14T+iG/4k4U=
 github.com/olekukonko/tablewriter v0.0.0-20180912035003-be2c049b30cc h1:rQ1O4ZLYR2xXHXgBCCfIIGnuZ0lidMQw2S5n1oOv+Wg=
 github.com/olekukonko/tablewriter v0.0.0-20180912035003-be2c049b30cc/go.mod h1:vsDQFd/mU46D+Z4whnwzcISnGGzXWMclvtLoiIKAKIo=
-github.com/phishdetect/phishdetect v0.0.0-20190319103108-5a37955f5f64 h1:CPXH2IiQtNKT40wCVt3D2oGR/b8GpqTrwgoI8WO5zyU=
-github.com/phishdetect/phishdetect v0.0.0-20190319103108-5a37955f5f64/go.mod h1:C6NvG1ZkK+lXrB5ewWsKo1GibC4N6FVWawcdCzjSULg=
+github.com/phishdetect/phishdetect v0.0.0-20190319121801-499201147c76 h1:HYjOVU6tU+eBMfE9vBtzI/5IEMlFsztLDRV/BhJCqIw=
+github.com/phishdetect/phishdetect v0.0.0-20190319121801-499201147c76/go.mod h1:C6NvG1ZkK+lXrB5ewWsKo1GibC4N6FVWawcdCzjSULg=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

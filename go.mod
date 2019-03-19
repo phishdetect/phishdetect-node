@@ -14,7 +14,7 @@ require (
 	github.com/kr/pty v1.1.4 // indirect
 	github.com/mattn/go-colorable v0.1.1
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/phishdetect/phishdetect v0.0.0-20190319103108-5a37955f5f64
+	github.com/phishdetect/phishdetect v0.0.0-20190319121801-499201147c76
 	github.com/sirupsen/logrus v1.4.0
 	github.com/spf13/pflag v1.0.3
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
