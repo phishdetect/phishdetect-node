@@ -7,7 +7,7 @@ This is the server component of PhishDetect, normally referred to as PhishDetect
 
 ## Build
 
-In order to build PhishDetect Node you need Go 1.11+ installed. You can then proceed with:
+In order to build PhishDetect Node you need Go 1.12+ installed. You can then proceed with:
 
     make deps
     make linux

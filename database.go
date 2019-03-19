@@ -21,8 +21,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Database struct {
@@ -71,7 +72,7 @@ type RawListItem struct {
 }
 
 func NewDatabase() (*Database, error) {
-	client, err := mongo.NewClient("mongodb://localhost:27017")
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		return nil, err
 	}
