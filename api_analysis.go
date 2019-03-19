@@ -67,6 +67,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	analysis := phishdetect.NewAnalysis(urlFinal, "")
+	// Load custom brands.
 	loadBrands(*analysis)
 
 	err = analysis.AnalyzeDomain()
@@ -134,6 +135,7 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
 
 	analysis := phishdetect.NewAnalysis(urlFinal, html)
+	// Load custom brands.
 	loadBrands(*analysis)
 
 	err = analysis.AnalyzeHTML()
@@ -202,6 +204,7 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	html := string(htmlData)
 
 	analysis := phishdetect.NewAnalysis(urlFinal, html)
+	// Load custom brands.
 	loadBrands(*analysis)
 
 	err = analysis.AnalyzeHTML()
