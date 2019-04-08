@@ -153,7 +153,8 @@ func main() {
 		router.HandleFunc("/check/", guiCheck)
 		router.HandleFunc("/link/analyze/", guiLinkAnalyze).Methods("POST")
 		router.HandleFunc(fmt.Sprintf("/link/{url:%s}", urlRegex), guiLinkCheck).Methods("GET", "POST")
-		router.HandleFunc(fmt.Sprintf("/email/{uuid:%s}", uuidRegex), guiEmail).Methods("GET", "POST")
+		// TODO: Temporarily disabled email view, until the objective is clear.
+		// router.HandleFunc(fmt.Sprintf("/email/{uuid:%s}", uuidRegex), guiEmail).Methods("GET", "POST")
 	}
 
 	// REST API routes.
