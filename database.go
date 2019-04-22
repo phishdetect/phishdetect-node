@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Database struct {
@@ -72,8 +72,8 @@ type RawListItem struct {
 }
 
 type Review struct {
-	Indicator string `json:"indicator"`
-	Datetime time.Time `json:"datetime"`
+	Indicator string    `json:"indicator"`
+	Datetime  time.Time `json:"datetime"`
 }
 
 func NewDatabase() (*Database, error) {

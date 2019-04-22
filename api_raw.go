@@ -29,7 +29,7 @@ type RequestRawFetch struct {
 }
 
 type RequestRawDetails struct {
-	Key string `json:"key"`
+	Key  string `json:"key"`
 	UUID string `json:"uuid"`
 }
 

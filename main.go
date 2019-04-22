@@ -58,7 +58,7 @@ var (
 	tmplRedirect *pongo.Template
 	tmplWarning  *pongo.Template
 	// tmplEmail    *pongo.Template
-	tmplReview   *pongo.Template
+	tmplReview *pongo.Template
 )
 
 func init() {

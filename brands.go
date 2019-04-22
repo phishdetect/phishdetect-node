@@ -17,15 +17,15 @@
 package main
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
-	"io/ioutil"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
 	"github.com/phishdetect/phishdetect"
 	"github.com/phishdetect/phishdetect/brand"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
 
 func loadBrands(analysis phishdetect.Analysis) {

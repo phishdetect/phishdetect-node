@@ -30,7 +30,7 @@ func guiReview(w http.ResponseWriter, r *http.Request) {
 
 	review := Review{
 		Indicator: ioc,
-		Datetime: time.Now().UTC(),
+		Datetime:  time.Now().UTC(),
 	}
 
 	err := db.AddReview(review)
