@@ -71,6 +71,11 @@ type RawListItem struct {
 	UUID        string    `json:"uuid"`
 }
 
+type Review struct {
+	Indicator string `json:"indicator"`
+	Datetime time.Time `json:"datetime"`
+}
+
 func NewDatabase() (*Database, error) {
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
@@ -232,4 +237,11 @@ func (d *Database) GetRawByUUID(uuid string) (Raw, error) {
 	}
 
 	return raw, nil
+}
+
+func (d *Database) AddReview(review Review) error {
+	coll := d.DB.Collection("review")
+
+	_, err := coll.InsertOne(context.Background(), review)
+	return err
 }

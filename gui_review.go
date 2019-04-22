@@ -16,30 +16,32 @@
 
 package main
 
-// import (
-// 	"net/http"
+import (
+	"net/http"
+	"time"
 
-// 	pongo "github.com/flosch/pongo2"
-// 	"github.com/gorilla/mux"
-// 	log "github.com/sirupsen/logrus"
-// )
+	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
+)
 
-// func guiEmail(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	uuid := vars["uuid"]
+func guiReview(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	ioc := vars["ioc"]
 
-// 	raw, err := db.GetRawByUUID(uuid)
-// 	if err != nil {
-// 		errorPage(w, "You didn't specify a valid email")
-// 		return
-// 	}
+	review := Review{
+		Indicator: ioc,
+		Datetime: time.Now().UTC(),
+	}
 
-// 	err = tmplEmail.ExecuteWriter(pongo.Context{
-// 		"content": raw.Content,
-// 		"uuid":    raw.UUID,
-// 	}, w)
-// 	if err != nil {
-// 		log.Error(err)
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 	}
-// }
+	err := db.AddReview(review)
+	if err != nil {
+		errorWithJSON(w, "Unable to store review request in database", http.StatusInternalServerError, err)
+		return
+	}
+
+	err = tmplReview.ExecuteWriter(nil, w)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
