@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"time"
 
+	pongo "github.com/flosch/pongo2"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
@@ -28,18 +29,26 @@ func guiReview(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	ioc := vars["ioc"]
 
+	indicator, err := db.GetIndicatorByHash(ioc)
+	if err != nil {
+		errorPage(w, "Unable to find the indicator you requested to be reviewed")
+		return
+	}
+
 	review := Review{
 		Indicator: ioc,
 		Datetime:  time.Now().UTC(),
 	}
 
-	err := db.AddReview(review)
+	err = db.AddReview(review)
 	if err != nil {
 		errorPage(w, "Unable to store review request in database")
 		return
 	}
 
-	err = tmplReview.ExecuteWriter(nil, w)
+	err = tmplReview.ExecuteWriter(pongo.Context{
+		"original": indicator.Original,
+	}, w)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
