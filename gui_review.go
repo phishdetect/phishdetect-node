@@ -35,7 +35,7 @@ func guiReview(w http.ResponseWriter, r *http.Request) {
 
 	err := db.AddReview(review)
 	if err != nil {
-		errorWithJSON(w, "Unable to store review request in database", http.StatusInternalServerError, err)
+		errorPage(w, "Unable to store review request in database")
 		return
 	}
 
