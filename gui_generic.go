@@ -19,11 +19,27 @@ package main
 import (
 	"net/http"
 
+	pongo "github.com/flosch/pongo2"
 	log "github.com/sirupsen/logrus"
 )
 
 func guiIndex(w http.ResponseWriter, r *http.Request) {
 	err := tmplIndex.ExecuteWriter(nil, w)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func guiContacts(w http.ResponseWriter, r *http.Request) {
+	if operatorContacts == "" {
+		errorPage(w, "Your operator did not provide any contact details")
+		return
+	}
+
+	err := tmplContacts.ExecuteWriter(pongo.Context{
+		"contacts": operatorContacts,
+	}, w)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

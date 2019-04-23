@@ -46,12 +46,15 @@ var (
 	disableGUI      bool
 	disableAnalysis bool
 
+	operatorContacts string
+
 	db *Database
 
 	templatesBox packr.Box
 	staticBox    packr.Box
 
 	tmplIndex    *pongo.Template
+	tmplContacts *pongo.Template
 	tmplError    *pongo.Template
 	tmplCheck    *pongo.Template
 	tmplLink     *pongo.Template
@@ -70,6 +73,7 @@ func init() {
 	flag.BoolVar(&disableAPI, "disable-api", false, "Disable the API routes")
 	flag.BoolVar(&disableGUI, "disable-web", false, "Disable the Web GUI")
 	flag.BoolVar(&disableAnalysis, "disable-analysis", false, "Disable the ability to analyze links and pages")
+	flag.StringVar(&operatorContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
 	flag.Parse()
 
 	if *debug {
@@ -103,6 +107,9 @@ func init() {
 
 	strIndex, _ := templatesBox.FindString("index.html")
 	tmplIndex = pongo.Must(pongo.FromString(strIndex))
+
+	strContacts, _ := templatesBox.FindString("contacts.html")
+	tmplContacts = pongo.Must(pongo.FromString(strContacts))
 
 	strError, _ := templatesBox.FindString("error.html")
 	tmplError = pongo.Must(pongo.FromString(strError))
@@ -155,6 +162,7 @@ func main() {
 	if disableGUI == false {
 		router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 		router.HandleFunc("/", guiIndex)
+		router.HandleFunc("/contacts/", guiContacts)
 		router.HandleFunc("/check/", guiCheck)
 		router.HandleFunc("/link/analyze/", guiLinkAnalyze).Methods("POST")
 		router.HandleFunc(fmt.Sprintf("/link/{url:%s}", urlRegex), guiLinkCheck).Methods("GET", "POST")
