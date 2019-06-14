@@ -3,47 +3,53 @@ module github.com/phishdetect/phishdetect-node
 go 1.12
 
 require (
-	github.com/Microsoft/go-winio v0.4.12 // indirect
-	github.com/anaskhan96/soup v1.1.1 // indirect
-	github.com/docker/distribution v2.7.1+incompatible // indirect
-	github.com/docker/go-units v0.4.0 // indirect
-	github.com/flosch/pongo2 v0.0.0-20181225140029-79872a7b2769
-	github.com/go-stack/stack v1.8.0 // indirect
-	github.com/gobuffalo/depgen v0.1.1 // indirect
-	github.com/gobuffalo/genny v0.1.1 // indirect
-	github.com/gobuffalo/gogen v0.1.1 // indirect
-	github.com/gobuffalo/packr v1.25.0
-	github.com/golang/protobuf v1.3.1 // indirect
+	cloud.google.com/go v0.40.0 // indirect
+	github.com/coreos/bbolt v1.3.3 // indirect
+	github.com/coreos/etcd v3.3.13+incompatible // indirect
+	github.com/coreos/go-semver v0.3.0 // indirect
+	github.com/coreos/go-systemd v0.0.0-20190612170431-362f06ec6bc1 // indirect
+	github.com/flosch/pongo2 v0.0.0-20190505152737-8914e1cf9164
+	github.com/gobuffalo/packd v0.2.0 // indirect
+	github.com/gobuffalo/packr v1.26.0
+	github.com/golang/mock v1.3.1 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/google/safebrowsing v0.0.0-20190318180502-92a16cf6d028 // indirect
-	github.com/gorilla/mux v1.7.1
-	github.com/goware/urlx v0.2.0 // indirect
-	github.com/juju/errors v0.0.0-20190207033735-e65537c515d7 // indirect
-	github.com/juju/loggo v0.0.0-20190212223446-d976af380377 // indirect
-	github.com/juju/testing v0.0.0-20190429233213-dfc56b8c09fc // indirect
-	github.com/karrick/godirwalk v1.8.2 // indirect
-	github.com/kr/pty v1.1.4 // indirect
-	github.com/mafredri/cdp v0.23.1 // indirect
-	github.com/mattn/go-colorable v0.1.1
-	github.com/mattn/go-isatty v0.0.7 // indirect
-	github.com/mattn/go-runewidth v0.0.4 // indirect
-	github.com/mozillazg/go-unidecode v0.1.1 // indirect
+	github.com/google/pprof v0.0.0-20190515194954-54271f7e092f // indirect
+	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
+	github.com/gorilla/mux v1.7.2
+	github.com/grpc-ecosystem/grpc-gateway v1.9.1 // indirect
+	github.com/kisielk/errcheck v1.2.0 // indirect
+	github.com/kr/pty v1.1.5 // indirect
+	github.com/magiconair/properties v1.8.1 // indirect
+	github.com/mattn/go-colorable v0.1.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/olekukonko/tablewriter v0.0.1 // indirect
-	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
-	github.com/phishdetect/phishdetect v0.0.0-20190319121801-499201147c76
+	github.com/pelletier/go-toml v1.4.0 // indirect
+	github.com/phishdetect/phishdetect v0.0.0-20190614100416-005fe511486b
+	github.com/prometheus/client_golang v0.9.4 // indirect
 	github.com/rakyll/statik v0.1.6 // indirect
-	github.com/sirupsen/logrus v1.4.1
+	github.com/rogpeppe/fastuuid v1.1.0 // indirect
+	github.com/russross/blackfriday v2.0.0+incompatible // indirect
+	github.com/sirupsen/logrus v1.4.2
+	github.com/spf13/afero v1.2.2 // indirect
+	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.3
+	github.com/spf13/viper v1.4.0 // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
+	github.com/ugorji/go v1.1.5-pre // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
-	go.mongodb.org/mongo-driver v1.0.1
-	golang.org/x/crypto v0.0.0-20190426145343-a29dc8fdc734 // indirect
-	golang.org/x/net v0.0.0-20190502183928-7f726cade0ab // indirect
-	golang.org/x/sys v0.0.0-20190502175342-a43fa875dd82 // indirect
-	golang.org/x/text v0.3.2 // indirect
-	golang.org/x/tools v0.0.0-20190503030157-5cec639030af // indirect
+	go.etcd.io/bbolt v1.3.3 // indirect
+	go.mongodb.org/mongo-driver v1.0.3
+	go.opencensus.io v0.22.0 // indirect
+	golang.org/x/crypto v0.0.0-20190611184440-5c40567a22f8 // indirect
+	golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522 // indirect
+	golang.org/x/image v0.0.0-20190523035834-f03afa92d3ff // indirect
+	golang.org/x/mobile v0.0.0-20190607214518-6fa95d984e88 // indirect
+	golang.org/x/mod v0.1.0 // indirect
+	golang.org/x/net v0.0.0-20190613194153-d28f0bde5980 // indirect
+	golang.org/x/sys v0.0.0-20190614084037-d442b75600c5 // indirect
+	google.golang.org/appengine v1.6.1 // indirect
+	google.golang.org/genproto v0.0.0-20190611190212-a7e196e89fd3 // indirect
+	google.golang.org/grpc v1.21.1 // indirect
 	gopkg.in/yaml.v2 v2.2.2
-	jaytaylor.com/html2text v0.0.0-20190408195923-01ec452cbe43 // indirect
+	honnef.co/go/tools v0.0.0-20190614002413-cb51c254f01b // indirect
 )
