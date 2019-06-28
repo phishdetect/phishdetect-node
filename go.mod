@@ -25,7 +25,7 @@ require (
 	github.com/mattn/go-colorable v0.1.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 	github.com/pelletier/go-toml v1.4.0 // indirect
-	github.com/phishdetect/phishdetect v0.0.0-20190628115522-3ff67a05c430
+	github.com/phishdetect/phishdetect v0.0.0-20190628123416-569d57e1b27c
 	github.com/prometheus/client_golang v0.9.4 // indirect
 	github.com/rakyll/statik v0.1.6 // indirect
 	github.com/rogpeppe/fastuuid v1.1.0 // indirect
