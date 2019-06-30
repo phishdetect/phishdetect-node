@@ -173,6 +173,7 @@ func main() {
 
 	// REST API routes.
 	if disableAPI == false {
+		router.HandleFunc("/api/config/", apiConfig).Methods("GET")
 		router.HandleFunc("/api/analyze/link/", apiAnalyzeLink).Methods("POST")
 		router.HandleFunc("/api/analyze/domain/", apiAnalyzeDomain).Methods("POST")
 		router.HandleFunc("/api/analyze/html/", apiAnalyzeHTML).Methods("POST")
