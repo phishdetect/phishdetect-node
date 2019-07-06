@@ -25,7 +25,7 @@ require (
 	github.com/mattn/go-colorable v0.1.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 	github.com/pelletier/go-toml v1.4.0 // indirect
-	github.com/phishdetect/phishdetect v0.0.0-20190628123416-569d57e1b27c
+	github.com/phishdetect/phishdetect v0.0.0-20190706105957-cf5a7a176573
 	github.com/prometheus/client_golang v0.9.4 // indirect
 	github.com/rakyll/statik v0.1.6 // indirect
 	github.com/rogpeppe/fastuuid v1.1.0 // indirect
@@ -42,14 +42,14 @@ require (
 	go.etcd.io/bbolt v1.3.3 // indirect
 	go.mongodb.org/mongo-driver v1.0.3
 	go.opencensus.io v0.22.0 // indirect
-	golang.org/x/crypto v0.0.0-20190621222207-cc06ce4a13d4 // indirect
+	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
 	golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522 // indirect
 	golang.org/x/image v0.0.0-20190523035834-f03afa92d3ff // indirect
 	golang.org/x/mobile v0.0.0-20190607214518-6fa95d984e88 // indirect
 	golang.org/x/mod v0.1.0 // indirect
-	golang.org/x/net v0.0.0-20190620200207-3b0461eec859 // indirect
+	golang.org/x/net v0.0.0-20190628185345-da137c7871d7 // indirect
 	golang.org/x/sys v0.0.0-20190626221950-04f50cda93cb // indirect
-	golang.org/x/tools v0.0.0-20190628034336-212fb13d595e // indirect
+	golang.org/x/tools v0.0.0-20190706070813-72ffa07ba3db // indirect
 	google.golang.org/appengine v1.6.1 // indirect
 	google.golang.org/genproto v0.0.0-20190611190212-a7e196e89fd3 // indirect
 	google.golang.org/grpc v1.21.1 // indirect
