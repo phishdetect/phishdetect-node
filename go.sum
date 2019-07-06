@@ -178,6 +178,12 @@ github.com/phishdetect/phishdetect v0.0.0-20190628123416-569d57e1b27c h1:oaIgSut
 github.com/phishdetect/phishdetect v0.0.0-20190628123416-569d57e1b27c/go.mod h1:ZMaWAJqbHOfb9JnKoHU2I8OgpIO0ocjOvoHAnDn65vU=
 github.com/phishdetect/phishdetect v0.0.0-20190706105957-cf5a7a176573 h1:ADDSKAgkJFmnBpBFsTQCyiqEh5GyzoW392Me7GZcr18=
 github.com/phishdetect/phishdetect v0.0.0-20190706105957-cf5a7a176573/go.mod h1:ZMaWAJqbHOfb9JnKoHU2I8OgpIO0ocjOvoHAnDn65vU=
+github.com/phishdetect/phishdetect v0.0.0-20190706120438-ce5bf64f39a6 h1:NWR7fG8Zuv6n47jUNUeixoUWv7loEEZ5/IOlg/7/maU=
+github.com/phishdetect/phishdetect v0.0.0-20190706120438-ce5bf64f39a6/go.mod h1:h5LksAVOPbrLKI+kufayhcvbK5xD1QhFpKi5S0U911Q=
+github.com/phishdetect/phishdetect v0.0.0-20190706120732-171d5e37d040 h1:MSzIMLukSdfIq+Q/VbiI41S92j3rawE9HEmFU8u1yeg=
+github.com/phishdetect/phishdetect v0.0.0-20190706120732-171d5e37d040/go.mod h1:h5LksAVOPbrLKI+kufayhcvbK5xD1QhFpKi5S0U911Q=
+github.com/phishdetect/phishdetect v0.0.0-20190706121138-caf37e6d9a46 h1:ROZSKftNMxAexzRe7i7jJMTxXz2YVASTGGwscqhvI2s=
+github.com/phishdetect/phishdetect v0.0.0-20190706121138-caf37e6d9a46/go.mod h1:h5LksAVOPbrLKI+kufayhcvbK5xD1QhFpKi5S0U911Q=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
@@ -228,6 +234,8 @@ github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/objx v0.2.0/go.mod h1:qt09Ya8vawLte6SNmTgCsAVtYtaKzEcn8ATUoHMkEqE=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+github.com/texttheater/golang-levenshtein v0.0.0-20180516184445-d188e65d659e h1:T5PdfK/M1xyrHwynxMIVMWLS7f/qHwfslZphxtGnw7s=
+github.com/texttheater/golang-levenshtein v0.0.0-20180516184445-d188e65d659e/go.mod h1:XDKHRm5ThF8YJjx001LtgelzsoaEcvnA7lVWz9EeX3g=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/ugorji/go v1.1.5-pre/go.mod h1:FwP/aQVg39TXzItUBMwnWp9T9gPQnXw4Poh4/oBQZ/0=
