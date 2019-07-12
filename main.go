@@ -32,7 +32,7 @@ import (
 	flag "github.com/spf13/pflag"
 )
 
-const urlRegex string = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
+const base64Regex string = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
 const sha256Regex string = "[a-fA-F0-9]{64}"
 
 var (
@@ -144,7 +144,8 @@ func main() {
 		router.HandleFunc("/contacts/", guiContacts)
 		router.HandleFunc("/check/", guiCheck)
 		router.HandleFunc("/link/analyze/", guiLinkAnalyze).Methods("POST")
-		router.HandleFunc(fmt.Sprintf("/link/{url:%s}", urlRegex), guiLinkCheck).Methods("GET", "POST")
+		router.HandleFunc(fmt.Sprintf("/link/{url:%s}", base64Regex), guiLinkCheck).Methods("GET", "POST")
+		router.HandleFunc(fmt.Sprintf("/report/{url:%s}", base64Regex), guiReport).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}", sha256Regex), guiReview).Methods("GET")
 	}
 

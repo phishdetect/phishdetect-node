@@ -76,6 +76,11 @@ type Review struct {
 	Datetime  time.Time `json:"datetime"`
 }
 
+type Report struct {
+	URL      string    `json:"url"`
+	Datetime time.Time `json:"datetime"`
+}
+
 func NewDatabase() (*Database, error) {
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
@@ -240,8 +245,15 @@ func (d *Database) GetRawByUUID(uuid string) (Raw, error) {
 }
 
 func (d *Database) AddReview(review Review) error {
-	coll := d.DB.Collection("review")
+	coll := d.DB.Collection("reviews")
 
 	_, err := coll.InsertOne(context.Background(), review)
+	return err
+}
+
+func (d *Database) AddReport(report Report) error {
+	coll := d.DB.Collection("reports")
+
+	_, err := coll.InsertOne(context.Background(), report)
 	return err
 }

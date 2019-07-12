@@ -17,39 +17,57 @@
 package main
 
 import (
+	"encoding/base64"
 	"net/http"
 	"strings"
 	"time"
 
 	pongo "github.com/flosch/pongo2"
 	"github.com/gorilla/mux"
+	"github.com/phishdetect/phishdetect"
 	log "github.com/sirupsen/logrus"
 )
 
-func guiReview(w http.ResponseWriter, r *http.Request) {
+func guiReport(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	ioc := strings.TrimSpace(vars["ioc"])
+	urlEncoded := strings.TrimSpace(vars["url"])
 
-	indicator, err := db.GetIndicatorByHash(ioc)
-	if err != nil {
-		errorPage(w, "Unable to find the indicator you requested to be reviewed")
+	// If no url was specified, we give an error.
+	if urlEncoded == "" {
+		errorPage(w, "You didn't specify a valid URL")
 		return
 	}
 
-	review := Review{
-		Indicator: ioc,
-		Datetime:  time.Now().UTC(),
-	}
-
-	err = db.AddReview(review)
+	data, err := base64.StdEncoding.DecodeString(urlEncoded)
 	if err != nil {
-		errorPage(w, "Unable to store review request in database")
+		log.Error(err)
+		errorPage(w, "You submitted an invalid URL argument. I expect a base64 encoded URL.")
 		return
 	}
 
-	tpl, err := tmplSet.FromCache("review.html")
+	urlDecoded := string(data)
+
+	_, err = phishdetect.NewLink(urlDecoded)
+	if err != nil {
+		log.Error(err)
+		errorPage(w, "The URL you reported does not seem valid.")
+		return
+	}
+
+	report := Report{
+		URL:      urlDecoded,
+		Datetime: time.Now().UTC(),
+	}
+
+	err = db.AddReport(report)
+	if err != nil {
+		errorPage(w, "Unable to store report in database")
+		return
+	}
+
+	tpl, err := tmplSet.FromCache("report.html")
 	err = tpl.ExecuteWriter(pongo.Context{
-		"original": indicator.Original,
+		"url": urlDecoded,
 	}, w)
 	if err != nil {
 		log.Error(err)

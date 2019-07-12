@@ -1,0 +1,12 @@
+{% extends "_layout.html" %}
+
+{% block content %}
+<div class="text-center mb-6">
+    <img src="/static/images/icon.png" class="h-16 mb-4" />
+    <h1 class="font-normal"><b>PhishDetect</b> Report</h1>
+</div>
+
+<div>You reported the following URL as suspicious:</div>
+<div class="font-mono bg-blue-lightest rounded-lg mt-4 mb-4 p-4">{{ url }}</div>
+<div class="">Thank you for reporting this issue to us. We will investigate this further and eventually remediate as soon as possible. If you continue experiencing issues, please get in contact with your <a class="text-blue hover:no-underline hover:text-blue-dark" href="/contacts/">PhishDetect Node Operators</a>. For more information, refer to the official <a class="text-blue hover:no-underline hover:text-blue-dark" href="https://phishdetect.io/help/"><i class="fas fa-link" title="This link leads to an external page"></i> Help</a> page.</div>
+{% endblock %}
