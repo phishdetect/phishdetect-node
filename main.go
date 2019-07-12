@@ -28,6 +28,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mattn/go-colorable"
 	"github.com/phishdetect/phishdetect"
+	"github.com/phishdetect/phishdetect/brand"
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
 )
@@ -54,7 +55,7 @@ var (
 
 	tmplSet *pongo.TemplateSet
 
-	customBrands *phishdetect.Brands
+	customBrands []*brand.Brand
 )
 
 func init() {
@@ -100,7 +101,7 @@ func init() {
 
 	tmplSet = pongo.NewSet("templates", packrBoxLoader{&templatesBox})
 
-	customBrands = loadBrands()
+	customBrands = compileBrands()
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {

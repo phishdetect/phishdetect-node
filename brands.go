@@ -28,7 +28,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func loadBrands() *phishdetect.Brands {
+func compileBrands() []*brand.Brand {
 	if brandsPath == "" {
 		return nil
 	}
@@ -47,22 +47,30 @@ func loadBrands() *phishdetect.Brands {
 		return nil
 	})
 
-	brands := phishdetect.NewBrands()
+	brands := []*brand.Brand{}
 
 	for _, path := range filePaths {
 		log.Debug("Trying to load custom brand file at path ", path)
-		brand := brand.Brand{}
+		customBrand := brand.Brand{}
 		yamlFile, err := ioutil.ReadFile(path)
-		err = yaml.Unmarshal(yamlFile, &brand)
+		err = yaml.Unmarshal(yamlFile, &customBrand)
 		if err != nil {
 			log.Warning("Failed to load brand file: ", err.Error())
 			continue
 		}
 
-		log.Debug("Loaded custom brand with name: ", brand.Name)
+		log.Debug("Loaded custom brand with name: ", customBrand.Name)
 
-		brands.AddBrand(&brand)
+		brands = append(brands, &customBrand)
 	}
 
 	return brands
+}
+
+func loadBrands(analysis phishdetect.Analysis) {
+	for _, customBrand := range customBrands {
+		analysis.Brands.AddBrand(customBrand)
+	}
+
+	return
 }
