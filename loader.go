@@ -17,8 +17,8 @@
 package main
 
 import (
-	"io"
 	"bytes"
+	"io"
 	"path"
 
 	"github.com/gobuffalo/packr"
