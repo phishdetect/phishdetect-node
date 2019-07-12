@@ -14,20 +14,21 @@ require (
 	github.com/gobuffalo/packr v1.30.1
 	github.com/gobuffalo/packr/v2 v2.5.2 // indirect
 	github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6 // indirect
+	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/safebrowsing v0.0.0-20190624211811-bbf0d20d26b3 // indirect
 	github.com/gorilla/mux v1.7.2
 	github.com/grpc-ecosystem/grpc-gateway v1.9.3 // indirect
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/kr/pty v1.1.8 // indirect
-	github.com/mafredri/cdp v0.23.4 // indirect
+	github.com/mafredri/cdp v0.24.2 // indirect
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/markbates/oncer v0.0.0-20181203154359-bf2de49a0be2 // indirect
 	github.com/markbates/safe v1.0.1 // indirect
 	github.com/mattn/go-colorable v0.1.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 	github.com/pelletier/go-toml v1.4.0 // indirect
-	github.com/phishdetect/phishdetect v0.0.0-20190707194233-398e0029a254
+	github.com/phishdetect/phishdetect v0.0.0-20190712223510-a3561ca432fb
 	github.com/prometheus/common v0.6.0 // indirect
 	github.com/prometheus/procfs v0.0.3 // indirect
 	github.com/rakyll/statik v0.1.6 // indirect
@@ -50,8 +51,8 @@ require (
 	golang.org/x/mobile v0.0.0-20190607214518-6fa95d984e88 // indirect
 	golang.org/x/mod v0.1.0 // indirect
 	golang.org/x/net v0.0.0-20190628185345-da137c7871d7 // indirect
-	golang.org/x/sys v0.0.0-20190626221950-04f50cda93cb // indirect
-	golang.org/x/tools v0.0.0-20190706070813-72ffa07ba3db // indirect
+	golang.org/x/sys v0.0.0-20190712062909-fae7ac547cb7 // indirect
+	golang.org/x/tools v0.0.0-20190712213246-8b927904ee0d // indirect
 	google.golang.org/genproto v0.0.0-20190701230453-710ae3a149df // indirect
 	google.golang.org/grpc v1.22.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2
