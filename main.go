@@ -52,15 +52,7 @@ var (
 	templatesBox packr.Box
 	staticBox    packr.Box
 
-	tmplIndex    *pongo.Template
-	tmplContacts *pongo.Template
-	tmplError    *pongo.Template
-	tmplCheck    *pongo.Template
-	tmplLink     *pongo.Template
-	tmplRedirect *pongo.Template
-	tmplWarning  *pongo.Template
-	// tmplEmail    *pongo.Template
-	tmplReview *pongo.Template
+	tmplSet *pongo.TemplateSet
 )
 
 func init() {
@@ -104,32 +96,7 @@ func init() {
 	templatesBox = packr.NewBox("templates")
 	staticBox = packr.NewBox("static")
 
-	strIndex, _ := templatesBox.FindString("index.html")
-	tmplIndex = pongo.Must(pongo.FromString(strIndex))
-
-	strContacts, _ := templatesBox.FindString("contacts.html")
-	tmplContacts = pongo.Must(pongo.FromString(strContacts))
-
-	strError, _ := templatesBox.FindString("error.html")
-	tmplError = pongo.Must(pongo.FromString(strError))
-
-	strCheck, _ := templatesBox.FindString("check.html")
-	tmplCheck = pongo.Must(pongo.FromString(strCheck))
-
-	strLink, _ := templatesBox.FindString("link.html")
-	tmplLink = pongo.Must(pongo.FromString(strLink))
-
-	strRedirect, _ := templatesBox.FindString("redirect.html")
-	tmplRedirect = pongo.Must(pongo.FromString(strRedirect))
-
-	strWarning, _ := templatesBox.FindString("warning.html")
-	tmplWarning = pongo.Must(pongo.FromString(strWarning))
-
-	// strEmail, _ := templatesBox.FindString("email.html")
-	// tmplEmail = pongo.Must(pongo.FromString(strEmail))
-
-	strReview, _ := templatesBox.FindString("review.html")
-	tmplReview = pongo.Must(pongo.FromString(strReview))
+	tmplSet = pongo.NewSet("templates", packrBoxLoader{&templatesBox})
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -139,8 +106,21 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func errorMessage(w http.ResponseWriter, message string) {
+	tpl, err := tmplSet.FromCache("error.html")
+	err = tpl.ExecuteWriter(pongo.Context{
+		"message": message,
+	}, w)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, "Some unexpected error occurred! :-(", http.StatusInternalServerError)
+	}
+	return
+}
+
 func errorPage(w http.ResponseWriter, message string) {
-	err := tmplError.ExecuteWriter(pongo.Context{
+	tpl, err := tmplSet.FromCache("errorPage.html")
+	err = tpl.ExecuteWriter(pongo.Context{
 		"message": message,
 	}, w)
 	if err != nil {

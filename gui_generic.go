@@ -24,7 +24,8 @@ import (
 )
 
 func guiIndex(w http.ResponseWriter, r *http.Request) {
-	err := tmplIndex.ExecuteWriter(nil, w)
+	tpl, err := tmplSet.FromCache("index.html")
+	err = tpl.ExecuteWriter(nil, w)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -37,7 +38,8 @@ func guiContacts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := tmplContacts.ExecuteWriter(pongo.Context{
+	tpl, err := tmplSet.FromCache("contacts.html")
+	err = tpl.ExecuteWriter(pongo.Context{
 		"contacts": operatorContacts,
 	}, w)
 	if err != nil {
@@ -47,7 +49,8 @@ func guiContacts(w http.ResponseWriter, r *http.Request) {
 }
 
 func guiCheck(w http.ResponseWriter, r *http.Request) {
-	err := tmplCheck.ExecuteWriter(nil, w)
+	tpl, err := tmplSet.FromCache("check.html")
+	err = tpl.ExecuteWriter(nil, w)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

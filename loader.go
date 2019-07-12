@@ -17,41 +17,29 @@
 package main
 
 import (
-	"net/http"
-	"time"
+	"io"
+	"bytes"
+	"path"
 
-	pongo "github.com/flosch/pongo2"
-	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
+	"github.com/gobuffalo/packr"
 )
 
-func guiReview(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ioc := vars["ioc"]
+// Thanks to @12foo
+// https://github.com/flosch/pongo2/issues/192#issuecomment-507024493
 
-	indicator, err := db.GetIndicatorByHash(ioc)
+type packrBoxLoader struct {
+	box *packr.Box
+}
+
+func (l packrBoxLoader) Abs(base, name string) string {
+	p := path.Join(path.Dir(base), name)
+	return p
+}
+
+func (l packrBoxLoader) Get(path string) (io.Reader, error) {
+	b, err := l.box.MustBytes(path)
 	if err != nil {
-		errorPage(w, "Unable to find the indicator you requested to be reviewed")
-		return
+		return nil, err
 	}
-
-	review := Review{
-		Indicator: ioc,
-		Datetime:  time.Now().UTC(),
-	}
-
-	err = db.AddReview(review)
-	if err != nil {
-		errorPage(w, "Unable to store review request in database")
-		return
-	}
-
-	tpl, err := tmplSet.FromCache("review.html")
-	err = tpl.ExecuteWriter(pongo.Context{
-		"original": indicator.Original,
-	}, w)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	return bytes.NewReader(b), nil
 }
