@@ -33,7 +33,6 @@ import (
 )
 
 const urlRegex string = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
-const uuidRegex string = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
 const sha256Regex string = "[a-fA-F0-9]{64}"
 
 var (
@@ -166,8 +165,6 @@ func main() {
 		router.HandleFunc("/check/", guiCheck)
 		router.HandleFunc("/link/analyze/", guiLinkAnalyze).Methods("POST")
 		router.HandleFunc(fmt.Sprintf("/link/{url:%s}", urlRegex), guiLinkCheck).Methods("GET", "POST")
-		// TODO: Temporarily disabled email view, until the objective is clear.
-		// router.HandleFunc(fmt.Sprintf("/email/{uuid:%s}", uuidRegex), guiEmail).Methods("GET", "POST")
 		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}", sha256Regex), guiReview).Methods("GET")
 	}
 
