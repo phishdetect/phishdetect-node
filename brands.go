@@ -28,14 +28,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func loadBrands(analysis phishdetect.Analysis) {
+func loadBrands() *phishdetect.Brands {
 	if brandsPath == "" {
-		return
+		return nil
 	}
 
 	if _, err := os.Stat(brandsPath); os.IsNotExist(err) {
 		log.Warning("The specified brands folder does not exist, skipping")
-		return
+		return nil
 	}
 
 	filePaths := []string{}
@@ -46,6 +46,8 @@ func loadBrands(analysis phishdetect.Analysis) {
 		}
 		return nil
 	})
+
+	brands := phishdetect.NewBrands()
 
 	for _, path := range filePaths {
 		log.Debug("Trying to load custom brand file at path ", path)
@@ -59,8 +61,8 @@ func loadBrands(analysis phishdetect.Analysis) {
 
 		log.Debug("Loaded custom brand with name: ", brand.Name)
 
-		analysis.Brands.AddBrand(&brand)
+		brands.AddBrand(&brand)
 	}
 
-	return
+	return brands
 }

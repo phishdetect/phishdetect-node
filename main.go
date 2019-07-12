@@ -53,6 +53,8 @@ var (
 	staticBox    packr.Box
 
 	tmplSet *pongo.TemplateSet
+
+	customBrands *phishdetect.Brands
 )
 
 func init() {
@@ -97,6 +99,8 @@ func init() {
 	staticBox = packr.NewBox("static")
 
 	tmplSet = pongo.NewSet("templates", packrBoxLoader{&templatesBox})
+
+	customBrands = loadBrands()
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {

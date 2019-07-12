@@ -157,8 +157,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	// Now that we have URL and HTML we can analyze results.
 	analysis := phishdetect.NewAnalysis(urlFinal, html)
-	// Load custom brands.
-	loadBrands(*analysis)
+	analysis.Brands = customBrands
 
 	err := analysis.AnalyzeHTML()
 	if err != nil {
