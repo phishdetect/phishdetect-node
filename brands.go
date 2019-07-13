@@ -69,6 +69,8 @@ func compileBrands() []*brand.Brand {
 
 func loadBrands(analysis phishdetect.Analysis) {
 	for _, customBrand := range customBrands {
+		// We reset the matches, otherwise we will have polluted results.
+		customBrand.Matches = 0
 		analysis.Brands.AddBrand(customBrand)
 	}
 
