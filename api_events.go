@@ -50,8 +50,7 @@ func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(events)
+	responseWithJSON(w, events)
 }
 
 func apiEventsAdd(w http.ResponseWriter, r *http.Request) {
@@ -75,6 +74,10 @@ func apiEventsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"msg": "Event added successfully", "uuid": event.UUID})
+	response := map[string]string{
+		"msg":  "Event added successfully",
+		"uuid": event.UUID,
+	}
+
+	responseWithJSON(w, response)
 }

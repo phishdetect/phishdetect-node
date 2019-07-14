@@ -37,14 +37,7 @@ type RequestIndicatorsDetails struct {
 	Key       string `json:"key"`
 }
 
-func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
-	// We get the indicators from the DB.
-	iocs, err := db.GetAllIndicators()
-	if err != nil {
-		errorWithJSON(w, "Failed to fetch indicators from database", http.StatusInternalServerError, err)
-		return
-	}
-
+func prepareIndicators(iocs []Indicator) map[string][]string {
 	// We loop through the list of indicators and generate the response.
 	emails := []string{}
 	domains := []string{}
@@ -62,8 +55,32 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 		"domains": domains,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(indicators)
+	return indicators
+}
+
+func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
+	// We get the indicators from the DB.
+	iocs, err := db.GetIndicators(IndicatorsLimit6Months)
+	if err != nil {
+		errorWithJSON(w, "Failed to fetch indicators from database", http.StatusInternalServerError, err)
+		return
+	}
+
+	indicators := prepareIndicators(iocs)
+
+	responseWithJSON(w, indicators)
+}
+
+func apiIndicatorsFetchRecent(w http.ResponseWriter, r *http.Request) {
+	iocs, err := db.GetIndicators(IndicatorsLimit24Hours)
+	if err != nil {
+		errorWithJSON(w, "Failed to fetch indicators from database", http.StatusInternalServerError, err)
+		return
+	}
+
+	indicators := prepareIndicators(iocs)
+
+	responseWithJSON(w, indicators)
 }
 
 func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
@@ -117,8 +134,12 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 		addedCounter++
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{"msg": fmt.Sprintf("Added %d indicators", addedCounter), "counter": addedCounter})
+	response := map[string]interface{}{
+		"msg":     fmt.Sprintf("Added %d indicators", addedCounter),
+		"counter": addedCounter,
+	}
+
+	responseWithJSON(w, response)
 }
 
 func apiIndicatorsDetails(w http.ResponseWriter, r *http.Request) {
@@ -141,6 +162,5 @@ func apiIndicatorsDetails(w http.ResponseWriter, r *http.Request) {
 		errorWithJSON(w, "Failed to fetch indicator from database", http.StatusInternalServerError, err)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ioc)
+	responseWithJSON(w, ioc)
 }

@@ -91,8 +91,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 		Warnings:    warnings,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(results)
+	responseWithJSON(w, results)
 }
 
 func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
@@ -163,8 +162,7 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 		Warnings:    warnings,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(results)
+	responseWithJSON(w, results)
 }
 
 func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
@@ -231,6 +229,5 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 		Warnings:    warnings,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(results)
+	responseWithJSON(w, results)
 }

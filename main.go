@@ -37,6 +37,7 @@ const base64Regex string = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-
 const sha256Regex string = "[a-fA-F0-9]{64}"
 
 var (
+	host         string
 	portNumber   string
 	apiVersion   string
 	safeBrowsing string
@@ -52,14 +53,15 @@ var (
 
 	templatesBox packr.Box
 	staticBox    packr.Box
-
-	tmplSet *pongo.TemplateSet
+	tmplSet      *pongo.TemplateSet
 
 	customBrands []*brand.Brand
 )
 
 func init() {
 	debug := flag.Bool("debug", false, "Enable debug logging")
+
+	flag.StringVar(&host, "host", "127.0.0.1", "Specify the host to bind the service on")
 	flag.StringVar(&portNumber, "port", "7856", "Specify which port number to bind the service on")
 	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use")
 	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
@@ -111,30 +113,6 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func errorMessage(w http.ResponseWriter, message string) {
-	tpl, err := tmplSet.FromCache("error.html")
-	err = tpl.ExecuteWriter(pongo.Context{
-		"message": message,
-	}, w)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, "Some unexpected error occurred! :-(", http.StatusInternalServerError)
-	}
-	return
-}
-
-func errorPage(w http.ResponseWriter, message string) {
-	tpl, err := tmplSet.FromCache("errorPage.html")
-	err = tpl.ExecuteWriter(pongo.Context{
-		"message": message,
-	}, w)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, "Some unexpected error occurred! :-(", http.StatusInternalServerError)
-	}
-	return
-}
-
 func main() {
 	fs := http.FileServer(staticBox)
 
@@ -161,6 +139,7 @@ func main() {
 		router.HandleFunc("/api/analyze/domain/", apiAnalyzeDomain).Methods("POST")
 		router.HandleFunc("/api/analyze/html/", apiAnalyzeHTML).Methods("POST")
 		router.HandleFunc("/api/indicators/fetch/", apiIndicatorsFetch).Methods("GET")
+		router.HandleFunc("/api/indicators/fetch/recent/", apiIndicatorsFetchRecent).Methods("GET")
 		router.HandleFunc("/api/indicators/add/", apiIndicatorsAdd).Methods("POST")
 		router.HandleFunc("/api/indicators/details/", apiIndicatorsDetails).Methods("POST")
 		router.HandleFunc("/api/events/fetch/", apiEventsFetch).Methods("POST")
@@ -175,7 +154,7 @@ func main() {
 		errorWithJSON(w, "File not found", http.StatusNotFound, nil)
 	})
 
-	hostPort := fmt.Sprintf("127.0.0.1:%s", portNumber)
+	hostPort := fmt.Sprintf("%s:%s", host, portNumber)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         hostPort,

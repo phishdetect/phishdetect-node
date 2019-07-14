@@ -17,7 +17,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -36,6 +35,5 @@ func apiConfig(w http.ResponseWriter, r *http.Request) {
 		OperatorContacts: operatorContacts,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(cfg)
+	responseWithJSON(w, cfg)
 }

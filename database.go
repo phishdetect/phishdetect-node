@@ -81,6 +81,10 @@ type Report struct {
 	Datetime time.Time `json:"datetime"`
 }
 
+const IndicatorsLimitAll = 0
+const IndicatorsLimit6Months = 1
+const IndicatorsLimit24Hours = 2
+
 func NewDatabase() (*Database, error) {
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
@@ -122,11 +126,32 @@ func (d *Database) GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
-func (d *Database) GetAllIndicators() ([]Indicator, error) {
+func (d *Database) GetIndicators(limit int) ([]Indicator, error) {
 	var iocs []Indicator
 	coll := d.DB.Collection("indicators")
-	// TODO: Need to filter output just to the bare minimum.
-	cur, err := coll.Find(context.Background(), bson.D{})
+
+	now := time.Now().UTC()
+
+	var filter bson.M
+
+	switch limit {
+	case IndicatorsLimitAll:
+		filter = bson.M{}
+	case IndicatorsLimit6Months:
+		filter = bson.M{
+			"datetime" : bson.M{
+				"$gte": now.AddDate(0, -6, 0),
+			},
+		}
+	case IndicatorsLimit24Hours:
+		filter = bson.M{
+			"datetime" : bson.M{
+				"$gte": now.Add(-24*time.Hour),
+			},
+		}
+	}
+
+	cur, err := coll.Find(context.Background(), filter)
 	if err != nil {
 		return nil, err
 	}

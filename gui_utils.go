@@ -17,27 +17,32 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 
+	pongo "github.com/flosch/pongo2"
 	log "github.com/sirupsen/logrus"
 )
 
-func errorWithJSON(w http.ResponseWriter, message string, code int, err error) {
+func errorMessage(w http.ResponseWriter, message string) {
+	tpl, err := tmplSet.FromCache("error.html")
+	err = tpl.ExecuteWriter(pongo.Context{
+		"message": message,
+	}, w)
 	if err != nil {
-		log.Error(message, ": ", err.Error())
-	} else {
-		log.Error(message)
+		log.Error(err)
+		http.Error(w, "Some unexpected error occurred! :-(", http.StatusInternalServerError)
 	}
-
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(map[string]string{"error": message})
+	return
 }
 
-func responseWithJSON(w http.ResponseWriter, data interface{}) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	// Fix with http status ok
-	w.WriteHeader(200)
-	json.NewEncoder(w).Encode(data)
+func errorPage(w http.ResponseWriter, message string) {
+	tpl, err := tmplSet.FromCache("errorPage.html")
+	err = tpl.ExecuteWriter(pongo.Context{
+		"message": message,
+	}, w)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, "Some unexpected error occurred! :-(", http.StatusInternalServerError)
+	}
+	return
 }

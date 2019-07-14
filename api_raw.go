@@ -54,8 +54,7 @@ func apiRawFetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(rawMessages)
+	responseWithJSON(w, rawMessages)
 }
 
 func apiRawAdd(w http.ResponseWriter, r *http.Request) {
@@ -78,8 +77,12 @@ func apiRawAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"msg": "Raw message added successfully", "uuid": raw.UUID})
+	response := map[string]string{
+		"msg":  "Raw message added successfully",
+		"uuid": raw.UUID,
+	}
+
+	responseWithJSON(w, response)
 }
 
 func apiRawDetails(w http.ResponseWriter, r *http.Request) {
@@ -103,6 +106,5 @@ func apiRawDetails(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(raw)
+	responseWithJSON(w, raw)
 }
