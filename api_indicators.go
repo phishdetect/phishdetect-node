@@ -67,7 +67,6 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	indicators := prepareIndicators(iocs)
-
 	responseWithJSON(w, indicators)
 }
 
@@ -79,7 +78,17 @@ func apiIndicatorsFetchRecent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	indicators := prepareIndicators(iocs)
+	responseWithJSON(w, indicators)
+}
 
+func apiIndicatorsFetchAll(w http.ResponseWriter, r *http.Request) {
+	iocs, err := db.GetIndicators(IndicatorsLimitAll)
+	if err != nil {
+		errorWithJSON(w, "Failed to fetch indicators from database", http.StatusInternalServerError, err)
+		return
+	}
+
+	indicators := prepareIndicators(iocs)
 	responseWithJSON(w, indicators)
 }
 
