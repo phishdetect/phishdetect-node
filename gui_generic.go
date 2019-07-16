@@ -49,6 +49,11 @@ func guiContacts(w http.ResponseWriter, r *http.Request) {
 }
 
 func guiCheck(w http.ResponseWriter, r *http.Request) {
+	if disableAnalysis == true {
+		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
+		return
+	}
+
 	tpl, err := tmplSet.FromCache("check.html")
 	err = tpl.ExecuteWriter(nil, w)
 	if err != nil {
