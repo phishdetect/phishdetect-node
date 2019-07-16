@@ -34,7 +34,7 @@ import (
 
 func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
 	if disableAnalysis == true {
-		errorMessage(w, "Analysis of links and pages was disabled by the administrator.")
+		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
 		return
 	}
 
@@ -43,14 +43,14 @@ func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
 
 	// If no url was specified, we give an error.
 	if urlEncoded == "" {
-		errorMessage(w, "You didn't specify a valid URL")
+		errorPage(w, "You didn't specify a valid URL")
 		return
 	}
 
 	data, err := base64.StdEncoding.DecodeString(urlEncoded)
 	if err != nil {
 		log.Error(err)
-		errorMessage(w, "You submitted an invalid URL argument. I expect a base64 encoded URL.")
+		errorPage(w, "You submitted an invalid URL argument. I expect a base64 encoded URL.")
 		return
 	}
 
@@ -100,7 +100,7 @@ func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
 
 func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	if disableAnalysis == true {
-		errorMessage(w, "Analysis of links and pages was disabled by the administrator.")
+		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
 		return
 	}
 
@@ -121,7 +121,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	// If there is no specified HTML string, it means we need to open the link.
 	if htmlEncoded == "" {
 		if !validateURL(url) {
-			errorMessage(w, "You have submitted an invalid link.")
+			errorPage(w, "You have submitted an invalid link.")
 			return
 		}
 
@@ -132,7 +132,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 		err := browser.Run()
 		if err != nil {
 			log.Error(err)
-			errorMessage(w, "Something failed while trying to launch the containerized browser. The URL might be invalid.")
+			errorPage(w, "Something failed while trying to launch the containerized browser. The URL might be invalid.")
 			return
 		}
 		html = browser.HTML
@@ -143,7 +143,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 		data, err := base64.StdEncoding.DecodeString(htmlEncoded)
 		if err != nil {
 			log.Error(err)
-			errorMessage(w, "I received invalid HTML data. I expect a base64 encoded string.")
+			errorPage(w, "I received invalid HTML data. I expect a base64 encoded string.")
 			return
 		}
 		html = string(data)
@@ -151,7 +151,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	// Check for Chrome errors, generally raised by connection failures.
 	if strings.HasPrefix(urlFinal, "chrome-error://") {
-		errorMessage(w, "An error occurred while visiting the link. The website might be offline.")
+		errorPage(w, "An error occurred while visiting the link. The website might be offline.")
 		return
 	}
 
@@ -161,12 +161,12 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	err := analysis.AnalyzeHTML()
 	if err != nil {
-		errorMessage(w, err.Error())
+		errorPage(w, err.Error())
 		return
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		errorMessage(w, err.Error())
+		errorPage(w, err.Error())
 		return
 	}
 	brand := analysis.Brands.GetBrand()
