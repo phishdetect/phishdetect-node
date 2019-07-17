@@ -42,6 +42,7 @@ var (
 	apiVersion   string
 	safeBrowsing string
 	brandsPath   string
+	yaraPath     string
 
 	disableAPI      bool
 	disableGUI      bool
@@ -66,6 +67,7 @@ func init() {
 	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use")
 	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
 	flag.StringVar(&brandsPath, "brands", "", "Specify a folder containing YAML files with Brand specifications")
+	flag.StringVar(&yaraPath, "yara", "", "Specify a path to a file or folder contaning Yara rules")
 	flag.BoolVar(&disableAPI, "disable-api", false, "Disable the API routes")
 	flag.BoolVar(&disableGUI, "disable-web", false, "Disable the Web GUI")
 	flag.BoolVar(&disableAnalysis, "disable-analysis", false, "Disable the ability to analyze links and pages")
@@ -94,7 +96,15 @@ func init() {
 				phishdetect.SafeBrowsingKey = key
 			}
 		} else {
-			log.Warning("The specified Google SafeBrowsing API key file does not exist. Check disabled.")
+			log.Warning("The specified Google SafeBrowsing API key file does not exist: check disabled")
+		}
+	}
+
+	if yaraPath != "" {
+		if _, err := os.Stat(yaraPath); err == nil {
+			phishdetect.YaraRulesPath = yaraPath
+		} else {
+			log.Warning("The specified path to the Yara rules does not exist")
 		}
 	}
 

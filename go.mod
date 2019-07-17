@@ -28,7 +28,7 @@ require (
 	github.com/mattn/go-colorable v0.1.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 	github.com/pelletier/go-toml v1.4.0 // indirect
-	github.com/phishdetect/phishdetect v0.0.0-20190714212337-23a451d8315d
+	github.com/phishdetect/phishdetect v0.0.0-20190717192102-666ea5a8ce6f
 	github.com/prometheus/common v0.6.0 // indirect
 	github.com/prometheus/procfs v0.0.3 // indirect
 	github.com/rakyll/statik v0.1.6 // indirect
@@ -40,6 +40,7 @@ require (
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.4.0 // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
+	github.com/texttheater/golang-levenshtein v0.0.0-20190717060638-b7aaf30637d6 // indirect
 	github.com/ugorji/go v1.1.7 // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
@@ -52,7 +53,7 @@ require (
 	golang.org/x/mod v0.1.0 // indirect
 	golang.org/x/net v0.0.0-20190628185345-da137c7871d7 // indirect
 	golang.org/x/sys v0.0.0-20190712062909-fae7ac547cb7 // indirect
-	golang.org/x/tools v0.0.0-20190712213246-8b927904ee0d // indirect
+	golang.org/x/tools v0.0.0-20190716221150-e98af2309876 // indirect
 	google.golang.org/genproto v0.0.0-20190701230453-710ae3a149df // indirect
 	google.golang.org/grpc v1.22.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2
