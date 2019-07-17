@@ -32,7 +32,7 @@ function countdown() {
 }
 counter = setInterval(countdown, 1000);
 
-$('#stopCounter').click(function(){
+$("#stopCounter").click(function(){
     clearInterval(counter);
     $("#stopCounter").removeClass();
     $("#stopCounter").addClass("bg-grey text-black border-grey-dark border-b-4 no-underline text-sm p-1 rounded cursor-not-allowed");
