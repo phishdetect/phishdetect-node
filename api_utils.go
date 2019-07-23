@@ -37,7 +37,6 @@ func errorWithJSON(w http.ResponseWriter, message string, code int, err error) {
 
 func responseWithJSON(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	// Fix with http status ok
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data)
 }
