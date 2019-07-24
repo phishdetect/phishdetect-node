@@ -1,3 +1,6 @@
+[![Build Status](https://api.travis-ci.org/phishdetect/phishdetect-node.png?branch=master)](https://travis-ci.org/phishdetect/phishdetect-node)
+[![Go Report Card][goreportcard-badge]][goreportcard]
+
 # PhishDetect Node
 
 This software is part of the PhishDetect project.
@@ -20,3 +23,6 @@ For proper documentation please refer to the [Admin Guide](https://phishdetect.g
 PhishDetect Node is released under GNU Affero General Public License 3.0 and is copyrighted to Claudio Guarnieri.
 
 The hook icon was created by Alex Fuller from Noun Project.
+
+[goreportcard]: https://goreportcard.com/report/github.com/phishdetect/phishdetect-node
+[goreportcard-badge]: https://goreportcard.com/badge/github.com/phishdetect/phishdetect-node
