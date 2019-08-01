@@ -18,6 +18,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/safebrowsing v0.0.0-20190624211811-bbf0d20d26b3 // indirect
 	github.com/gorilla/mux v1.7.2
+	github.com/goware/urlx v0.3.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.9.3 // indirect
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/kr/pty v1.1.8 // indirect
@@ -28,7 +29,7 @@ require (
 	github.com/mattn/go-colorable v0.1.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 	github.com/pelletier/go-toml v1.4.0 // indirect
-	github.com/phishdetect/phishdetect v0.0.0-20190717211646-79d5131b1f92
+	github.com/phishdetect/phishdetect v0.0.0-20190801185910-27299a8d9426
 	github.com/prometheus/common v0.6.0 // indirect
 	github.com/prometheus/procfs v0.0.3 // indirect
 	github.com/rakyll/statik v0.1.6 // indirect
@@ -51,9 +52,9 @@ require (
 	golang.org/x/image v0.0.0-20190703141733-d6a02ce849c9 // indirect
 	golang.org/x/mobile v0.0.0-20190607214518-6fa95d984e88 // indirect
 	golang.org/x/mod v0.1.0 // indirect
-	golang.org/x/net v0.0.0-20190628185345-da137c7871d7 // indirect
-	golang.org/x/sys v0.0.0-20190712062909-fae7ac547cb7 // indirect
-	golang.org/x/tools v0.0.0-20190717194535-128ec6dfca09 // indirect
+	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
+	golang.org/x/sys v0.0.0-20190801041406-cbf593c0f2f3 // indirect
+	golang.org/x/tools v0.0.0-20190731214159-1e85ed8060aa // indirect
 	google.golang.org/genproto v0.0.0-20190701230453-710ae3a149df // indirect
 	google.golang.org/grpc v1.22.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2
