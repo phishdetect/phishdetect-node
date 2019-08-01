@@ -37,7 +37,7 @@ type AnalysisRequest struct {
 type AnalysisResults struct {
 	URL         string   `json:"url"`
 	URLFinal    string   `json:"url_final"`
-	Whitelisted bool     `json:"whitelisted"`
+	Safelisted bool     `json:"safelisted"`
 	Brand       string   `json:"brand"`
 	Score       int      `json:"score"`
 	Screenshot  string   `json:"screenshot"`
@@ -84,7 +84,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	results := AnalysisResults{
 		URL:         req.URL,
 		URLFinal:    urlFinal,
-		Whitelisted: analysis.Whitelisted,
+		Safelisted: analysis.Safelisted,
 		Score:       analysis.Score,
 		Brand:       brand,
 		Screenshot:  "",
@@ -155,7 +155,7 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	results := AnalysisResults{
 		URL:         req.URL,
 		URLFinal:    urlFinal,
-		Whitelisted: analysis.Whitelisted,
+		Safelisted: analysis.Safelisted,
 		Score:       analysis.Score,
 		Brand:       brand,
 		Screenshot:  screenshot,
@@ -222,7 +222,7 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	results := AnalysisResults{
 		URL:         url,
 		URLFinal:    urlFinal,
-		Whitelisted: analysis.Whitelisted,
+		Safelisted: analysis.Safelisted,
 		Score:       analysis.Score,
 		Brand:       brand,
 		Screenshot:  "",

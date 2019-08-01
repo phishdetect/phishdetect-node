@@ -173,9 +173,9 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("Completed analysis of ", url)
 
-	// If the site is whitelisted, or the final score is low, we offer the
+	// If the site is safelisted, or the final score is low, we offer the
 	// redirect to the original link.
-	if analysis.Whitelisted || analysis.Score < 30 {
+	if analysis.Safelisted || analysis.Score < 30 {
 		tpl, err := tmplSet.FromCache("redirect.html")
 		err = tpl.ExecuteWriter(pongo.Context{
 			"url":           url,
@@ -183,7 +183,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 			"urlFinal":      urlFinal,
 			"sha1":          urlSHA1,
 			"brand":         brand,
-			"whitelisted":   analysis.Whitelisted,
+			"safelisted":   analysis.Safelisted,
 			"screenshot":    screenshot,
 		}, w)
 		if err != nil {
