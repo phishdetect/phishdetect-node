@@ -35,13 +35,13 @@ type AnalysisRequest struct {
 // AnalysisResults contains all the information we want to return through the
 // apiAnalyze API.
 type AnalysisResults struct {
-	URL         string   `json:"url"`
-	URLFinal    string   `json:"url_final"`
+	URL        string   `json:"url"`
+	URLFinal   string   `json:"url_final"`
 	Safelisted bool     `json:"safelisted"`
-	Brand       string   `json:"brand"`
-	Score       int      `json:"score"`
-	Screenshot  string   `json:"screenshot"`
-	Warnings    []string `json:"warnings"`
+	Brand      string   `json:"brand"`
+	Score      int      `json:"score"`
+	Screenshot string   `json:"screenshot"`
+	Warnings   []string `json:"warnings"`
 }
 
 func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
@@ -82,13 +82,13 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	results := AnalysisResults{
-		URL:         req.URL,
-		URLFinal:    urlFinal,
+		URL:        req.URL,
+		URLFinal:   urlFinal,
 		Safelisted: analysis.Safelisted,
-		Score:       analysis.Score,
-		Brand:       brand,
-		Screenshot:  "",
-		Warnings:    warnings,
+		Score:      analysis.Score,
+		Brand:      brand,
+		Screenshot: "",
+		Warnings:   warnings,
 	}
 
 	responseWithJSON(w, results)
@@ -153,13 +153,13 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	results := AnalysisResults{
-		URL:         req.URL,
-		URLFinal:    urlFinal,
+		URL:        req.URL,
+		URLFinal:   urlFinal,
 		Safelisted: analysis.Safelisted,
-		Score:       analysis.Score,
-		Brand:       brand,
-		Screenshot:  screenshot,
-		Warnings:    warnings,
+		Score:      analysis.Score,
+		Brand:      brand,
+		Screenshot: screenshot,
+		Warnings:   warnings,
 	}
 
 	responseWithJSON(w, results)
@@ -220,13 +220,13 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	}
 
 	results := AnalysisResults{
-		URL:         url,
-		URLFinal:    urlFinal,
+		URL:        url,
+		URLFinal:   urlFinal,
 		Safelisted: analysis.Safelisted,
-		Score:       analysis.Score,
-		Brand:       brand,
-		Screenshot:  "",
-		Warnings:    warnings,
+		Score:      analysis.Score,
+		Brand:      brand,
+		Screenshot: "",
+		Warnings:   warnings,
 	}
 
 	responseWithJSON(w, results)

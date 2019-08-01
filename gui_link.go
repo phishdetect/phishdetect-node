@@ -183,7 +183,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 			"urlFinal":      urlFinal,
 			"sha1":          urlSHA1,
 			"brand":         brand,
-			"safelisted":   analysis.Safelisted,
+			"safelisted":    analysis.Safelisted,
 			"screenshot":    screenshot,
 		}, w)
 		if err != nil {
