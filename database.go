@@ -192,6 +192,12 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 			return err
 		}
 	} else {
+		// We update the data of the indicator, so that it get served again.
+		_, err = coll.UpdateOne(context.Background(), bson.D{{"hashed", ioc.Hashed}},
+			bson.M{"$set": bson.M{"datetime": time.Now().UTC()}})
+		if err != nil {
+			return err
+		}
 		return fmt.Errorf("This is an already known indicator")
 	}
 
