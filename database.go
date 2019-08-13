@@ -54,6 +54,7 @@ type Event struct {
 	UserContact string    `json:"user_contact"`
 	Datetime    time.Time `json:"datetime"`
 	UUID        string    `json:"uuid"`
+	Key         string    `json:"key"`
 }
 
 type Raw struct {
@@ -62,6 +63,7 @@ type Raw struct {
 	UserContact string    `json:"user_contact"`
 	Datetime    time.Time `json:"datetime"`
 	UUID        string    `json:"uuid"`
+	Key         string    `json:"key"`
 }
 
 type RawListItem struct {
@@ -74,11 +76,13 @@ type RawListItem struct {
 type Review struct {
 	Indicator string    `json:"indicator"`
 	Datetime  time.Time `json:"datetime"`
+	Key       string    `json:"key"`
 }
 
 type Report struct {
 	URL      string    `json:"url"`
 	Datetime time.Time `json:"datetime"`
+	Key      string    `json:"key"`
 }
 
 const IndicatorsLimitAll = 0

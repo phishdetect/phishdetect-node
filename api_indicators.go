@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -29,12 +30,6 @@ type RequestIndicatorsAdd struct {
 	Type       string   `json:"type"`
 	Indicators []string `json:"indicators"`
 	Tags       []string `json:"tags"`
-	Key        string   `json:"key"`
-}
-
-type RequestIndicatorsDetails struct {
-	Indicator string `json:"indicator"`
-	Key       string `json:"key"`
 }
 
 func prepareIndicators(iocs []Indicator) map[string][]string {
@@ -102,9 +97,9 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := getUserFromKey(req.Key)
+	user := getUserFromKey(getAPIKeyFromQuery(r))
 	if user == nil {
-		errorWithJSON(w, "You are not authorized to perform this operation", http.StatusUnauthorized, nil)
+		errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
 		return
 	}
 
@@ -152,21 +147,9 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiIndicatorsDetails(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var req RequestIndicatorsDetails
-	err := decoder.Decode(&req)
-	if err != nil {
-		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)
-		return
-	}
+	vars := mux.Vars(r)
 
-	user := getUserFromKey(req.Key)
-	if user == nil {
-		errorWithJSON(w, "You are not authorized to perform this operation", http.StatusUnauthorized, nil)
-		return
-	}
-
-	ioc, err := db.GetIndicatorByHash(req.Indicator)
+	ioc, err := db.GetIndicatorByHash(vars["ioc"])
 	if err != nil {
 		errorWithJSON(w, "Failed to fetch indicator from database", http.StatusInternalServerError, err)
 	}

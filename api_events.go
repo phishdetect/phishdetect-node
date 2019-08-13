@@ -24,26 +24,7 @@ import (
 	"github.com/nu7hatch/gouuid"
 )
 
-type RequestEventsFetch struct {
-	Key string `json:"key"`
-}
-
 func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var req RequestEventsFetch
-	err := decoder.Decode(&req)
-	if err != nil {
-		errorWithJSON(w, "Unable to parse request", http.StatusBadRequest, err)
-		return
-	}
-
-	// First we check if the user is allowed to fetch the events.
-	user := getUserFromKey(req.Key)
-	if user == nil || user.Role != "admin" {
-		errorWithJSON(w, "You are not authorized to perform this operation", http.StatusUnauthorized, nil)
-		return
-	}
-
 	events, err := db.GetAllEvents()
 	if err != nil {
 		errorWithJSON(w, "Failed to fetch events from database", http.StatusInternalServerError, err)

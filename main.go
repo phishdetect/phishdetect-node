@@ -33,6 +33,7 @@ import (
 	flag "github.com/spf13/pflag"
 )
 
+const uuidRegex string = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
 const base64Regex string = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
 const sha256Regex string = "[a-fA-F0-9]{64}"
 
@@ -47,6 +48,7 @@ var (
 	disableAPI      bool
 	disableGUI      bool
 	disableAnalysis bool
+	enforceUserAuth bool
 
 	operatorContacts string
 
@@ -71,6 +73,7 @@ func init() {
 	flag.BoolVar(&disableAPI, "disable-api", false, "Disable the API routes")
 	flag.BoolVar(&disableGUI, "disable-web", false, "Disable the Web GUI")
 	flag.BoolVar(&disableAnalysis, "disable-analysis", false, "Disable the ability to analyze links and pages")
+	flag.BoolVar(&enforceUserAuth, "enforce-auth", false, "Require a valid user API key for all operations")
 	flag.StringVar(&operatorContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
 	flag.Parse()
 
@@ -140,27 +143,27 @@ func main() {
 		router.HandleFunc("/contacts/", guiContacts)
 		router.HandleFunc("/check/", guiCheck)
 		router.HandleFunc("/link/analyze/", guiLinkAnalyze).Methods("POST")
-		router.HandleFunc(fmt.Sprintf("/link/{url:%s}", base64Regex), guiLinkCheck).Methods("GET", "POST")
-		router.HandleFunc(fmt.Sprintf("/report/{url:%s}", base64Regex), guiReport).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}", sha256Regex), guiReview).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", base64Regex), guiLinkCheck).Methods("GET", "POST")
+		router.HandleFunc(fmt.Sprintf("/report/{url:%s}/", base64Regex), guiReport).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}/", sha256Regex), guiReview).Methods("GET")
 	}
 
 	// REST API routes.
 	if disableAPI == false {
-		router.HandleFunc("/api/config/", apiConfig).Methods("GET")
-		router.HandleFunc("/api/analyze/link/", apiAnalyzeLink).Methods("POST")
-		router.HandleFunc("/api/analyze/domain/", apiAnalyzeDomain).Methods("POST")
-		router.HandleFunc("/api/analyze/html/", apiAnalyzeHTML).Methods("POST")
-		router.HandleFunc("/api/indicators/fetch/", apiIndicatorsFetch).Methods("GET")
-		router.HandleFunc("/api/indicators/fetch/recent/", apiIndicatorsFetchRecent).Methods("GET")
-		router.HandleFunc("/api/indicators/fetch/all/", apiIndicatorsFetchAll).Methods("GET")
-		router.HandleFunc("/api/indicators/add/", apiIndicatorsAdd).Methods("POST")
-		router.HandleFunc("/api/indicators/details/", apiIndicatorsDetails).Methods("POST")
-		router.HandleFunc("/api/events/fetch/", apiEventsFetch).Methods("POST")
-		router.HandleFunc("/api/events/add/", apiEventsAdd).Methods("POST")
-		router.HandleFunc("/api/raw/fetch/", apiRawFetch).Methods("POST")
-		router.HandleFunc("/api/raw/add/", apiRawAdd).Methods("POST")
-		router.HandleFunc("/api/raw/details/", apiRawDetails).Methods("POST")
+		router.HandleFunc("/api/config/", authMiddleware(apiConfig, roleUser)).Methods("GET")
+		router.HandleFunc("/api/analyze/link/", authMiddleware(apiAnalyzeLink, roleUser)).Methods("POST")
+		router.HandleFunc("/api/analyze/domain/", authMiddleware(apiAnalyzeDomain, roleUser)).Methods("POST")
+		router.HandleFunc("/api/analyze/html/", authMiddleware(apiAnalyzeHTML, roleUser)).Methods("POST")
+		router.HandleFunc("/api/indicators/fetch/", authMiddleware(apiIndicatorsFetch, roleUser)).Methods("GET")
+		router.HandleFunc("/api/indicators/fetch/recent/", authMiddleware(apiIndicatorsFetchRecent, roleUser)).Methods("GET")
+		router.HandleFunc("/api/indicators/fetch/all/", authMiddleware(apiIndicatorsFetchAll, roleUser)).Methods("GET")
+		router.HandleFunc("/api/indicators/add/", authMiddleware(apiIndicatorsAdd, roleSubmitter)).Methods("POST")
+		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", sha256Regex), authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/events/fetch/", authMiddleware(apiEventsFetch, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/events/add/", authMiddleware(apiEventsAdd, roleUser)).Methods("POST")
+		router.HandleFunc("/api/raw/fetch/", authMiddleware(apiRawFetch, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/raw/add/", authMiddleware(apiRawAdd, roleUser)).Methods("POST")
+		router.HandleFunc(fmt.Sprintf("/api/raw/details/{uuid:%s}/", uuidRegex), authMiddleware(apiRawDetails, roleAdmin)).Methods("GET")
 	}
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

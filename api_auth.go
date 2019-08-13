@@ -16,17 +16,92 @@
 
 package main
 
+import (
+	"net/http"
+	"strings"
+)
+
+const (
+	roleUser      = "user"
+	roleSubmitter = "submitter"
+	roleAdmin     = "admin"
+)
+
+var rolesRank = map[string]int{
+	roleUser:      0,
+	roleSubmitter: 1,
+	roleAdmin:     2,
+}
+
 func getUserFromKey(key string) *User {
+	if key == "" {
+		return nil
+	}
+
 	users, err := db.GetAllUsers()
 	if err != nil {
 		return nil
 	}
 
 	for _, user := range users {
-		if user.Key == key {
+		if strings.ToLower(user.Key) == strings.ToLower(key) {
 			return &user
 		}
 	}
 
 	return nil
+}
+
+func getAPIKeyFromQuery(r *http.Request) string {
+	keys, ok := r.URL.Query()["key"]
+	if !ok || len(keys) < 1 {
+		return ""
+	}
+	return keys[0]
+}
+
+func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// If there is no role specified, the API is not protected.
+		if requiredRole == "" {
+			next(w, r)
+			return
+		}
+
+		// Try to fetch an API key.
+		apiKey := getAPIKeyFromQuery(r)
+		// Look for a user with this API key.
+		user := getUserFromKey(apiKey)
+
+		// If we didn't find a user for this API key and there is
+		// enforceUserAuth enabled, then we return a 401 because no API
+		// should be publicly accessible.
+		if user == nil && enforceUserAuth == true {
+			errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
+			return
+		}
+
+		// Which required role is necessary?
+		if requiredRole == roleUser {
+			// At this point all these statements should be true:
+			// 1. The request comes from a valid user (regardless of the role).
+			// 2. The requested resource requires a valid user.
+			// 3. Whether enforceUserAuth is true or false should be irrelevent.
+			next(w, r)
+			return
+		} else if rolesRank[requiredRole] >= rolesRank[roleSubmitter] {
+			// In case of other roles (submitter and admin) we check if the
+			// matched has a role value >= the required role value.
+			if user != nil && rolesRank[user.Role] >= rolesRank[requiredRole] {
+				next(w, r)
+				return
+			} else {
+				// Otherwise we return 401.
+				errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
+				return
+			}
+		}
+
+		errorWithJSON(w, ERROR_MSG_UNEXPECTED_ERROR, http.StatusInternalServerError, nil)
+	})
 }
