@@ -49,7 +49,7 @@ func guiContacts(w http.ResponseWriter, r *http.Request) {
 }
 
 func guiCheck(w http.ResponseWriter, r *http.Request) {
-	if disableAnalysis == true {
+	if !enableAnalysis {
 		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
 		return
 	}

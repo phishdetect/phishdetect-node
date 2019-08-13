@@ -33,7 +33,7 @@ import (
 )
 
 func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
-	if disableAnalysis == true {
+	if !enableAnalysis {
 		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
 		return
 	}
@@ -99,7 +99,7 @@ func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
-	if disableAnalysis == true {
+	if !enableAnalysis {
 		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
 		return
 	}

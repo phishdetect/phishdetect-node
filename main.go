@@ -45,9 +45,9 @@ var (
 	brandsPath   string
 	yaraPath     string
 
-	disableAPI      bool
-	disableGUI      bool
-	disableAnalysis bool
+	enableAPI bool
+	enableGUI bool
+	enableAnalysis bool
 	enforceUserAuth bool
 
 	operatorContacts string
@@ -70,10 +70,10 @@ func init() {
 	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
 	flag.StringVar(&brandsPath, "brands", "", "Specify a folder containing YAML files with Brand specifications")
 	flag.StringVar(&yaraPath, "yara", "", "Specify a path to a file or folder contaning Yara rules")
-	flag.BoolVar(&disableAPI, "disable-api", false, "Disable the API routes")
-	flag.BoolVar(&disableGUI, "disable-web", false, "Disable the Web GUI")
-	flag.BoolVar(&disableAnalysis, "disable-analysis", false, "Disable the ability to analyze links and pages")
-	flag.BoolVar(&enforceUserAuth, "enforce-auth", false, "Require a valid user API key for all operations")
+	disableAPI := flag.Bool("disable-api", false, "Disable the API routes")
+	disableGUI := flag.Bool("disable-web", false, "Disable the Web GUI")
+	disableAnalysis := flag.Bool("disable-analysis", false, "Disable the ability to analyze links and pages")
+	disableUserAuth := flag.Bool("disable-user-auth", false, "Require a valid user API key for all operations")
 	flag.StringVar(&operatorContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
 	flag.Parse()
 
@@ -83,6 +83,17 @@ func init() {
 	log.SetFormatter(&log.TextFormatter{ForceColors: true})
 	log.SetOutput(colorable.NewColorableStdout())
 
+	// Initialize configuration values.
+	enableAPI = !*disableAPI
+	enableGUI = !*disableGUI
+	enableAnalysis = !*disableAnalysis
+	enforceUserAuth = !*disableUserAuth
+
+	log.Info("Enable API: ", enableAPI)
+	log.Info("Enable GUI: ", enableGUI)
+	log.Info("Enable Analysis: ", enableAnalysis)
+	log.Info("Enforce User Auth: ", enforceUserAuth)
+
 	// Initiate connection to database.
 	var err error
 	db, err = NewDatabase()
@@ -91,6 +102,7 @@ func init() {
 		return
 	}
 
+	// Initialize SafeBrowsing if an API key was provided.
 	if safeBrowsing != "" {
 		if _, err := os.Stat(safeBrowsing); err == nil {
 			buf, _ := ioutil.ReadFile(safeBrowsing)
@@ -103,6 +115,7 @@ func init() {
 		}
 	}
 
+	// Initialize Yara scanner if rule files were specified.
 	if yaraPath != "" {
 		if _, err := os.Stat(yaraPath); err == nil {
 			err = phishdetect.InitializeYara(yaraPath)
@@ -114,11 +127,12 @@ func init() {
 		}
 	}
 
+	// Load templates.
 	templatesBox = packr.NewBox("templates")
 	staticBox = packr.NewBox("static")
-
 	tmplSet = pongo.NewSet("templates", packrBoxLoader{&templatesBox})
 
+	// Load custom brands.
 	customBrands = compileBrands()
 }
 
@@ -137,7 +151,7 @@ func main() {
 	router.Use(loggingMiddleware)
 
 	// Graphical interface routes.
-	if disableGUI == false {
+	if enableGUI {
 		router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 		router.HandleFunc("/", guiIndex)
 		router.HandleFunc("/contacts/", guiContacts)
@@ -149,20 +163,28 @@ func main() {
 	}
 
 	// REST API routes.
-	if disableAPI == false {
-		router.HandleFunc("/api/config/", authMiddleware(apiConfig, roleUser)).Methods("GET")
+	if enableAPI {
+		// Non-auth routes.
+		router.HandleFunc("/api/config/", apiConfig).Methods("GET")
+
+		// User routes.
+		router.HandleFunc("/api/auth/", authMiddleware(apiAuth, roleUser)).Methods("GET")
 		router.HandleFunc("/api/analyze/link/", authMiddleware(apiAnalyzeLink, roleUser)).Methods("POST")
 		router.HandleFunc("/api/analyze/domain/", authMiddleware(apiAnalyzeDomain, roleUser)).Methods("POST")
 		router.HandleFunc("/api/analyze/html/", authMiddleware(apiAnalyzeHTML, roleUser)).Methods("POST")
 		router.HandleFunc("/api/indicators/fetch/", authMiddleware(apiIndicatorsFetch, roleUser)).Methods("GET")
 		router.HandleFunc("/api/indicators/fetch/recent/", authMiddleware(apiIndicatorsFetchRecent, roleUser)).Methods("GET")
 		router.HandleFunc("/api/indicators/fetch/all/", authMiddleware(apiIndicatorsFetchAll, roleUser)).Methods("GET")
+		router.HandleFunc("/api/events/add/", authMiddleware(apiEventsAdd, roleUser)).Methods("POST")
+		router.HandleFunc("/api/raw/add/", authMiddleware(apiRawAdd, roleUser)).Methods("POST")
+
+		// Submitter routes.
 		router.HandleFunc("/api/indicators/add/", authMiddleware(apiIndicatorsAdd, roleSubmitter)).Methods("POST")
+
+		// Admin routes.
 		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", sha256Regex), authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/events/fetch/", authMiddleware(apiEventsFetch, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/events/add/", authMiddleware(apiEventsAdd, roleUser)).Methods("POST")
 		router.HandleFunc("/api/raw/fetch/", authMiddleware(apiRawFetch, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/raw/add/", authMiddleware(apiRawAdd, roleUser)).Methods("POST")
 		router.HandleFunc(fmt.Sprintf("/api/raw/details/{uuid:%s}/", uuidRegex), authMiddleware(apiRawDetails, roleAdmin)).Methods("GET")
 	}
 

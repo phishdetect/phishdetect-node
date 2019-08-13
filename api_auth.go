@@ -105,3 +105,17 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 		errorWithJSON(w, ERROR_MSG_UNEXPECTED_ERROR, http.StatusInternalServerError, nil)
 	})
 }
+
+func apiAuth(w http.ResponseWriter, r *http.Request) {
+	// Try to fetch an API key.
+	apiKey := getAPIKeyFromQuery(r)
+	// Look for a user with this API key.
+	user := getUserFromKey(apiKey)
+
+	if user == nil {
+		errorWithJSON(w, ERROR_MSG_INVALID_AUTH, http.StatusUnauthorized, nil)
+		return
+	}
+
+	responseWithJSON(w, map[string]string{})
+}
