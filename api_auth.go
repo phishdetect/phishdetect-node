@@ -19,6 +19,8 @@ package main
 import (
 	"net/http"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -50,6 +52,15 @@ func getUserFromKey(key string) *User {
 	}
 
 	return nil
+}
+
+func generateAPIKey(source string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(source), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	return encodeSHA1(string(hash)), nil
 }
 
 func getAPIKeyFromQuery(r *http.Request) string {

@@ -1,0 +1,18 @@
+{% extends "_layout.html" %}
+
+{% block content %}
+<div class="text-center mb-6">
+    <img src="/static/images/icon.png" class="h-16 mb-4" />
+    <h1 class="font-normal"><b>PhishDetect</b></h1>
+</div>
+
+<form action="/register/" method="POST">
+    <label for="name" class="font-bold">Your preferred name:</label>
+    <div class="mt-2 mb-6"><input type="text" class="block appearance-none w-full bg-white border border-grey-light px-4 py-4 rounded focus:border-blue-light" id="name" name="name" /></div>
+
+    <label for="email" class="font-bold">Your email address:</label>
+    <div class="mt-2 mb-6"><input type="text" class="block appearance-none w-full bg-white border border-grey-light px-4 py-4 rounded focus:border-blue-light" id="email" name="email" /></div>
+
+    <div class="mt-6"><button type="submit" class="bg-blue hover:bg-blue-light text-white py-2 px-4 border-b-4 border-blue-dark hover:text-white hover:no-underline hover:border-blue rounded cursor-pointer"><i class="fas fa-user-plus"></i> Register</button></div>
+</form>
+{% endblock %}

@@ -32,11 +32,12 @@ type Database struct {
 }
 
 type User struct {
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	Key       string `json:"key"`
-	Role      string `json:"role"`
-	Activated bool   `json:"activated"`
+	Name      string    `json:"name" validate:"required"`
+	Email     string    `json:"email" validate:"required,email"`
+	Key       string    `json:"key"`
+	Role      string    `json:"role"`
+	Activated bool      `json:"activated"`
+	Datetime  time.Time `json:"datetime"`
 }
 
 type Indicator struct {
@@ -131,6 +132,23 @@ func (d *Database) GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
+func (d *Database) AddUser(user User) error {
+	coll := d.DB.Collection("users")
+
+	var userFound User
+	err := coll.FindOne(context.Background(), bson.D{{"email", user.Email}}).Decode(&userFound)
+	if err != nil {
+		switch err {
+		case mongo.ErrNoDocuments:
+		default:
+			return err
+		}
+	}
+
+	_, err = coll.InsertOne(context.Background(), user)
+	return err
+}
+
 func (d *Database) GetIndicators(limit int) ([]Indicator, error) {
 	var iocs []Indicator
 	coll := d.DB.Collection("indicators")
@@ -188,8 +206,8 @@ func (d *Database) GetIndicatorByHash(hash string) (Indicator, error) {
 func (d *Database) AddIndicator(ioc Indicator) error {
 	coll := d.DB.Collection("indicators")
 
-	var iocFind Indicator
-	err := coll.FindOne(context.Background(), bson.D{{"hashed", ioc.Hashed}}).Decode(&iocFind)
+	var iocFound Indicator
+	err := coll.FindOne(context.Background(), bson.D{{"hashed", ioc.Hashed}}).Decode(&iocFound)
 	if err != nil {
 		switch err {
 		case mongo.ErrNoDocuments:
