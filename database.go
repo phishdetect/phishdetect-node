@@ -36,6 +36,7 @@ type User struct {
 	Email string `json:"email"`
 	Key   string `json:"key"`
 	Role  string `json:"role"`
+	Activated bool `json:"activated"`
 }
 
 type Indicator struct {

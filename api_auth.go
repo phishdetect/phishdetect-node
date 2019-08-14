@@ -76,7 +76,7 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 		// If we didn't find a user for this API key and there is
 		// enforceUserAuth enabled, then we return a 401 because no API
 		// should be publicly accessible.
-		if user == nil && enforceUserAuth == true {
+		if (user == nil || !user.Activated) && enforceUserAuth == true {
 			errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
 			return
 		}
