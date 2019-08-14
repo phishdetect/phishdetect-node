@@ -21,20 +21,20 @@ import (
 )
 
 type Config struct {
-	EnableAPI        bool   `json:"enable_api"`
-	EnableGUI        bool   `json:"enable_gui"`
-	EnableAnalysis   bool   `json:"enable_analysis"`
-	EnforceUserAuth  bool   `json:"enforce_user_auth"`
-	OperatorContacts string `json:"operator_contacts"`
+	EnableAPI             bool   `json:"enable_api"`
+	EnableGUI             bool   `json:"enable_gui"`
+	EnableAnalysis        bool   `json:"enable_analysis"`
+	EnforceUserAuth       bool   `json:"enforce_user_auth"`
+	AdministratorContacts string `json:"admin_contacts"`
 }
 
 func apiConfig(w http.ResponseWriter, r *http.Request) {
 	cfg := Config{
-		EnableAPI:        enableAPI,
-		EnableGUI:        enableGUI,
-		EnableAnalysis:   enableAnalysis,
-		EnforceUserAuth:  enforceUserAuth,
-		OperatorContacts: operatorContacts,
+		EnableAPI:             enableAPI,
+		EnableGUI:             enableGUI,
+		EnableAnalysis:        enableAnalysis,
+		EnforceUserAuth:       enforceUserAuth,
+		AdministratorContacts: adminContacts,
 	}
 
 	responseWithJSON(w, cfg)

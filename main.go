@@ -50,7 +50,7 @@ var (
 	enableAnalysis  bool
 	enforceUserAuth bool
 
-	operatorContacts string
+	adminContacts string
 
 	db *Database
 
@@ -74,7 +74,7 @@ func init() {
 	disableGUI := flag.Bool("disable-web", false, "Disable the Web GUI")
 	disableAnalysis := flag.Bool("disable-analysis", false, "Disable the ability to analyze links and pages")
 	disableUserAuth := flag.Bool("disable-user-auth", false, "Require a valid user API key for all operations")
-	flag.StringVar(&operatorContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
+	flag.StringVar(&adminContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
 	flag.Parse()
 
 	if *debug {
@@ -153,11 +153,12 @@ func main() {
 	// Graphical interface routes.
 	if enableGUI {
 		router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-		router.HandleFunc("/", guiIndex)
-		router.HandleFunc("/contacts/", guiContacts)
-		router.HandleFunc("/check/", guiCheck)
-		router.HandleFunc("/link/analyze/", guiLinkAnalyze).Methods("POST")
-		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", base64Regex), guiLinkCheck).Methods("GET", "POST")
+		router.HandleFunc("/", guiIndex).Methods("GET")
+		router.HandleFunc("/register/", guiRegister).Methods("GET", "POST")
+		router.HandleFunc("/contacts/", guiContacts).Methods("GET")
+		router.HandleFunc("/check/", guiCheck).Methods("GET")
+		router.HandleFunc("/link/analyze/", authMiddleware(guiLinkAnalyze, roleUser)).Methods("POST")
+		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", base64Regex), authMiddleware(guiLinkCheck, roleUser)).Methods("GET", "POST")
 		router.HandleFunc(fmt.Sprintf("/report/{url:%s}/", base64Regex), guiReport).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}/", sha256Regex), guiReview).Methods("GET")
 	}
