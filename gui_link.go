@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -58,19 +57,6 @@ func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
 	urlDecoded := string(data)
 	log.Info("Received analysis request for ", urlDecoded)
 
-	// Check for "tor" query value.
-	tor := ""
-	torS, ok := r.URL.Query()["tor"]
-	if ok {
-		tor = torS[0]
-	}
-	// Check for "force" query value.
-	force := ""
-	forceS, ok := r.URL.Query()["force"]
-	if ok {
-		force = forceS[0]
-	}
-
 	// These options are used if the user sent an HTML page from the
 	// browser extension.
 	html := ""
@@ -88,8 +74,6 @@ func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
 		"url":        urlDecoded,
 		"html":       html,
 		"screenshot": screenshot,
-		"tor":        tor,
-		"force":      force,
 	}, w)
 	if err != nil {
 		log.Error(err)
@@ -109,8 +93,6 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	urlSHA1 := encodeSHA1(url)
 	htmlEncoded := r.PostFormValue("html")
 	screenshot := r.PostFormValue("screenshot")
-	tor, _ := strconv.ParseBool(r.PostFormValue("tor"))
-	// force 	:= r.PostFormValue("force")
 
 	html := ""
 
@@ -128,7 +110,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 		// Setting Docker API version.
 		os.Setenv("DOCKER_API_VERSION", apiVersion)
 		// Instantiate new browser and open the link.
-		browser := phishdetect.NewBrowser(urlNormalized, "", tor, "")
+		browser := phishdetect.NewBrowser(urlNormalized, "", false, "")
 		err := browser.Run()
 		if err != nil {
 			log.Error(err)
