@@ -74,6 +74,7 @@ func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
 		"url":        urlDecoded,
 		"html":       html,
 		"screenshot": screenshot,
+		"key":        getAPIKeyFromQuery(r),
 	}, w)
 	if err != nil {
 		log.Error(err)

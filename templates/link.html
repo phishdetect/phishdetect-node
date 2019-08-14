@@ -22,12 +22,10 @@
 <script>
 $(document).ready(function() {
     $.post({
-        url: "/link/analyze/",
+        url: "/link/analyze/?key={{key}}",
         data: {
             "url": "{{url|safe}}",
             "html": "{{html}}",
-            "tor": "{{tor}}",
-            "force": "{{force}}",
             "screenshot": "{{screenshot}}"
         },
         dataType: "html",
