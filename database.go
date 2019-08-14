@@ -32,11 +32,11 @@ type Database struct {
 }
 
 type User struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Key   string `json:"key"`
-	Role  string `json:"role"`
-	Activated bool `json:"activated"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	Key       string `json:"key"`
+	Role      string `json:"role"`
+	Activated bool   `json:"activated"`
 }
 
 type Indicator struct {
@@ -52,7 +52,7 @@ type Event struct {
 	Type        string    `json:"type"`
 	Match       string    `json:"match"`
 	Indicator   string    `json:"indicator"`
-	UserContact string    `json:"user_contact"`
+	UserContact string    `json:"user_contact" bson:"user_contact"`
 	Datetime    time.Time `json:"datetime"`
 	UUID        string    `json:"uuid"`
 	Key         string    `json:"key"`
@@ -61,7 +61,7 @@ type Event struct {
 type Raw struct {
 	Type        string    `json:"type"`
 	Content     string    `json:"content"`
-	UserContact string    `json:"user_contact"`
+	UserContact string    `json:"user_contact" bson:"user_contact"`
 	Datetime    time.Time `json:"datetime"`
 	UUID        string    `json:"uuid"`
 	Key         string    `json:"key"`
@@ -69,7 +69,7 @@ type Raw struct {
 
 type RawListItem struct {
 	Type        string    `json:"type"`
-	UserContact string    `json:"user_contact"`
+	UserContact string    `json:"user_contact" bson:"user_contact"`
 	Datetime    time.Time `json:"datetime"`
 	UUID        string    `json:"uuid"`
 }

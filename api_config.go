@@ -21,9 +21,9 @@ import (
 )
 
 type Config struct {
-	EnableAPI       bool    `json:"enable_api"`
-	EnableGUI       bool    `json:"enable_gui"`
-	EnableAnalysis  bool    `json:"enable_analysis"`
+	EnableAPI        bool   `json:"enable_api"`
+	EnableGUI        bool   `json:"enable_gui"`
+	EnableAnalysis   bool   `json:"enable_analysis"`
 	EnforceUserAuth  bool   `json:"enforce_user_auth"`
 	OperatorContacts string `json:"operator_contacts"`
 }

@@ -45,9 +45,9 @@ var (
 	brandsPath   string
 	yaraPath     string
 
-	enableAPI bool
-	enableGUI bool
-	enableAnalysis bool
+	enableAPI       bool
+	enableGUI       bool
+	enableAnalysis  bool
 	enforceUserAuth bool
 
 	operatorContacts string
