@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	uuidRegex   = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
+	uuidRegex   = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[4|5|6|7|8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
 	base64Regex = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
 	sha1Regex   = "[a-fA-F0-9]{40}"
 	sha256Regex = "[a-fA-F0-9]{64}"
