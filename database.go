@@ -73,6 +73,7 @@ type RawListItem struct {
 	UserContact string    `json:"user_contact" bson:"user_contact"`
 	Datetime    time.Time `json:"datetime"`
 	UUID        string    `json:"uuid"`
+	Key         string    `json:"key"`
 }
 
 type Review struct {
