@@ -92,12 +92,12 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 			return
 		}
 
-		// Which required role is necessary?
+		// Which minimum role is necessary for this route?
 		if requiredRole == roleUser {
 			// At this point all these statements should be true:
 			// 1. The request comes from a valid user (regardless of the role).
 			// 2. The requested resource requires a valid user.
-			// 3. Whether enforceUserAuth is true or false should be irrelevent.
+			// 3. Whether enforceUserAuth is true or false should be irrelevant.
 			next(w, r)
 			return
 		} else if rolesRank[requiredRole] >= rolesRank[roleSubmitter] {
