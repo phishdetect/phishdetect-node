@@ -33,9 +33,12 @@ import (
 	flag "github.com/spf13/pflag"
 )
 
-const uuidRegex string = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
-const base64Regex string = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
-const sha256Regex string = "[a-fA-F0-9]{64}"
+const (
+	uuidRegex   = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
+	base64Regex = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
+	sha1Regex   = "[a-fA-F0-9]{40}"
+	sha256Regex = "[a-fA-F0-9]{64}"
+)
 
 var (
 	host         string
@@ -187,6 +190,8 @@ func main() {
 		router.HandleFunc("/api/events/fetch/", authMiddleware(apiEventsFetch, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/raw/fetch/", authMiddleware(apiRawFetch, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/raw/details/{uuid:%s}/", uuidRegex), authMiddleware(apiRawDetails, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/registration/pending/", authMiddleware(apiRegistrationPending, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/registration/activate/{apiKey:%s}/", sha1Regex), authMiddleware(apiRegistrationActivate, roleAdmin)).Methods("GET")
 	}
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

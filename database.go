@@ -132,6 +132,18 @@ func (d *Database) GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
+func (d *Database) ActivateUser(key string) error {
+	coll := d.DB.Collection("users")
+
+	_, err := coll.UpdateOne(context.Background(), bson.D{{"key", key}},
+		bson.M{"$set": bson.M{"activated": true}})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (d *Database) AddUser(user User) error {
 	coll := d.DB.Collection("users")
 
