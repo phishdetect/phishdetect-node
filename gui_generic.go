@@ -47,18 +47,3 @@ func guiContacts(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
-func guiCheck(w http.ResponseWriter, r *http.Request) {
-	if !enableAnalysis {
-		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
-		return
-	}
-
-	tpl, err := tmplSet.FromCache("check.html")
-	err = tpl.ExecuteWriter(nil, w)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
