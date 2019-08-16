@@ -35,6 +35,28 @@ var rolesRank = map[string]int{
 	roleAdmin:     2,
 }
 
+func generateAPIKey(source string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(source), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	return encodeSHA1(string(hash)), nil
+}
+
+func getAPIKeyFromRequest(r *http.Request) string {
+	keys, ok := r.URL.Query()["key"]
+	if !ok || len(keys) < 1 {
+		if r.Method == "POST" {
+			r.ParseForm()
+			return r.PostFormValue("key")
+		} else {
+			return ""
+		}
+	}
+	return keys[0]
+}
+
 func getUserFromKey(key string) *User {
 	if key == "" {
 		return nil
@@ -54,23 +76,6 @@ func getUserFromKey(key string) *User {
 	return nil
 }
 
-func generateAPIKey(source string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(source), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-
-	return encodeSHA1(string(hash)), nil
-}
-
-func getAPIKeyFromQuery(r *http.Request) string {
-	keys, ok := r.URL.Query()["key"]
-	if !ok || len(keys) < 1 {
-		return ""
-	}
-	return keys[0]
-}
-
 func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// If there is no role specified, the API is not protected.
@@ -80,7 +85,7 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 		}
 
 		// Try to fetch an API key.
-		apiKey := getAPIKeyFromQuery(r)
+		apiKey := getAPIKeyFromRequest(r)
 		// Look for a user with this API key.
 		user := getUserFromKey(apiKey)
 
@@ -119,7 +124,7 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 
 func apiAuth(w http.ResponseWriter, r *http.Request) {
 	// Try to fetch an API key.
-	apiKey := getAPIKeyFromQuery(r)
+	apiKey := getAPIKeyFromRequest(r)
 	// Look for a user with this API key.
 	user := getUserFromKey(apiKey)
 

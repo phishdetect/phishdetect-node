@@ -97,7 +97,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := getUserFromKey(getAPIKeyFromQuery(r))
+	user := getUserFromKey(getAPIKeyFromRequest(r))
 	if user == nil {
 		errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
 		return
