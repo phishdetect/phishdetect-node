@@ -24,15 +24,19 @@ db = client.phishdetect
 
 def main():
     parser = argparse.ArgumentParser(description="Add a user to the database")
-    parser.add_argument('--admin', action='store_true', help="Enable if the user is an administrator")
     parser.add_argument('name', type=str, help="Name of the user")
     parser.add_argument('email', type=str, help="Email of the user")
+    parser.add_argument('--submitter', action='store_true', help="Make this a submitter")
+    parser.add_argument('--admin', action='store_true', help="Make this an administrator")
+    parser.add_argument('--inactive', action='store_true', help="Do not activate the user yet")
     args = parser.parse_args()
 
     name = args.name
     email = args.email
 
-    role = 'submitter'
+    role = 'user'
+    if args.submitter:
+        role = 'submitter'
     if args.admin:
         role = 'admin'
 
@@ -49,6 +53,7 @@ def main():
         'email': email,
         'key': key,
         'role': role,
+        'activated': (not args.inactive),
     })
     print("User \"{}\" added!".format(name))
     print("The API key is: {}".format(key))
