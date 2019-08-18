@@ -3,7 +3,7 @@ module github.com/phishdetect/phishdetect-node
 go 1.12
 
 require (
-	cloud.google.com/go v0.44.0 // indirect
+	cloud.google.com/go v0.44.3 // indirect
 	github.com/coreos/bbolt v1.3.3 // indirect
 	github.com/coreos/etcd v3.3.13+incompatible // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -22,7 +22,7 @@ require (
 	github.com/google/safebrowsing v0.0.0-20190624211811-bbf0d20d26b3 // indirect
 	github.com/gorilla/mux v1.7.2
 	github.com/goware/urlx v0.3.1 // indirect
-	github.com/grpc-ecosystem/grpc-gateway v1.9.5 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.9.6 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/kr/pty v1.1.8 // indirect
@@ -39,6 +39,7 @@ require (
 	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/phishdetect/phishdetect v0.0.0-20190811205256-6e09e1d67c44
 	github.com/prometheus/client_golang v1.1.0 // indirect
+	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
 	github.com/rakyll/statik v0.1.6 // indirect
 	github.com/rogpeppe/fastuuid v1.2.0 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible // indirect
@@ -48,6 +49,7 @@ require (
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.4.0 // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
+	github.com/stretchr/testify v1.4.0 // indirect
 	github.com/texttheater/golang-levenshtein v0.0.0-20190717060638-b7aaf30637d6 // indirect
 	github.com/ugorji/go v1.1.7 // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
@@ -55,11 +57,12 @@ require (
 	go.etcd.io/bbolt v1.3.3 // indirect
 	go.mongodb.org/mongo-driver v1.0.3
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
-	golang.org/x/mobile v0.0.0-20190806162312-597adff16ade // indirect
-	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
-	golang.org/x/sys v0.0.0-20190804053845-51ab0e2deafa // indirect
-	golang.org/x/tools v0.0.0-20190809145639-6d4652c779c4 // indirect
-	google.golang.org/grpc v1.22.1 // indirect
+	golang.org/x/mobile v0.0.0-20190814143026-e8b3e6111d02 // indirect
+	golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7 // indirect
+	golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // indirect
+	golang.org/x/tools v0.0.0-20190816200558-6889da9d5479 // indirect
+	google.golang.org/genproto v0.0.0-20190817000702-55e96fffbd48 // indirect
+	google.golang.org/grpc v1.23.0 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
 	gopkg.in/yaml.v2 v2.2.2
 	honnef.co/go/tools v0.0.1-2019.2.2 // indirect
