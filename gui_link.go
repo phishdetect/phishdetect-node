@@ -85,7 +85,7 @@ func guiLinkCheck(w http.ResponseWriter, r *http.Request) {
 
 func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	if !enableAnalysis {
-		errorPage(w, "Analysis of links and pages was disabled by the administrator.")
+		errorMessage(w, "Analysis of links and pages was disabled by the administrator.")
 		return
 	}
 
@@ -104,7 +104,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	// If there is no specified HTML string, it means we need to open the link.
 	if htmlEncoded == "" {
 		if !validateURL(url) {
-			errorPage(w, "You have submitted an invalid link.")
+			errorMessage(w, "You have submitted an invalid link.")
 			return
 		}
 
@@ -115,7 +115,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 		err := browser.Run()
 		if err != nil {
 			log.Error(err)
-			errorPage(w, "Something failed while trying to launch the containerized browser. The URL might be invalid.")
+			errorMessage(w, "Something failed while trying to launch the containerized browser. The URL might be invalid.")
 			return
 		}
 		html = browser.HTML
@@ -126,7 +126,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 		data, err := base64.StdEncoding.DecodeString(htmlEncoded)
 		if err != nil {
 			log.Error(err)
-			errorPage(w, "I received invalid HTML data. I expect a base64 encoded string.")
+			errorMessage(w, "I received invalid HTML data. I expect a base64 encoded string.")
 			return
 		}
 		html = string(data)
@@ -134,7 +134,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	// Check for Chrome errors, generally raised by connection failures.
 	if strings.HasPrefix(urlFinal, "chrome-error://") {
-		errorPage(w, "An error occurred while visiting the link. The website might be offline.")
+		errorMessage(w, "An error occurred while visiting the link. The website might be offline.")
 		return
 	}
 
@@ -144,12 +144,12 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	err := analysis.AnalyzeHTML()
 	if err != nil {
-		errorPage(w, err.Error())
+		errorMessage(w, err.Error())
 		return
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		errorPage(w, err.Error())
+		errorMessage(w, err.Error())
 		return
 	}
 	brand := analysis.Brands.GetBrand()
