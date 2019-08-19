@@ -160,7 +160,7 @@ func main() {
 		router.HandleFunc("/register/", guiRegister).Methods("GET", "POST")
 		router.HandleFunc("/contacts/", guiContacts).Methods("GET")
 		router.HandleFunc("/link/analyze/", authMiddleware(guiLinkAnalyze, roleUser)).Methods("POST")
-		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", base64Regex), authMiddleware(guiLinkCheck, roleUser)).Methods("GET", "POST")
+		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", base64Regex), authMiddleware(guiLinkCheck, roleUser)).Methods("POST")
 		router.HandleFunc(fmt.Sprintf("/report/{url:%s}/", base64Regex), guiReport).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}/", sha256Regex), guiReview).Methods("GET")
 	}
