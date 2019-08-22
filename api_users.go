@@ -45,7 +45,7 @@ func apiUsersPending(w http.ResponseWriter, r *http.Request) {
 	responseWithJSON(w, notActive)
 }
 
-func apiUsersAll(w http.ResponseWriter, r *http.Request) {
+func apiUsersActive(w http.ResponseWriter, r *http.Request) {
 	users, err := db.GetAllUsers()
 	if err != nil {
 		errorWithJSON(w, "Failed to fetch the list of users", http.StatusInternalServerError, err)
@@ -54,7 +54,7 @@ func apiUsersAll(w http.ResponseWriter, r *http.Request) {
 
 	usersOnly := []User{}
 	for _, user := range users {
-		if user.Role == "user" {
+		if user.Role == "user" && user.Activated == true {
 			usersOnly = append(usersOnly, user)
 		}
 	}

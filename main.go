@@ -190,7 +190,7 @@ func main() {
 		router.HandleFunc("/api/raw/fetch/", authMiddleware(apiRawFetch, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/raw/details/{uuid:%s}/", uuidRegex), authMiddleware(apiRawDetails, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/users/pending/", authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/users/all/", authMiddleware(apiUsersAll, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/users/active/", authMiddleware(apiUsersActive, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/users/activate/{apiKey:%s}/", sha1Regex), authMiddleware(apiUsersActivate, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{apiKey:%s}/", sha1Regex), authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
 	}
