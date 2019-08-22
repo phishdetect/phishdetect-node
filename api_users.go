@@ -23,7 +23,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func apiRegistrationPending(w http.ResponseWriter, r *http.Request) {
+func apiUsersPending(w http.ResponseWriter, r *http.Request) {
 	if !enforceUserAuth {
 		errorWithJSON(w, "The Node does not enforce user authentication", http.StatusForbidden, nil)
 		return
@@ -45,7 +45,24 @@ func apiRegistrationPending(w http.ResponseWriter, r *http.Request) {
 	responseWithJSON(w, notActive)
 }
 
-func apiRegistrationActivate(w http.ResponseWriter, r *http.Request) {
+func apiUsersAll(w http.ResponseWriter, r *http.Request) {
+	users, err := db.GetAllUsers()
+	if err != nil {
+		errorWithJSON(w, "Failed to fetch the list of users", http.StatusInternalServerError, err)
+		return
+	}
+
+	usersOnly := []User{}
+	for _, user := range users {
+		if user.Role == "user" {
+			usersOnly = append(usersOnly, user)
+		}
+	}
+
+	responseWithJSON(w, usersOnly)
+}
+
+func apiUsersActivate(w http.ResponseWriter, r *http.Request) {
 	if !enforceUserAuth {
 		errorWithJSON(w, "The Node does not enforce user authentication", http.StatusForbidden, nil)
 		return
@@ -62,6 +79,28 @@ func apiRegistrationActivate(w http.ResponseWriter, r *http.Request) {
 
 	response := map[string]interface{}{
 		"msg": fmt.Sprintf("User with API key %s activated successfully", apiKey),
+	}
+
+	responseWithJSON(w, response)
+}
+
+func apiUsersDeactivate(w http.ResponseWriter, r *http.Request) {
+	if !enforceUserAuth {
+		errorWithJSON(w, "The Node does not enforce user authentication", http.StatusForbidden, nil)
+		return
+	}
+
+	vars := mux.Vars(r)
+	apiKey := vars["apiKey"]
+
+	err := db.DeactivateUser(apiKey)
+	if err != nil {
+		errorWithJSON(w, "Failed to deactivate the user", http.StatusInternalServerError, err)
+		return
+	}
+
+	response := map[string]interface{}{
+		"msg": fmt.Sprintf("User with API key %s deactivated successfully", apiKey),
 	}
 
 	responseWithJSON(w, response)

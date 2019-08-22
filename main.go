@@ -189,8 +189,10 @@ func main() {
 		router.HandleFunc("/api/events/fetch/", authMiddleware(apiEventsFetch, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/raw/fetch/", authMiddleware(apiRawFetch, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/raw/details/{uuid:%s}/", uuidRegex), authMiddleware(apiRawDetails, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/registration/pending/", authMiddleware(apiRegistrationPending, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/registration/activate/{apiKey:%s}/", sha1Regex), authMiddleware(apiRegistrationActivate, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/users/pending/", authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/users/all/", authMiddleware(apiUsersAll, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/users/activate/{apiKey:%s}/", sha1Regex), authMiddleware(apiUsersActivate, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{apiKey:%s}/", sha1Regex), authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
 	}
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
