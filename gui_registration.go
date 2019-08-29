@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	pongo "github.com/flosch/pongo2"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -94,7 +95,7 @@ func guiRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tpl, err := tmplSet.FromCache("registerComplete.html")
-	err = tpl.ExecuteWriter(nil, w)
+	err = tpl.ExecuteWriter(pongo.Context{"key": apiKey}, w)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
