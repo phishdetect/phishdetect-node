@@ -19,7 +19,7 @@ require (
 	github.com/mattn/go-colorable v0.1.2
 	github.com/mattn/go-isatty v0.0.9 // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/phishdetect/phishdetect v0.0.0-20190904154407-1e052b427a4c
+	github.com/phishdetect/phishdetect v0.0.0-20190909221609-dcbcc0765923
 	github.com/rakyll/statik v0.1.6 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/pflag v1.0.3
@@ -29,11 +29,11 @@ require (
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.1.0
-	golang.org/x/crypto v0.0.0-20190829043050-9756ffdc2472
-	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 // indirect
-	golang.org/x/sys v0.0.0-20190904005037-43c01164e931 // indirect
+	golang.org/x/crypto v0.0.0-20190909091759-094676da4a83
+	golang.org/x/net v0.0.0-20190909003024-a7b16738d86b // indirect
+	golang.org/x/sys v0.0.0-20190909082730-f460065e899a // indirect
 	golang.org/x/text v0.3.2 // indirect
-	golang.org/x/tools v0.0.0-20190903163617-be0da057c5e3 // indirect
+	golang.org/x/tools v0.0.0-20190909214602-067311248421 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
 	gopkg.in/yaml.v2 v2.2.2
