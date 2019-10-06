@@ -74,7 +74,7 @@ func init() {
 	flag.StringVar(&brandsPath, "brands", "", "Specify a folder containing YAML files with Brand specifications")
 	flag.StringVar(&yaraPath, "yara", "", "Specify a path to a file or folder contaning Yara rules")
 	disableAPI := flag.Bool("disable-api", false, "Disable the API routes")
-	disableGUI := flag.Bool("disable-web", false, "Disable the Web GUI")
+	disableGUI := flag.Bool("disable-gui", false, "Disable the Web GUI")
 	disableAnalysis := flag.Bool("disable-analysis", false, "Disable the ability to analyze links and pages")
 	disableUserAuth := flag.Bool("disable-user-auth", false, "Require a valid user API key for all operations")
 	flag.StringVar(&adminContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
