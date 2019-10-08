@@ -14,10 +14,8 @@ require (
 	github.com/go-kit/kit v0.9.0 // indirect
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
-	github.com/gobuffalo/envy v1.7.1 // indirect
-	github.com/gobuffalo/logger v1.0.1 // indirect
 	github.com/gobuffalo/packr v1.30.1
-	github.com/gobuffalo/packr/v2 v2.6.0 // indirect
+	github.com/gobuffalo/packr/v2 v2.7.1 // indirect
 	github.com/gogo/protobuf v1.3.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
@@ -29,6 +27,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.11.1 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/juju/errors v0.0.0-20190806202954-0232dcc7464d // indirect
+	github.com/karrick/godirwalk v1.12.0 // indirect
 	github.com/kr/pty v1.1.8 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mafredri/cdp v0.24.2 // indirect
@@ -58,15 +57,14 @@ require (
 	go.etcd.io/bbolt v1.3.3 // indirect
 	go.mongodb.org/mongo-driver v1.1.1
 	go.opencensus.io v0.22.1 // indirect
-	golang.org/x/crypto v0.0.0-20190923035154-9ee001bba392
+	golang.org/x/crypto v0.0.0-20191002192127-34f69633bfdc
 	golang.org/x/exp v0.0.0-20190829153037-c13cbed26979 // indirect
 	golang.org/x/image v0.0.0-20190910094157-69e4b8554b2a // indirect
 	golang.org/x/lint v0.0.0-20190909230951-414d861bb4ac // indirect
 	golang.org/x/mobile v0.0.0-20190830201351-c6da95954960 // indirect
 	golang.org/x/net v0.0.0-20190923162816-aa69164e4478 // indirect
-	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
-	golang.org/x/sys v0.0.0-20190924092210-98129a5cf4a0 // indirect
-	golang.org/x/tools v0.0.0-20190924052046-3ac2a5bbd98a // indirect
+	golang.org/x/sys v0.0.0-20191007154456-ef33b2fb2c41 // indirect
+	golang.org/x/tools v0.0.0-20191007185444-6536af71d98a // indirect
 	google.golang.org/api v0.10.0 // indirect
 	google.golang.org/appengine v1.6.2 // indirect
 	google.golang.org/genproto v0.0.0-20190905072037-92dd089d5514 // indirect
