@@ -16,7 +16,7 @@ deps:
 linux:
 	@mkdir -p $(BUILD_FOLDER)/linux
 
-	@echo "[builder] Building Linux Web executable"
+	@echo "[builder] Building PhishDetect Node Linux executable"
 	$(FLAGS_LINUX) packr build -o $(BUILD_FOLDER)/linux/phishdetect-node
 
 	@echo "[builder] Done!"
