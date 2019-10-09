@@ -43,6 +43,7 @@ require (
 	github.com/prometheus/procfs v0.0.4 // indirect
 	github.com/rakyll/statik v0.1.6 // indirect
 	github.com/rogpeppe/fastuuid v1.2.0 // indirect
+	github.com/rogpeppe/go-internal v1.5.0 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/afero v1.2.2 // indirect
@@ -63,7 +64,7 @@ require (
 	golang.org/x/lint v0.0.0-20190909230951-414d861bb4ac // indirect
 	golang.org/x/mobile v0.0.0-20190830201351-c6da95954960 // indirect
 	golang.org/x/net v0.0.0-20190923162816-aa69164e4478 // indirect
-	golang.org/x/sys v0.0.0-20191007154456-ef33b2fb2c41 // indirect
+	golang.org/x/sys v0.0.0-20191008105621-543471e840be // indirect
 	golang.org/x/tools v0.0.0-20191007185444-6536af71d98a // indirect
 	google.golang.org/api v0.10.0 // indirect
 	google.golang.org/appengine v1.6.2 // indirect
