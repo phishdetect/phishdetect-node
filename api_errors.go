@@ -17,7 +17,12 @@
 package main
 
 const (
-	ERROR_MSG_NOT_AUTHORIZED   = "You are not authorized to perform this operation"
-	ERROR_MSG_UNEXPECTED_ERROR = "Some unexpected error occurred"
-	ERROR_MSG_INVALID_AUTH     = "The API key appears to be invalid"
+	ERROR_MSG_NOT_AUTHORIZED    = "You are not authorized to perform this operation"
+	ERROR_MSG_UNEXPECTED_ERROR  = "Some unexpected error occurred"
+	ERROR_MSG_INVALID_AUTH      = "The API key appears to be invalid"
+	ERROR_MSG_ANALYSIS_DISABLED = "Analysis was disabled by administrator"
+	ERROR_MSG_INVALID_REQUEST   = "Invalid request"
+	ERROR_MSG_INVALID_URL       = "Invalid URL"
+	ERROR_MSG_ANALYSIS_FAILED   = "Something failed during the analysis"
+	ERROR_MSG_INVALID_HTML      = "Invalid HTML"
 )

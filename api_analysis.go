@@ -46,7 +46,7 @@ type AnalysisResults struct {
 
 func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	if !enableAnalysis {
-		errorWithJSON(w, "Analysis was disabled by administrator", http.StatusForbidden, nil)
+		errorWithJSON(w, ERROR_MSG_ANALYSIS_DISABLED, http.StatusForbidden, nil)
 		return
 	}
 
@@ -54,7 +54,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		errorWithJSON(w, "Invalid request", http.StatusBadRequest, err)
+		errorWithJSON(w, ERROR_MSG_INVALID_REQUEST, http.StatusBadRequest, err)
 		return
 	}
 
@@ -62,7 +62,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	urlFinal := urlNormalized
 
 	if !validateURL(urlNormalized) {
-		errorWithJSON(w, "Invalid URL", http.StatusBadRequest, nil)
+		errorWithJSON(w, ERROR_MSG_INVALID_URL, http.StatusBadRequest, nil)
 		return
 	}
 
@@ -71,7 +71,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 
 	err = analysis.AnalyzeDomain()
 	if err != nil {
-		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
 		return
 	}
 	brand := analysis.Brands.GetBrand()
@@ -96,7 +96,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 
 func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	if !enableAnalysis {
-		errorWithJSON(w, "Analysis was disabled by administrator", http.StatusForbidden, nil)
+		errorWithJSON(w, ERROR_MSG_ANALYSIS_DISABLED, http.StatusForbidden, nil)
 		return
 	}
 
@@ -104,7 +104,7 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		errorWithJSON(w, "Invalid request", http.StatusBadRequest, err)
+		errorWithJSON(w, ERROR_MSG_INVALID_REQUEST, http.StatusBadRequest, err)
 		return
 	}
 
@@ -115,7 +115,7 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	var screenshot string
 
 	if !validateURL(urlNormalized) {
-		errorWithJSON(w, "Invalid URL", http.StatusBadRequest, nil)
+		errorWithJSON(w, ERROR_MSG_INVALID_URL, http.StatusBadRequest, nil)
 		return
 	}
 
@@ -125,7 +125,7 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	browser := phishdetect.NewBrowser(urlNormalized, "", false, "")
 	err = browser.Run()
 	if err != nil {
-		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
 		return
 	}
 	html = browser.HTML
@@ -137,12 +137,12 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 
 	err = analysis.AnalyzeHTML()
 	if err != nil {
-		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
 		return
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
 		return
 	}
 	brand := analysis.Brands.GetBrand()
@@ -167,7 +167,7 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 
 func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	if !enableAnalysis {
-		errorWithJSON(w, "Analysis was disabled by administrator", http.StatusForbidden, nil)
+		errorWithJSON(w, ERROR_MSG_ANALYSIS_DISABLED, http.StatusForbidden, nil)
 		return
 	}
 
@@ -175,7 +175,7 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		errorWithJSON(w, "Invalid request", http.StatusBadRequest, err)
+		errorWithJSON(w, ERROR_MSG_INVALID_REQUEST, http.StatusBadRequest, err)
 		return
 	}
 
@@ -183,18 +183,18 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	urlFinal := url
 
 	if !validateURL(url) {
-		errorWithJSON(w, "Invalid URL", http.StatusBadRequest, nil)
+		errorWithJSON(w, ERROR_MSG_INVALID_URL, http.StatusBadRequest, nil)
 		return
 	}
 
 	if req.HTML == "" {
-		errorWithJSON(w, "Invalid HTML", http.StatusBadRequest, nil)
+		errorWithJSON(w, ERROR_MSG_INVALID_HTML, http.StatusBadRequest, nil)
 		return
 	}
 
 	htmlData, err := base64.StdEncoding.DecodeString(req.HTML)
 	if err != nil {
-		errorWithJSON(w, "Invalid HTML", http.StatusBadRequest, nil)
+		errorWithJSON(w, ERROR_MSG_INVALID_HTML, http.StatusBadRequest, nil)
 		return
 	}
 	html := string(htmlData)
@@ -204,12 +204,12 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 
 	err = analysis.AnalyzeHTML()
 	if err != nil {
-		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
 		return
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		errorWithJSON(w, "Something failed during the analysis", http.StatusInternalServerError, err)
+		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
 		return
 	}
 	brand := analysis.Brands.GetBrand()
