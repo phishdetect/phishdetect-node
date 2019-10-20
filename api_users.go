@@ -25,7 +25,7 @@ import (
 
 func apiUsersPending(w http.ResponseWriter, r *http.Request) {
 	if !enforceUserAuth {
-		errorWithJSON(w, "The Node does not enforce user authentication", http.StatusForbidden, nil)
+		errorWithJSON(w, ERROR_MSG_NO_AUTH_REQUIRED, http.StatusForbidden, nil)
 		return
 	}
 
@@ -64,7 +64,7 @@ func apiUsersActive(w http.ResponseWriter, r *http.Request) {
 
 func apiUsersActivate(w http.ResponseWriter, r *http.Request) {
 	if !enforceUserAuth {
-		errorWithJSON(w, "The Node does not enforce user authentication", http.StatusForbidden, nil)
+		errorWithJSON(w, ERROR_MSG_NO_AUTH_REQUIRED, http.StatusForbidden, nil)
 		return
 	}
 
@@ -86,7 +86,7 @@ func apiUsersActivate(w http.ResponseWriter, r *http.Request) {
 
 func apiUsersDeactivate(w http.ResponseWriter, r *http.Request) {
 	if !enforceUserAuth {
-		errorWithJSON(w, "The Node does not enforce user authentication", http.StatusForbidden, nil)
+		errorWithJSON(w, ERROR_MSG_NO_AUTH_REQUIRED, http.StatusForbidden, nil)
 		return
 	}
 

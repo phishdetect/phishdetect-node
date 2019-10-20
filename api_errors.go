@@ -27,4 +27,5 @@ const (
 	ERROR_MSG_INVALID_HTML            = "Invalid HTML"
 	ERROR_MSG_INDICATORS_FETCH_FAILED = "Failed to fetch indicators from database"
 	ERROR_MSG_PARSE_REQUEST_FAILED    = "Unable to parse request"
+	ERROR_MSG_NO_AUTH_REQUIRED        = "The Node does not enforce user authentication"
 )
