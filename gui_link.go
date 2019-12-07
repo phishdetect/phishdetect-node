@@ -156,10 +156,10 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("Completed analysis of ", url)
 
-	// If the site is safelisted, or the final score is low, we offer the
-	// redirect to the original link.
+	// If the site is safelisted, or the final score is low, we offer
+	// to continue the original link.
 	if analysis.Safelisted || analysis.Score < 30 {
-		tpl, err := tmplSet.FromCache("redirect.html")
+		tpl, err := tmplSet.FromCache("continue.html")
 		err = tpl.ExecuteWriter(pongo.Context{
 			"url":           url,
 			"urlNormalized": urlNormalized,
