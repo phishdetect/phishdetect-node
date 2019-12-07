@@ -157,7 +157,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	log.Info("Completed analysis of ", url)
 
 	// If the site is safelisted, or the final score is low, we offer
-	// to continue the original link.
+	// to continue to the original link.
 	if analysis.Safelisted || analysis.Score < 30 {
 		tpl, err := tmplSet.FromCache("continue.html")
 		err = tpl.ExecuteWriter(pongo.Context{
