@@ -253,13 +253,16 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 	return err
 }
 
-func (d *Database) GetAllEvents(offset int64) ([]Event, error) {
+func (d *Database) GetAllEvents(offset, limit int64) ([]Event, error) {
 	coll := d.DB.Collection("events")
 
 	opts := options.Find()
 	opts.SetSort(bson.D{{"datetime", -1}})
 	if offset > 0 {
 		opts.SetSkip(offset)
+	}
+	if limit > 0 {
+		opts.SetLimit(limit)
 	}
 	cur, err := coll.Find(context.Background(), bson.D{}, opts)
 	if err != nil {
@@ -286,13 +289,16 @@ func (d *Database) AddEvent(event Event) error {
 	return err
 }
 
-func (d *Database) GetAllRaw(offset int64) ([]RawListItem, error) {
+func (d *Database) GetAllRaw(offset, limit int64) ([]RawListItem, error) {
 	coll := d.DB.Collection("raw")
 
 	opts := options.Find()
 	opts.SetSort(bson.D{{"datetime", -1}})
 	if offset > 0 {
 		opts.SetSkip(offset)
+	}
+	if limit > 0 {
+		opts.SetLimit(limit)
 	}
 	cur, err := coll.Find(context.Background(), bson.D{}, opts)
 	if err != nil {

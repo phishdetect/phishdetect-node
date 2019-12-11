@@ -27,13 +27,18 @@ import (
 
 func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
 	var offset int64 = 0
-
 	keys, ok := r.URL.Query()["offset"]
 	if ok && len(keys) == 1 {
 		offset, _ = strconv.ParseInt(keys[0], 10, 64)
 	}
 
-	events, err := db.GetAllEvents(offset)
+	var limit int64 = 0
+	keys, ok = r.URL.Query()["limit"]
+	if ok && len(keys) == 1 {
+		limit, _ = strconv.ParseInt(keys[0], 10, 64)
+	}
+
+	events, err := db.GetAllEvents(offset, limit)
 	if err != nil {
 		errorWithJSON(w, "Failed to fetch events from database", http.StatusInternalServerError, err)
 		return

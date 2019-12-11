@@ -28,13 +28,18 @@ import (
 
 func apiRawFetch(w http.ResponseWriter, r *http.Request) {
 	var offset int64 = 0
-
 	keys, ok := r.URL.Query()["offset"]
 	if ok && len(keys) == 1 {
 		offset, _ = strconv.ParseInt(keys[0], 10, 64)
 	}
 
-	rawMessages, err := db.GetAllRaw(offset)
+	var limit int64 = 0
+	keys, ok = r.URL.Query()["limit"]
+	if ok && len(keys) == 1 {
+		limit, _ = strconv.ParseInt(keys[0], 10, 64)
+	}
+
+	rawMessages, err := db.GetAllRaw(offset, limit)
 	if err != nil {
 		errorWithJSON(w, "Failed to fetch raw messages from database", http.StatusInternalServerError, err)
 		return
