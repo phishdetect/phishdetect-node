@@ -283,10 +283,15 @@ func (d *Database) AddEvent(event Event) error {
 	return err
 }
 
-func (d *Database) GetAllRaw() ([]RawListItem, error) {
+func (d *Database) GetAllRaw(offset int64) ([]RawListItem, error) {
 	coll := d.DB.Collection("raw")
 
-	cur, err := coll.Find(context.Background(), bson.D{})
+	opts := options.Find()
+	opts.SetSort(bson.D{{"datetime", -1}})
+	if offset > 0 {
+		opts.SetSkip(offset)
+	}
+	cur, err := coll.Find(context.Background(), bson.D{}, opts)
 	if err != nil {
 		return nil, err
 	}
