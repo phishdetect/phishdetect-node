@@ -253,11 +253,14 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 	return err
 }
 
-func (d *Database) GetAllEvents() ([]Event, error) {
+func (d *Database) GetAllEvents(offset int64) ([]Event, error) {
 	coll := d.DB.Collection("events")
 
 	opts := options.Find()
 	opts.SetSort(bson.D{{"datetime", -1}})
+	if offset > 0 {
+		opts.SetSkip(offset)
+	}
 	cur, err := coll.Find(context.Background(), bson.D{}, opts)
 	if err != nil {
 		return nil, err

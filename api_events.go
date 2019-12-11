@@ -19,13 +19,21 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/nu7hatch/gouuid"
 )
 
 func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
-	events, err := db.GetAllEvents()
+	var offset int64 = 0
+
+	keys, ok := r.URL.Query()["offset"]
+	if ok && len(keys) == 1 {
+		offset, _ = strconv.ParseInt(keys[0], 10, 64)
+	}
+
+	events, err := db.GetAllEvents(offset)
 	if err != nil {
 		errorWithJSON(w, "Failed to fetch events from database", http.StatusInternalServerError, err)
 		return
