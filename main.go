@@ -141,7 +141,11 @@ func init() {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Debug(r.RemoteAddr, " ", r.Method, " ", r.RequestURI)
+		remote := r.Header.Get("X-Forwarded-For")
+		if remote == "" {
+			remote = r.RemoteAddr
+		}
+		log.Debug(remote, " ", r.Method, " ", r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
 }
