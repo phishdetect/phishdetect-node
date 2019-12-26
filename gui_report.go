@@ -24,9 +24,9 @@ import (
 
 	pongo "github.com/flosch/pongo2"
 	"github.com/gorilla/mux"
+	"github.com/nu7hatch/gouuid"
 	"github.com/phishdetect/phishdetect"
 	log "github.com/sirupsen/logrus"
-	"github.com/nu7hatch/gouuid"
 )
 
 func guiReport(w http.ResponseWriter, r *http.Request) {
@@ -58,10 +58,10 @@ func guiReport(w http.ResponseWriter, r *http.Request) {
 	u4, _ := uuid.NewV4()
 
 	report := Report{
-		Type: "url",
+		Type:     "url",
 		Content:  urlDecoded,
 		Datetime: time.Now().UTC(),
-		UUID: u4.String(),
+		UUID:     u4.String(),
 	}
 
 	err = db.AddReport(report)
