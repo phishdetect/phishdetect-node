@@ -26,7 +26,7 @@ import (
 	"github.com/nu7hatch/gouuid"
 )
 
-func apiRawFetch(w http.ResponseWriter, r *http.Request) {
+func apiReportsFetch(w http.ResponseWriter, r *http.Request) {
 	var offset int64 = 0
 	keys, ok := r.URL.Query()["offset"]
 	if ok && len(keys) == 1 {
@@ -39,51 +39,57 @@ func apiRawFetch(w http.ResponseWriter, r *http.Request) {
 		limit, _ = strconv.ParseInt(keys[0], 10, 64)
 	}
 
-	rawMessages, err := db.GetAllRaw(offset, limit)
+	var reportType string = ""
+	keys, ok = r.URL.Query()["type"]
+	if ok && len(keys) == 1 {
+		reportType = keys[0]
+	}
+
+	reports, err := db.GetAllReports(offset, limit, reportType)
 	if err != nil {
-		errorWithJSON(w, "Failed to fetch raw messages from database", http.StatusInternalServerError, err)
+		errorWithJSON(w, "Failed to fetch reports from database", http.StatusInternalServerError, err)
 		return
 	}
 
-	responseWithJSON(w, rawMessages)
+	responseWithJSON(w, reports)
 }
 
-func apiRawAdd(w http.ResponseWriter, r *http.Request) {
+func apiReportsAdd(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var raw Raw
-	err := decoder.Decode(&raw)
+	var report Report
+	err := decoder.Decode(&report)
 	if err != nil {
-		errorWithJSON(w, "Unable to parse raw message", http.StatusBadRequest, err)
+		errorWithJSON(w, "Unable to parse report", http.StatusBadRequest, err)
 		return
 	}
 
-	raw.Datetime = time.Now().UTC()
+	report.Datetime = time.Now().UTC()
 
 	u4, _ := uuid.NewV4()
-	raw.UUID = u4.String()
+	report.UUID = u4.String()
 
-	err = db.AddRaw(raw)
+	err = db.AddReport(report)
 	if err != nil {
-		errorWithJSON(w, "Unable to store raw message in database", http.StatusInternalServerError, err)
+		errorWithJSON(w, "Unable to store report in database", http.StatusInternalServerError, err)
 		return
 	}
 
 	response := map[string]string{
-		"msg":  "Raw message added successfully",
-		"uuid": raw.UUID,
+		"msg":  "Report message added successfully",
+		"uuid": report.UUID,
 	}
 
 	responseWithJSON(w, response)
 }
 
-func apiRawDetails(w http.ResponseWriter, r *http.Request) {
+func apiReportsDetails(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	raw, err := db.GetRawByUUID(vars["uuid"])
+	report, err := db.GetReportByUUID(vars["uuid"])
 	if err != nil {
-		errorWithJSON(w, "Failed to fetch raw message from database", http.StatusInternalServerError, err)
+		errorWithJSON(w, "Failed to fetch report from database", http.StatusInternalServerError, err)
 		return
 	}
 
-	responseWithJSON(w, raw)
+	responseWithJSON(w, report)
 }
