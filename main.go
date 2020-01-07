@@ -83,7 +83,11 @@ func init() {
 	if *debug {
 		log.SetLevel(log.DebugLevel)
 	}
-	log.SetFormatter(&log.TextFormatter{ForceColors: true})
+	log.SetFormatter(&log.TextFormatter{
+		ForceColors: true,
+		TimestampFormat: "2006-01-02 15:04:05 -0700",
+		FullTimestamp: true,
+	})
 	log.SetOutput(colorable.NewColorableStdout())
 
 	// Initialize configuration values.
