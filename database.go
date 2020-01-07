@@ -160,6 +160,18 @@ func (d *Database) AddUser(user User) error {
 	return err
 }
 
+func (d *Database) GetUserByKey(key string) (User, error) {
+	coll := d.DB.Collection("users")
+
+	var userFound User
+	err := coll.FindOne(context.Background(), bson.D{{"key", key}}).Decode(&userFound)
+	if err != nil {
+		return User{}, err
+	}
+
+	return userFound, nil
+}
+
 func (d *Database) GetIndicators(limit int) ([]Indicator, error) {
 	var iocs []Indicator
 	coll := d.DB.Collection("indicators")

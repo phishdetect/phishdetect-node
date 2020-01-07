@@ -21,6 +21,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"regexp"
 	"time"
 
 	pongo "github.com/flosch/pongo2"
@@ -62,6 +63,8 @@ var (
 	tmplSet      *pongo.TemplateSet
 
 	customBrands []*brand.Brand
+
+	sha1RegexCompiled *regexp.Regexp
 )
 
 func init() {
@@ -141,6 +144,9 @@ func init() {
 
 	// Load custom brands.
 	customBrands = compileBrands()
+
+	// Compile sha1 regex (used for key validation).
+	sha1RegexCompiled = regexp.MustCompile(sha1Regex)
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {

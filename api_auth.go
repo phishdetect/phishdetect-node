@@ -54,46 +54,43 @@ func getAPIKeyFromRequest(r *http.Request) string {
 			return ""
 		}
 	}
-	return keys[0]
-}
 
-func getUserFromKey(key string) *User {
-	if key == "" {
-		return nil
+	key := strings.ToLower(keys[0])
+	if !sha1RegexCompiled.MatchString(key) {
+		return ""
 	}
 
-	users, err := db.GetAllUsers()
-	if err != nil {
-		return nil
-	}
-
-	for _, user := range users {
-		if strings.ToLower(user.Key) == strings.ToLower(key) {
-			return &user
-		}
-	}
-
-	return nil
+	return key
 }
 
 func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// If there is no role specified, the API is not protected.
-		if requiredRole == "" {
+		if (enforceUserAuth == false || requiredRole == "") {
 			next(w, r)
 			return
 		}
 
 		// Try to fetch an API key.
 		apiKey := getAPIKeyFromRequest(r)
+		if apiKey == "" {
+			errorWithJSON(w, ERROR_MSG_INVALID_API_KEY, http.StatusUnauthorized, nil)
+			return
+		}
+
 		// Look for a user with this API key.
-		user := getUserFromKey(apiKey)
+		user, err := db.GetUserByKey(apiKey)
+		if err != nil {
+			// The user does not exist with that API key.
+			errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
+			return
+		}
 
 		// If we didn't find a user for this API key and there is
 		// enforceUserAuth enabled, then we return a 401 because no API
 		// should be publicly accessible.
-		if (user == nil || !user.Activated) && enforceUserAuth == true {
-			errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
+		if (!user.Activated && enforceUserAuth == true) {
+			errorWithJSON(w, ERROR_MSG_USER_NOT_ACTIVATED, http.StatusUnauthorized, nil)
 			return
 		}
 
@@ -108,7 +105,7 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 		} else if rolesRank[requiredRole] >= rolesRank[roleSubmitter] {
 			// In case of other roles (submitter and admin) we check if the
 			// matched has a role value >= the required role value.
-			if user != nil && rolesRank[user.Role] >= rolesRank[requiredRole] {
+			if rolesRank[user.Role] >= rolesRank[requiredRole] {
 				next(w, r)
 				return
 			} else {
@@ -123,15 +120,6 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 }
 
 func apiAuth(w http.ResponseWriter, r *http.Request) {
-	// Try to fetch an API key.
-	apiKey := getAPIKeyFromRequest(r)
-	// Look for a user with this API key.
-	user := getUserFromKey(apiKey)
-
-	if user == nil {
-		errorWithJSON(w, ERROR_MSG_INVALID_AUTH, http.StatusUnauthorized, nil)
-		return
-	}
-
+	// This is just a dummy request used to test users.
 	responseWithJSON(w, map[string]string{})
 }
