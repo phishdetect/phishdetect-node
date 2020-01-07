@@ -1,5 +1,5 @@
 // PhishDetect
-// Copyright (c) 2018-2019 Claudio Guarnieri.
+// Copyright (c) 2018-2020 Claudio Guarnieri.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -24,6 +24,7 @@ import (
 
 	pongo "github.com/flosch/pongo2"
 	"github.com/gorilla/mux"
+	"github.com/nu7hatch/gouuid"
 	"github.com/phishdetect/phishdetect"
 	log "github.com/sirupsen/logrus"
 )
@@ -54,9 +55,13 @@ func guiReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	u4, _ := uuid.NewV4()
+
 	report := Report{
-		URL:      urlDecoded,
+		Type:     "url",
+		Content:  urlDecoded,
 		Datetime: time.Now().UTC(),
+		UUID:     u4.String(),
 	}
 
 	err = db.AddReport(report)

@@ -1,5 +1,5 @@
 // PhishDetect
-// Copyright (c) 2018-2019 Claudio Guarnieri.
+// Copyright (c) 2018-2020 Claudio Guarnieri.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -59,17 +59,9 @@ type Event struct {
 	Key         string    `json:"key"`
 }
 
-type Raw struct {
+type Report struct {
 	Type        string    `json:"type"`
 	Content     string    `json:"content"`
-	UserContact string    `json:"user_contact" bson:"user_contact"`
-	Datetime    time.Time `json:"datetime"`
-	UUID        string    `json:"uuid"`
-	Key         string    `json:"key"`
-}
-
-type RawListItem struct {
-	Type        string    `json:"type"`
 	UserContact string    `json:"user_contact" bson:"user_contact"`
 	Datetime    time.Time `json:"datetime"`
 	UUID        string    `json:"uuid"`
@@ -80,12 +72,6 @@ type Review struct {
 	Indicator string    `json:"indicator"`
 	Datetime  time.Time `json:"datetime"`
 	Key       string    `json:"key"`
-}
-
-type Report struct {
-	URL      string    `json:"url"`
-	Datetime time.Time `json:"datetime"`
-	Key      string    `json:"key"`
 }
 
 const IndicatorsLimitAll = 0
@@ -289,8 +275,8 @@ func (d *Database) AddEvent(event Event) error {
 	return err
 }
 
-func (d *Database) GetAllRaw(offset, limit int64) ([]RawListItem, error) {
-	coll := d.DB.Collection("raw")
+func (d *Database) GetAllReports(offset, limit int64, reportType string) ([]Report, error) {
+	coll := d.DB.Collection("reports")
 
 	opts := options.Find()
 	opts.SetSort(bson.D{{"datetime", -1}})
@@ -300,53 +286,52 @@ func (d *Database) GetAllRaw(offset, limit int64) ([]RawListItem, error) {
 	if limit > 0 {
 		opts.SetLimit(limit)
 	}
-	cur, err := coll.Find(context.Background(), bson.D{}, opts)
+
+	filter := bson.D{}
+	if reportType != "" {
+		filter = bson.D{{"type", reportType}}
+	}
+
+	cur, err := coll.Find(context.Background(), filter, opts)
 	if err != nil {
 		return nil, err
 	}
 	defer cur.Close(context.Background())
 
-	rawMessages := []RawListItem{}
+	reports := []Report{}
 	for cur.Next(context.Background()) {
-		var raw RawListItem
-		if err := cur.Decode(&raw); err != nil {
+		var report Report
+		if err := cur.Decode(&report); err != nil {
 			continue
 		}
-		rawMessages = append(rawMessages, raw)
+		reports = append(reports, report)
 	}
 
-	return rawMessages, nil
-}
-
-func (d *Database) AddRaw(raw Raw) error {
-	coll := d.DB.Collection("raw")
-
-	_, err := coll.InsertOne(context.Background(), raw)
-	return err
-}
-
-func (d *Database) GetRawByUUID(uuid string) (Raw, error) {
-	coll := d.DB.Collection("raw")
-
-	var raw Raw
-	err := coll.FindOne(context.Background(), bson.D{{"uuid", uuid}}).Decode(&raw)
-	if err != nil {
-		return Raw{}, err
-	}
-
-	return raw, nil
-}
-
-func (d *Database) AddReview(review Review) error {
-	coll := d.DB.Collection("reviews")
-
-	_, err := coll.InsertOne(context.Background(), review)
-	return err
+	return reports, nil
 }
 
 func (d *Database) AddReport(report Report) error {
 	coll := d.DB.Collection("reports")
 
 	_, err := coll.InsertOne(context.Background(), report)
+	return err
+}
+
+func (d *Database) GetReportByUUID(uuid string) (Report, error) {
+	coll := d.DB.Collection("reports")
+
+	var report Report
+	err := coll.FindOne(context.Background(), bson.D{{"uuid", uuid}}).Decode(&report)
+	if err != nil {
+		return Report{}, err
+	}
+
+	return report, nil
+}
+
+func (d *Database) AddReview(review Review) error {
+	coll := d.DB.Collection("reviews")
+
+	_, err := coll.InsertOne(context.Background(), review)
 	return err
 }

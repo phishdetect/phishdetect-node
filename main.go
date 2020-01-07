@@ -1,5 +1,5 @@
 // PhishDetect
-// Copyright (c) 2018-2019 Claudio Guarnieri.
+// Copyright (c) 2018-2020 Claudio Guarnieri.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -187,7 +187,7 @@ func main() {
 		router.HandleFunc("/api/indicators/fetch/recent/", authMiddleware(apiIndicatorsFetchRecent, roleUser)).Methods("GET")
 		router.HandleFunc("/api/indicators/fetch/all/", authMiddleware(apiIndicatorsFetchAll, roleUser)).Methods("GET")
 		router.HandleFunc("/api/events/add/", authMiddleware(apiEventsAdd, roleUser)).Methods("POST")
-		router.HandleFunc("/api/raw/add/", authMiddleware(apiRawAdd, roleUser)).Methods("POST")
+		router.HandleFunc("/api/reports/add/", authMiddleware(apiReportsAdd, roleUser)).Methods("POST")
 
 		// Submitter routes.
 		router.HandleFunc("/api/indicators/add/", authMiddleware(apiIndicatorsAdd, roleSubmitter)).Methods("POST")
@@ -195,12 +195,13 @@ func main() {
 		// Admin routes.
 		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", sha256Regex), authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/events/fetch/", authMiddleware(apiEventsFetch, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/raw/fetch/", authMiddleware(apiRawFetch, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/raw/details/{uuid:%s}/", uuidRegex), authMiddleware(apiRawDetails, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/reports/fetch/", authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/reports/details/{uuid:%s}/", uuidRegex), authMiddleware(apiReportsDetails, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/users/pending/", authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/users/active/", authMiddleware(apiUsersActive, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/users/activate/{apiKey:%s}/", sha1Regex), authMiddleware(apiUsersActivate, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{apiKey:%s}/", sha1Regex), authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/reports/fetch/", authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
 	}
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
