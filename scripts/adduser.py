@@ -40,7 +40,7 @@ def main():
     if args.admin:
         role = 'admin'
 
-    key = secrets.token_urlsafe(16)
+    key = secrets.token_hex(20)
 
     user = db.users.find_one({'email': email})
     if user:
