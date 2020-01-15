@@ -44,6 +44,7 @@ const (
 var (
 	host         string
 	portNumber   string
+	mongoURL     string
 	apiVersion   string
 	safeBrowsing string
 	brandsPath   string
@@ -70,6 +71,7 @@ var (
 func init() {
 	debug := flag.Bool("debug", false, "Enable debug logging")
 
+	flag.StringVar(&mongoURL, "mongo", "mongodb://localhost:27017", "Specify the mongodb url")
 	flag.StringVar(&host, "host", "127.0.0.1", "Specify the host to bind the service on")
 	flag.StringVar(&portNumber, "port", "7856", "Specify which port number to bind the service on")
 	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use")
@@ -106,7 +108,7 @@ func init() {
 
 	// Initiate connection to database.
 	var err error
-	db, err = NewDatabase()
+	db, err = NewDatabase(mongoURL)
 	if err != nil {
 		log.Fatal("Failed connection to database: ", err.Error())
 		return

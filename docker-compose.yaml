@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  phishdetect-node:
+    build: .
+    container_name: "phishdetect-node"
+    ports:
+      - "7856:7856"
+    entrypoint:
+      - ./build/linux/phishdetect-node
+      - --host=0.0.0.0
+      - --mongo=mongodb://database:27017
+      - --debug
+
+  database:
+    image: 'mongo'
+    container_name: "phishdetect-mongo"
+    volumes:
+      - ./mongo-volume:/data/db

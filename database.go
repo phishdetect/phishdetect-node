@@ -78,8 +78,8 @@ const IndicatorsLimitAll = 0
 const IndicatorsLimit6Months = 1
 const IndicatorsLimit24Hours = 2
 
-func NewDatabase() (*Database, error) {
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+func NewDatabase(url string) (*Database, error) {
+	client, err := mongo.NewClient(options.Client().ApplyURI(url))
 	if err != nil {
 		return nil, err
 	}

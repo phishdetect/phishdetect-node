@@ -20,6 +20,21 @@ In order to build PhishDetect Node you need Go 1.12+ installed. You can then pro
 
 For proper documentation please refer to the [Admin Guide](https://phishdetect.gitbook.io/admin-guide/).
 
+## Docker
+
+To build and run PhishDetect Node in a local Docker container, install Docker
+and run
+
+    docker build -t phishdetect-node .
+    docker run -it --rm --name phishdetect-container -p 7856:7856 phishdetect-node
+
+To run both PhishDetect Node and MongoDB in containers, use docker-compose:
+
+    docker-compose build
+    docker-compose up
+
+You can then access the node at `http://localhost:7856`.
+
 ## License
 
 PhishDetect Node is released under GNU Affero General Public License 3.0 and is copyrighted to Claudio Guarnieri.
