@@ -61,6 +61,7 @@ func cleanIndicator(indicator string) string {
 	indicator = strings.ToLower(indicator)
 	indicator = strings.Replace(indicator, "[@]", "@", -1)
 	indicator = strings.Replace(indicator, "[.]", ".", -1)
+	indicator = strings.Replace(indicator, "\\.", ".", -1)
 
 	if !strings.Contains(indicator, "@") && strings.HasPrefix(indicator, "www.") {
 		indicator = indicator[4:]
