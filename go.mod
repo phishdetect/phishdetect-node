@@ -41,7 +41,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.4 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.4.0 // indirect
-	github.com/phishdetect/phishdetect v1.8.2
+	github.com/phishdetect/phishdetect v1.8.3
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.1.0 // indirect
 	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect

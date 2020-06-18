@@ -26,26 +26,17 @@ import (
 	"github.com/phishdetect/phishdetect"
 )
 
-// Resource contains information on resources loaded while visiting a site.
-type Resource struct {
-	Status  int    `json:"status"`
-	URL     string `json:"url"`
-	Type    string `json:"type"`
-	SHA256  string `json:"sha256"`
-	Content string `json:"content"`
-}
-
 // AnalysisResults contains results from analysis.
 type AnalysisResults struct {
-	URL        string     `json:"url"`
-	URLFinal   string     `json:"url_final"`
-	Safelisted bool       `json:"safelisted"`
-	Brand      string     `json:"brand"`
-	Score      int        `json:"score"`
-	Screenshot string     `json:"screenshot"`
-	Warnings   []string   `json:"warnings"`
-	Visits     []string   `json:"visits"`
-	Resources  []Resource `json:"resources"`
+	URL        string                 `json:"url"`
+	URLFinal   string                 `json:"url_final"`
+	Safelisted bool                   `json:"safelisted"`
+	Brand      string                 `json:"brand"`
+	Score      int                    `json:"score"`
+	Screenshot string                 `json:"screenshot"`
+	Warnings   []phishdetect.Warning  `json:"warnings"`
+	Visits     []string               `json:"visits"`
+	Resources  []phishdetect.Resource `json:"resources"`
 }
 
 func analyzeDomain(domain string) (*AnalysisResults, error) {
@@ -65,18 +56,13 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 	}
 	brand := analysis.Brands.GetBrand()
 
-	var warnings []string
-	for _, warning := range analysis.Warnings {
-		warnings = append(warnings, warning.Description)
-	}
-
 	results := AnalysisResults{
 		URL:        domain,
 		URLFinal:   urlFinal,
 		Safelisted: analysis.Safelisted,
 		Score:      analysis.Score,
 		Brand:      brand,
-		Warnings:   warnings,
+		Warnings:   analysis.Warnings,
 	}
 
 	return &results, nil
@@ -123,24 +109,6 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 	}
 	brand := analysis.Brands.GetBrand()
 
-	var warnings []string
-	for _, warning := range analysis.Warnings {
-		warnings = append(warnings, warning.Description)
-	}
-
-	var resources []Resource
-	for _, resource := range browser.Resources {
-		newResource := Resource{
-			Status:  resource.Status,
-			URL:     resource.URL,
-			Type:    resource.Type,
-			SHA256:  resource.SHA256,
-			Content: resource.Content,
-		}
-
-		resources = append(resources, newResource)
-	}
-
 	results := AnalysisResults{
 		URL:        url,
 		URLFinal:   urlFinal,
@@ -148,9 +116,9 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 		Score:      analysis.Score,
 		Brand:      brand,
 		Screenshot: screenshot,
-		Warnings:   warnings,
+		Warnings:   analysis.Warnings,
 		Visits:     browser.Visits,
-		Resources:  resources,
+		Resources:  browser.Resources,
 	}
 
 	return &results, nil
@@ -186,18 +154,13 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 	}
 	brand := analysis.Brands.GetBrand()
 
-	var warnings []string
-	for _, warning := range analysis.Warnings {
-		warnings = append(warnings, warning.Description)
-	}
-
 	results := AnalysisResults{
 		URL:        url,
 		URLFinal:   urlFinal,
 		Safelisted: analysis.Safelisted,
 		Score:      analysis.Score,
 		Brand:      brand,
-		Warnings:   warnings,
+		Warnings:   analysis.Warnings,
 	}
 
 	return &results, nil
