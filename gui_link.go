@@ -18,16 +18,12 @@ package main
 
 import (
 	"encoding/base64"
-	"fmt"
 	"net/http"
-	"os"
-	"strings"
 	"time"
 
 	pongo "github.com/flosch/pongo2"
 	"github.com/gorilla/mux"
 	"github.com/nu7hatch/gouuid"
-	"github.com/phishdetect/phishdetect"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -95,79 +91,43 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	htmlEncoded := r.PostFormValue("html")
 	screenshot := r.PostFormValue("screenshot")
 
-	html := ""
-
 	// For the moment, urlFinal will be the original URL.
 	urlFinal := url
-	urlNormalized := phishdetect.NormalizeURL(url)
+
+	var results *AnalysisResults
+	var err error
 
 	// If there is no specified HTML string, it means we need to open the link.
 	if htmlEncoded == "" {
-		if !validateURL(url) {
-			errorMessage(w, "You have submitted an invalid link.")
+		results, err = analyzeURL(url)
+		if err != nil {
+			errorPage(w, err.Error())
 			return
 		}
 
-		// Setting Docker API version.
-		os.Setenv("DOCKER_API_VERSION", apiVersion)
-		// Instantiate new browser and open the link.
-		browser := phishdetect.NewBrowser(urlNormalized, "", false, "")
-		err := browser.Run()
-		if err != nil {
-			log.Error(err)
-			errorMessage(w, "Something failed while trying to launch the containerized browser. The URL might be invalid.")
-			return
-		}
-		html = browser.HTML
-		urlFinal = browser.FinalURL
-		screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
-		// Otherwise, we decode the base64-encoded HTML string and use that.
+		urlFinal = results.URLFinal
+		screenshot = results.Screenshot
 	} else {
-		data, err := base64.StdEncoding.DecodeString(htmlEncoded)
+		results, err = analyzeHTML(url, htmlEncoded)
 		if err != nil {
-			log.Error(err)
-			errorMessage(w, "I received invalid HTML data. I expect a base64 encoded string.")
+			errorPage(w, err.Error())
 			return
 		}
-		html = string(data)
 	}
-
-	// Check for Chrome errors, generally raised by connection failures.
-	if strings.HasPrefix(urlFinal, "chrome-error://") {
-		errorMessage(w, "An error occurred while visiting the link. The website might be offline.")
-		return
-	}
-
-	// Now that we have URL and HTML we can analyze results.
-	analysis := phishdetect.NewAnalysis(urlFinal, html)
-	loadBrands(*analysis)
-
-	err := analysis.AnalyzeHTML()
-	if err != nil {
-		errorMessage(w, err.Error())
-		return
-	}
-	err = analysis.AnalyzeURL()
-	if err != nil {
-		errorMessage(w, err.Error())
-		return
-	}
-	brand := analysis.Brands.GetBrand()
 
 	log.Info("Completed analysis of ", url)
 
 	// If the site is safelisted, or the final score is low, we offer
 	// to continue to the original link.
-	if analysis.Safelisted || analysis.Score < 30 {
+	if results.Safelisted || results.Score < 30 {
 		tpl, err := tmplSet.FromCache("continue.html")
 		err = tpl.ExecuteWriter(pongo.Context{
-			"url":           url,
-			"urlNormalized": urlNormalized,
-			"urlFinal":      urlFinal,
-			"sha1":          urlSHA1,
-			"brand":         brand,
-			"safelisted":    analysis.Safelisted,
-			"screenshot":    screenshot,
+			"url":        url,
+			"urlFinal":   urlFinal,
+			"sha1":       urlSHA1,
+			"brand":      results.Brand,
+			"safelisted": results.Safelisted,
+			"screenshot": screenshot,
 		}, w)
 		if err != nil {
 			log.Error(err)
@@ -196,14 +156,13 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	// Otherwise we show the warning.
 	tpl, err := tmplSet.FromCache("warning.html")
 	err = tpl.ExecuteWriter(pongo.Context{
-		"url":           url,
-		"urlNormalized": urlNormalized,
-		"urlFinal":      urlFinal,
-		"sha1":          urlSHA1,
-		"warnings":      analysis.Warnings,
-		"brand":         brand,
-		"score":         analysis.Score,
-		"screenshot":    screenshot,
+		"url":        url,
+		"urlFinal":   urlFinal,
+		"sha1":       urlSHA1,
+		"warnings":   results.Warnings,
+		"brand":      results.Brand,
+		"score":      results.Score,
+		"screenshot": screenshot,
 	}, w)
 	if err != nil {
 		log.Error(err)

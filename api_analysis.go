@@ -17,31 +17,14 @@
 package main
 
 import (
-	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"os"
-
-	"github.com/phishdetect/phishdetect"
 )
 
 // AnalysisRequest contains the information required to start an analysis.
 type AnalysisRequest struct {
 	URL  string `json:"url"`
 	HTML string `json:"html"`
-}
-
-// AnalysisResults contains all the information we want to return through the
-// apiAnalyze API.
-type AnalysisResults struct {
-	URL        string   `json:"url"`
-	URLFinal   string   `json:"url_final"`
-	Safelisted bool     `json:"safelisted"`
-	Brand      string   `json:"brand"`
-	Score      int      `json:"score"`
-	Screenshot string   `json:"screenshot"`
-	Warnings   []string `json:"warnings"`
 }
 
 func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
@@ -58,37 +41,10 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	urlNormalized := phishdetect.NormalizeURL(req.URL)
-	urlFinal := urlNormalized
-
-	if !validateURL(urlNormalized) {
-		errorWithJSON(w, ERROR_MSG_INVALID_URL, http.StatusBadRequest, nil)
-		return
-	}
-
-	analysis := phishdetect.NewAnalysis(urlFinal, "")
-	loadBrands(*analysis)
-
-	err = analysis.AnalyzeDomain()
+	results, err := analyzeDomain(req.URL)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
+		errorWithJSON(w, err.Error(), http.StatusInternalServerError, err)
 		return
-	}
-	brand := analysis.Brands.GetBrand()
-
-	var warnings []string
-	for _, warning := range analysis.Warnings {
-		warnings = append(warnings, warning.Description)
-	}
-
-	results := AnalysisResults{
-		URL:        req.URL,
-		URLFinal:   urlFinal,
-		Safelisted: analysis.Safelisted,
-		Score:      analysis.Score,
-		Brand:      brand,
-		Screenshot: "",
-		Warnings:   warnings,
 	}
 
 	responseWithJSON(w, results)
@@ -108,58 +64,10 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	urlNormalized := phishdetect.NormalizeURL(req.URL)
-	urlFinal := urlNormalized
-
-	var html string
-	var screenshot string
-
-	if !validateURL(urlNormalized) {
-		errorWithJSON(w, ERROR_MSG_INVALID_URL, http.StatusBadRequest, nil)
-		return
-	}
-
-	// Setting Docker API version.
-	os.Setenv("DOCKER_API_VERSION", apiVersion)
-	// Instantiate new browser and open the link.
-	browser := phishdetect.NewBrowser(urlNormalized, "", false, "")
-	err = browser.Run()
+	results, err := analyzeURL(req.URL)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
+		errorWithJSON(w, err.Error(), http.StatusInternalServerError, err)
 		return
-	}
-	html = browser.HTML
-	urlFinal = browser.FinalURL
-	screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
-
-	analysis := phishdetect.NewAnalysis(urlFinal, html)
-	loadBrands(*analysis)
-
-	err = analysis.AnalyzeHTML()
-	if err != nil {
-		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
-		return
-	}
-	err = analysis.AnalyzeURL()
-	if err != nil {
-		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
-		return
-	}
-	brand := analysis.Brands.GetBrand()
-
-	var warnings []string
-	for _, warning := range analysis.Warnings {
-		warnings = append(warnings, warning.Description)
-	}
-
-	results := AnalysisResults{
-		URL:        req.URL,
-		URLFinal:   urlFinal,
-		Safelisted: analysis.Safelisted,
-		Score:      analysis.Score,
-		Brand:      brand,
-		Screenshot: screenshot,
-		Warnings:   warnings,
 	}
 
 	responseWithJSON(w, results)
@@ -179,54 +87,10 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := req.URL
-	urlFinal := url
-
-	if !validateURL(url) {
-		errorWithJSON(w, ERROR_MSG_INVALID_URL, http.StatusBadRequest, nil)
-		return
-	}
-
-	if req.HTML == "" {
-		errorWithJSON(w, ERROR_MSG_INVALID_HTML, http.StatusBadRequest, nil)
-		return
-	}
-
-	htmlData, err := base64.StdEncoding.DecodeString(req.HTML)
+	results, err := analyzeHTML(req.URL, req.HTML)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_INVALID_HTML, http.StatusBadRequest, nil)
+		errorWithJSON(w, err.Error(), http.StatusInternalServerError, err)
 		return
-	}
-	html := string(htmlData)
-
-	analysis := phishdetect.NewAnalysis(urlFinal, html)
-	loadBrands(*analysis)
-
-	err = analysis.AnalyzeHTML()
-	if err != nil {
-		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
-		return
-	}
-	err = analysis.AnalyzeURL()
-	if err != nil {
-		errorWithJSON(w, ERROR_MSG_ANALYSIS_FAILED, http.StatusInternalServerError, err)
-		return
-	}
-	brand := analysis.Brands.GetBrand()
-
-	var warnings []string
-	for _, warning := range analysis.Warnings {
-		warnings = append(warnings, warning.Description)
-	}
-
-	results := AnalysisResults{
-		URL:        url,
-		URLFinal:   urlFinal,
-		Safelisted: analysis.Safelisted,
-		Score:      analysis.Score,
-		Brand:      brand,
-		Screenshot: "",
-		Warnings:   warnings,
 	}
 
 	responseWithJSON(w, results)

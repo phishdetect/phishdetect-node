@@ -66,7 +66,7 @@ func getAPIKeyFromRequest(r *http.Request) string {
 func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// If there is no role specified, the API is not protected.
-		if (enforceUserAuth == false || requiredRole == "") {
+		if enforceUserAuth == false || requiredRole == "" {
 			next(w, r)
 			return
 		}
@@ -89,7 +89,7 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 		// If we didn't find a user for this API key and there is
 		// enforceUserAuth enabled, then we return a 401 because no API
 		// should be publicly accessible.
-		if (!user.Activated && enforceUserAuth == true) {
+		if !user.Activated && enforceUserAuth == true {
 			errorWithJSON(w, ERROR_MSG_USER_NOT_ACTIVATED, http.StatusUnauthorized, nil)
 			return
 		}
