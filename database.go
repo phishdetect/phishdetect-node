@@ -24,6 +24,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/phishdetect/phishdetect"
 )
 
 type Database struct {
@@ -72,6 +73,20 @@ type Review struct {
 	Indicator string    `json:"indicator"`
 	Datetime  time.Time `json:"datetime"`
 	Key       string    `json:"key"`
+}
+
+type AnalysisResults struct {
+	URL        string                 `json:"url"`
+	URLFinal   string                 `json:"url_final" bson:"url_final`
+	Safelisted bool                   `json:"safelisted"`
+	Brand      string                 `json:"brand"`
+	Score      int                    `json:"score"`
+	Screenshot string                 `json:"screenshot"`
+	Warnings   []phishdetect.Warning  `json:"warnings"`
+	Visits     []string               `json:"visits"`
+	Resources  []phishdetect.Resource `json:"resources"`
+	HTML       string                 `json:"html"`
+	EventUUID  string                 `json:"uuid"`
 }
 
 const IndicatorsLimitAll = 0
@@ -345,5 +360,12 @@ func (d *Database) AddReview(review Review) error {
 	coll := d.DB.Collection("reviews")
 
 	_, err := coll.InsertOne(context.Background(), review)
+	return err
+}
+
+func (d *Database) AddAnalysisResults(results AnalysisResults) error {
+	coll := d.DB.Collection("analysisresults")
+
+	_, err := coll.InsertOne(context.Background(), results)
 	return err
 }

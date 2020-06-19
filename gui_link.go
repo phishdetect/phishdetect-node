@@ -94,11 +94,13 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	// For the moment, urlFinal will be the original URL.
 	urlFinal := url
 
+	var eventType string
 	var results *AnalysisResults
 	var err error
 
 	// If there is no specified HTML string, it means we need to open the link.
 	if htmlEncoded == "" {
+		eventType = "analysis_link"
 		results, err = analyzeURL(url)
 		if err != nil {
 			errorPage(w, err.Error())
@@ -108,6 +110,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 		urlFinal = results.URLFinal
 		screenshot = results.Screenshot
 	} else {
+		eventType = "analysis_html"
 		results, err = analyzeHTML(url, htmlEncoded)
 		if err != nil {
 			errorPage(w, err.Error())
@@ -141,16 +144,23 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// We store a record in the database.
-	u4, _ := uuid.NewV4()
+	uuidInstance, _ := uuid.NewV4()
+	uuidString := uuidInstance.String()
 	event := Event{
-		Type:        "analysis",
+		Type:        eventType,
 		Match:       url,
 		Indicator:   "",
 		UserContact: "",
 		Datetime:    time.Now().UTC(),
-		UUID:        u4.String(),
+		UUID:        uuidString,
 	}
 	err = db.AddEvent(event)
+	if err != nil {
+		log.Error(err)
+	}
+
+	results.EventUUID = uuidString
+	err = db.AddAnalysisResults(*results)
 	if err != nil {
 		log.Error(err)
 	}

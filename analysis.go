@@ -26,19 +26,6 @@ import (
 	"github.com/phishdetect/phishdetect"
 )
 
-// AnalysisResults contains results from analysis.
-type AnalysisResults struct {
-	URL        string                 `json:"url"`
-	URLFinal   string                 `json:"url_final"`
-	Safelisted bool                   `json:"safelisted"`
-	Brand      string                 `json:"brand"`
-	Score      int                    `json:"score"`
-	Screenshot string                 `json:"screenshot"`
-	Warnings   []phishdetect.Warning  `json:"warnings"`
-	Visits     []string               `json:"visits"`
-	Resources  []phishdetect.Resource `json:"resources"`
-}
-
 func analyzeDomain(domain string) (*AnalysisResults, error) {
 	urlNormalized := phishdetect.NormalizeURL(domain)
 	urlFinal := urlNormalized
@@ -72,7 +59,6 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 	urlNormalized := phishdetect.NormalizeURL(url)
 	urlFinal := urlNormalized
 
-	var html string
 	var screenshot string
 
 	if !validateURL(urlNormalized) {
@@ -87,7 +73,6 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 	if err != nil {
 		return nil, errors.New(ERROR_MSG_ANALYSIS_FAILED)
 	}
-	html = browser.HTML
 	urlFinal = browser.FinalURL
 
 	if strings.HasPrefix(urlFinal, "chrome-error://") {
@@ -95,7 +80,7 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 	}
 
 	screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
-	analysis := phishdetect.NewAnalysis(urlFinal, html)
+	analysis := phishdetect.NewAnalysis(urlFinal, browser.HTML)
 
 	loadBrands(*analysis)
 
@@ -119,6 +104,7 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 		Warnings:   analysis.Warnings,
 		Visits:     browser.Visits,
 		Resources:  browser.Resources,
+		HTML:       browser.HTML,
 	}
 
 	return &results, nil
@@ -161,6 +147,7 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 		Score:      analysis.Score,
 		Brand:      brand,
 		Warnings:   analysis.Warnings,
+		HTML:       html,
 	}
 
 	return &results, nil
