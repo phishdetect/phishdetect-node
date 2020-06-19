@@ -65,8 +65,8 @@ func apiReportsAdd(w http.ResponseWriter, r *http.Request) {
 
 	report.Datetime = time.Now().UTC()
 
-	u4, _ := uuid.NewV4()
-	report.UUID = u4.String()
+	uuidInstance, _ := uuid.NewV4()
+	report.UUID = uuidInstance.String()
 
 	err = db.AddReport(report)
 	if err != nil {

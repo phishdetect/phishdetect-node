@@ -55,13 +55,12 @@ func guiReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u4, _ := uuid.NewV4()
-
+	uuidInstance, _ := uuid.NewV4()
 	report := Report{
 		Type:     "url",
 		Content:  urlDecoded,
 		Datetime: time.Now().UTC(),
-		UUID:     u4.String(),
+		UUID:     uuidInstance.String(),
 	}
 
 	err = db.AddReport(report)

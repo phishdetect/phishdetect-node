@@ -59,8 +59,8 @@ func apiEventsAdd(w http.ResponseWriter, r *http.Request) {
 
 	event.Datetime = time.Now().UTC()
 
-	u4, _ := uuid.NewV4()
-	event.UUID = u4.String()
+	uuidInstance, _ := uuid.NewV4()
+	event.UUID = uuidInstance.String()
 
 	err = db.AddEvent(event)
 	if err != nil {
