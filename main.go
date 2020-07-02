@@ -22,16 +22,19 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 
 	pongo "github.com/flosch/pongo2"
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
+	"github.com/manifoldco/promptui"
 	"github.com/mattn/go-colorable"
 	"github.com/phishdetect/phishdetect"
 	"github.com/phishdetect/phishdetect/brand"
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 const (
@@ -42,20 +45,21 @@ const (
 )
 
 var (
-	host         string
-	portNumber   string
-	mongoURL     string
-	apiVersion   string
-	safeBrowsing string
-	brandsPath   string
-	yaraPath     string
+	createNewUserFlag bool
+
+	host          string
+	portNumber    string
+	mongoURL      string
+	apiVersion    string
+	safeBrowsing  string
+	brandsPath    string
+	yaraPath      string
+	adminContacts string
 
 	enableAPI       bool
 	enableGUI       bool
 	enableAnalysis  bool
 	enforceUserAuth bool
-
-	adminContacts string
 
 	db *Database
 
@@ -68,20 +72,47 @@ var (
 	sha1RegexCompiled *regexp.Regexp
 )
 
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		remote := r.Header.Get("X-Forwarded-For")
+		if remote == "" {
+			remote = r.RemoteAddr
+		}
+		log.Debug(remote, " ", r.Method, " ", r.RequestURI)
+		next.ServeHTTP(w, r)
+	})
+}
+
 func init() {
+	// Enable debug logging.
 	debug := flag.Bool("debug", false, "Enable debug logging")
 
-	flag.StringVar(&mongoURL, "mongo", "mongodb://localhost:27017", "Specify the mongodb url")
-	flag.StringVar(&host, "host", "127.0.0.1", "Specify the host to bind the service on")
-	flag.StringVar(&portNumber, "port", "7856", "Specify which port number to bind the service on")
-	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use")
-	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
-	flag.StringVar(&brandsPath, "brands", "", "Specify a folder containing YAML files with Brand specifications")
-	flag.StringVar(&yaraPath, "yara", "", "Specify a path to a file or folder contaning Yara rules")
+	// With this flag, instead of starting the server, we create a new user.
+	flag.BoolVar(&createNewUserFlag, "create-user", false, "Create a new user")
+
+	// Disable default functionality.
 	disableAPI := flag.Bool("disable-api", false, "Disable the API routes")
 	disableGUI := flag.Bool("disable-gui", false, "Disable the Web GUI")
 	disableAnalysis := flag.Bool("disable-analysis", false, "Disable the ability to analyze links and pages")
 	disableUserAuth := flag.Bool("disable-user-auth", false, "Disable requirement of a valid user API key for all operations")
+
+	// Server connection details.
+	flag.StringVar(&host, "host", "127.0.0.1", "Specify the host to bind the service on")
+	flag.StringVar(&portNumber, "port", "7856", "Specify which port number to bind the service on")
+	flag.StringVar(&mongoURL, "mongo", "mongodb://localhost:27017", "Specify the mongodb url")
+
+	// Docker API version.
+	// TODO: I should look into deprecating this.
+	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use")
+
+	// Following are optional configuration values.
+	// Path to additional brands YAML definitions.
+	flag.StringVar(&brandsPath, "brands", "", "Specify a folder containing YAML files with Brand specifications")
+	// Path to Yara rules.
+	flag.StringVar(&yaraPath, "yara", "", "Specify a path to a file or folder contaning Yara rules")
+	// Path to a file containing a Google Safebrowsing key.
+	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
+	// URL to a page providing contact details for the Node operators.
 	flag.StringVar(&adminContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
 	flag.Parse()
 
@@ -101,11 +132,6 @@ func init() {
 	enableAnalysis = !*disableAnalysis
 	enforceUserAuth = !*disableUserAuth
 
-	log.Info("Enable API: ", enableAPI)
-	log.Info("Enable GUI: ", enableGUI)
-	log.Info("Enable Analysis: ", enableAnalysis)
-	log.Info("Enforce User Auth: ", enforceUserAuth)
-
 	// Initiate connection to database.
 	var err error
 	db, err = NewDatabase(mongoURL)
@@ -113,6 +139,13 @@ func init() {
 		log.Fatal("Failed connection to database: ", err.Error())
 		return
 	}
+}
+
+func initServer() {
+	log.Info("Enable API: ", enableAPI)
+	log.Info("Enable GUI: ", enableGUI)
+	log.Info("Enable Analysis: ", enableAnalysis)
+	log.Info("Enforce User Auth: ", enforceUserAuth)
 
 	// Initialize SafeBrowsing if an API key was provided.
 	if safeBrowsing != "" {
@@ -151,18 +184,7 @@ func init() {
 	sha1RegexCompiled = regexp.MustCompile(sha1Regex)
 }
 
-func loggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		remote := r.Header.Get("X-Forwarded-For")
-		if remote == "" {
-			remote = r.RemoteAddr
-		}
-		log.Debug(remote, " ", r.Method, " ", r.RequestURI)
-		next.ServeHTTP(w, r)
-	})
-}
-
-func main() {
+func startServer() {
 	fs := http.FileServer(staticBox)
 
 	router := mux.NewRouter()
@@ -226,6 +248,95 @@ func main() {
 	}
 
 	log.Info("Starting PhishDetect Node on ", hostPort, " and waiting for requests...")
-
 	log.Fatal(srv.ListenAndServe())
+}
+
+func createNewUser() {
+	log.Info("Creating a new user")
+
+	promptRole := promptui.Select{
+		Label: "Role",
+		Items: []string{roleAdmin, roleSubmitter, roleUser},
+	}
+	_, role, err := promptRole.Run()
+	if err != nil {
+		log.Error("Failed to enter role: ", err)
+		return
+	}
+	log.Info("You chose role: ", role)
+
+	promptName := promptui.Prompt{
+		Label: "Name",
+	}
+	name, err := promptName.Run()
+	if err != nil {
+		log.Error("Failed to enter name: ", err)
+		return
+	}
+	log.Info("You chose name: ", name)
+
+	promptEmail := promptui.Prompt{
+		Label: "Email",
+	}
+	email, err := promptEmail.Run()
+	if err != nil {
+		log.Error("Failed to enter email: ", err)
+		return
+	}
+	log.Info("You chose email: ", email)
+
+	// Check if a user already exists with the specified email address.
+	existingUsers, err := db.GetAllUsers()
+	if err != nil {
+		log.Error("Unable to retrieve list of existing users: ", err)
+		return
+	}
+	for _, existingUser := range existingUsers {
+		if strings.ToLower(existingUser.Email) == strings.ToLower(email) {
+			log.Error("A user was already registered with the same email address!")
+			return
+		}
+	}
+
+	apiKey, err := generateAPIKey(email)
+	if err != nil {
+		log.Error("Something went wrong while generating your API key! Please try again.")
+		return
+	}
+
+	user := User{
+		Name:      name,
+		Email:     email,
+		Key:       apiKey,
+		Role:      role,
+		Activated: true,
+		Datetime:  time.Now().UTC(),
+	}
+
+	// Validate if the user provided proper data.
+	validate = validator.New()
+	err = validate.Struct(user)
+	if err != nil {
+		log.Error("You did not provide a valid name and/or email address")
+		return
+	}
+
+	// Add user to the database.
+	err = db.AddUser(user)
+	if err != nil {
+		log.Error("Failed to register user: ", err)
+		return
+	}
+
+	log.Info("New user \"", name, "\" created with API key: ", apiKey)
+}
+
+func main() {
+	if createNewUserFlag {
+		createNewUser()
+		return
+	}
+
+	initServer()
+	startServer()
 }

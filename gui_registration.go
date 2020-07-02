@@ -83,7 +83,7 @@ func guiRegister(w http.ResponseWriter, r *http.Request) {
 	validate = validator.New()
 	err = validate.Struct(user)
 	if err != nil {
-		errorPage(w, "You did not provide valid name and email address")
+		errorPage(w, "You did not provide a valid name and/or email address")
 		return
 	}
 
