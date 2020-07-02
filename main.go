@@ -141,7 +141,6 @@ func init() {
 	}
 }
 
-
 func createNewUser() {
 	log.Info("Creating a new user")
 
