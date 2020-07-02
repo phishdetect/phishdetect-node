@@ -51,17 +51,10 @@ func guiRegister(w http.ResponseWriter, r *http.Request) {
 	name := r.PostFormValue("name")
 	email := strings.ToLower(r.PostFormValue("email"))
 
-	// Check if a user already exists with the specified email address.
-	existingUsers, err := db.GetAllUsers()
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	for _, existingUser := range existingUsers {
-		if strings.ToLower(existingUser.Email) == email {
-			errorPage(w, "A user was already registered with the same email address!")
-			return
-		}
+	exists, _ := checkIfUserExists(email)
+	if exists == true {
+		errorPage(w, "A user was already registered with the same email address!")
+		return
 	}
 
 	apiKey, err := generateAPIKey(email)
