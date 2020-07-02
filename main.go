@@ -141,6 +141,87 @@ func init() {
 	}
 }
 
+
+func createNewUser() {
+	log.Info("Creating a new user")
+
+	promptRole := promptui.Select{
+		Label: "Role",
+		Items: []string{roleAdmin, roleSubmitter, roleUser},
+	}
+	_, role, err := promptRole.Run()
+	if err != nil {
+		log.Error("Failed to enter role: ", err)
+		return
+	}
+	log.Info("You chose role: ", role)
+
+	promptName := promptui.Prompt{
+		Label: "Name",
+	}
+	name, err := promptName.Run()
+	if err != nil {
+		log.Error("Failed to enter name: ", err)
+		return
+	}
+	log.Info("You chose name: ", name)
+
+	promptEmail := promptui.Prompt{
+		Label: "Email",
+	}
+	email, err := promptEmail.Run()
+	if err != nil {
+		log.Error("Failed to enter email: ", err)
+		return
+	}
+	log.Info("You chose email: ", email)
+
+	// Check if a user already exists with the specified email address.
+	existingUsers, err := db.GetAllUsers()
+	if err != nil {
+		log.Error("Unable to retrieve list of existing users: ", err)
+		return
+	}
+	for _, existingUser := range existingUsers {
+		if strings.ToLower(existingUser.Email) == strings.ToLower(email) {
+			log.Error("A user was already registered with the same email address!")
+			return
+		}
+	}
+
+	apiKey, err := generateAPIKey(email)
+	if err != nil {
+		log.Error("Something went wrong while generating your API key! Please try again.")
+		return
+	}
+
+	user := User{
+		Name:      name,
+		Email:     email,
+		Key:       apiKey,
+		Role:      role,
+		Activated: true,
+		Datetime:  time.Now().UTC(),
+	}
+
+	// Validate if the user provided proper data.
+	validate = validator.New()
+	err = validate.Struct(user)
+	if err != nil {
+		log.Error("You did not provide a valid name and/or email address")
+		return
+	}
+
+	// Add user to the database.
+	err = db.AddUser(user)
+	if err != nil {
+		log.Error("Failed to register user: ", err)
+		return
+	}
+
+	log.Info("New user \"", name, "\" created with API key: ", apiKey)
+}
+
 func initServer() {
 	log.Info("Enable API: ", enableAPI)
 	log.Info("Enable GUI: ", enableGUI)
@@ -249,86 +330,6 @@ func startServer() {
 
 	log.Info("Starting PhishDetect Node on ", hostPort, " and waiting for requests...")
 	log.Fatal(srv.ListenAndServe())
-}
-
-func createNewUser() {
-	log.Info("Creating a new user")
-
-	promptRole := promptui.Select{
-		Label: "Role",
-		Items: []string{roleAdmin, roleSubmitter, roleUser},
-	}
-	_, role, err := promptRole.Run()
-	if err != nil {
-		log.Error("Failed to enter role: ", err)
-		return
-	}
-	log.Info("You chose role: ", role)
-
-	promptName := promptui.Prompt{
-		Label: "Name",
-	}
-	name, err := promptName.Run()
-	if err != nil {
-		log.Error("Failed to enter name: ", err)
-		return
-	}
-	log.Info("You chose name: ", name)
-
-	promptEmail := promptui.Prompt{
-		Label: "Email",
-	}
-	email, err := promptEmail.Run()
-	if err != nil {
-		log.Error("Failed to enter email: ", err)
-		return
-	}
-	log.Info("You chose email: ", email)
-
-	// Check if a user already exists with the specified email address.
-	existingUsers, err := db.GetAllUsers()
-	if err != nil {
-		log.Error("Unable to retrieve list of existing users: ", err)
-		return
-	}
-	for _, existingUser := range existingUsers {
-		if strings.ToLower(existingUser.Email) == strings.ToLower(email) {
-			log.Error("A user was already registered with the same email address!")
-			return
-		}
-	}
-
-	apiKey, err := generateAPIKey(email)
-	if err != nil {
-		log.Error("Something went wrong while generating your API key! Please try again.")
-		return
-	}
-
-	user := User{
-		Name:      name,
-		Email:     email,
-		Key:       apiKey,
-		Role:      role,
-		Activated: true,
-		Datetime:  time.Now().UTC(),
-	}
-
-	// Validate if the user provided proper data.
-	validate = validator.New()
-	err = validate.Struct(user)
-	if err != nil {
-		log.Error("You did not provide a valid name and/or email address")
-		return
-	}
-
-	// Add user to the database.
-	err = db.AddUser(user)
-	if err != nil {
-		log.Error("Failed to register user: ", err)
-		return
-	}
-
-	log.Info("New user \"", name, "\" created with API key: ", apiKey)
 }
 
 func main() {
