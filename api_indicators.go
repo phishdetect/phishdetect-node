@@ -57,7 +57,7 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	// We get the indicators from the DB.
 	iocs, err := db.GetIndicators(IndicatorsLimit6Months)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_INDICATORS_FETCH_FAILED, http.StatusInternalServerError, err)
+		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -68,7 +68,7 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 func apiIndicatorsFetchRecent(w http.ResponseWriter, r *http.Request) {
 	iocs, err := db.GetIndicators(IndicatorsLimit24Hours)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_INDICATORS_FETCH_FAILED, http.StatusInternalServerError, err)
+		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -79,7 +79,7 @@ func apiIndicatorsFetchRecent(w http.ResponseWriter, r *http.Request) {
 func apiIndicatorsFetchAll(w http.ResponseWriter, r *http.Request) {
 	iocs, err := db.GetIndicators(IndicatorsLimitAll)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_INDICATORS_FETCH_FAILED, http.StatusInternalServerError, err)
+		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -93,13 +93,13 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	var req RequestIndicatorsAdd
 	err := decoder.Decode(&req)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_PARSE_REQUEST_FAILED, http.StatusBadRequest, err)
+		errorWithJSON(w, ErrorMsgParseRequestFailed, http.StatusBadRequest, err)
 		return
 	}
 
 	user, err := db.GetUserByKey(getAPIKeyFromRequest(r))
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
+		errorWithJSON(w, ErrorMsgNotAuthorized, http.StatusUnauthorized, nil)
 		return
 	}
 

@@ -74,7 +74,7 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 		// Try to fetch an API key.
 		apiKey := getAPIKeyFromRequest(r)
 		if apiKey == "" {
-			errorWithJSON(w, ERROR_MSG_INVALID_API_KEY, http.StatusUnauthorized, nil)
+			errorWithJSON(w, ErrorMsgInvalidApiKey, http.StatusUnauthorized, nil)
 			return
 		}
 
@@ -82,7 +82,7 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 		user, err := db.GetUserByKey(apiKey)
 		if err != nil {
 			// The user does not exist with that API key.
-			errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
+			errorWithJSON(w, ErrorMsgNotAuthorized, http.StatusUnauthorized, nil)
 			return
 		}
 
@@ -90,7 +90,7 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 		// enforceUserAuth enabled, then we return a 401 because no API
 		// should be publicly accessible.
 		if !user.Activated && enforceUserAuth == true {
-			errorWithJSON(w, ERROR_MSG_USER_NOT_ACTIVATED, http.StatusUnauthorized, nil)
+			errorWithJSON(w, ErrorMsgUserNotActivated, http.StatusUnauthorized, nil)
 			return
 		}
 
@@ -111,11 +111,11 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 			}
 
 			// Otherwise we return 401.
-			errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
+			errorWithJSON(w, ErrorMsgNotAuthorized, http.StatusUnauthorized, nil)
 			return
 		}
 
-		errorWithJSON(w, ERROR_MSG_UNEXPECTED_ERROR, http.StatusInternalServerError, nil)
+		errorWithJSON(w, ErrorMsgUnexpectedError, http.StatusInternalServerError, nil)
 	})
 }
 

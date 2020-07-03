@@ -29,7 +29,7 @@ type AnalysisRequest struct {
 
 func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	if !enableAnalysis {
-		errorWithJSON(w, ERROR_MSG_ANALYSIS_DISABLED, http.StatusForbidden, nil)
+		errorWithJSON(w, ErrorMsgAnalysisDisabled, http.StatusForbidden, nil)
 		return
 	}
 
@@ -37,7 +37,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_INVALID_REQUEST, http.StatusBadRequest, err)
+		errorWithJSON(w, ErrorMsgInvalidRequest, http.StatusBadRequest, err)
 		return
 	}
 
@@ -52,7 +52,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 
 func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	if !enableAnalysis {
-		errorWithJSON(w, ERROR_MSG_ANALYSIS_DISABLED, http.StatusForbidden, nil)
+		errorWithJSON(w, ErrorMsgAnalysisDisabled, http.StatusForbidden, nil)
 		return
 	}
 
@@ -60,7 +60,7 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_INVALID_REQUEST, http.StatusBadRequest, err)
+		errorWithJSON(w, ErrorMsgInvalidRequest, http.StatusBadRequest, err)
 		return
 	}
 
@@ -75,7 +75,7 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 
 func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	if !enableAnalysis {
-		errorWithJSON(w, ERROR_MSG_ANALYSIS_DISABLED, http.StatusForbidden, nil)
+		errorWithJSON(w, ErrorMsgAnalysisDisabled, http.StatusForbidden, nil)
 		return
 	}
 
@@ -83,7 +83,7 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 	var req AnalysisRequest
 	err := decoder.Decode(&req)
 	if err != nil {
-		errorWithJSON(w, ERROR_MSG_INVALID_REQUEST, http.StatusBadRequest, err)
+		errorWithJSON(w, ErrorMsgInvalidRequest, http.StatusBadRequest, err)
 		return
 	}
 

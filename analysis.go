@@ -31,7 +31,7 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 	urlFinal := urlNormalized
 
 	if !validateURL(urlNormalized) {
-		return nil, errors.New(ERROR_MSG_INVALID_URL)
+		return nil, errors.New(ErrorMsgInvalidUrl)
 	}
 
 	analysis := phishdetect.NewAnalysis(urlFinal, "")
@@ -39,7 +39,7 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 
 	err := analysis.AnalyzeDomain()
 	if err != nil {
-		return nil, errors.New(ERROR_MSG_ANALYSIS_FAILED)
+		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := analysis.Brands.GetBrand()
 
@@ -62,7 +62,7 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 	var screenshot string
 
 	if !validateURL(urlNormalized) {
-		return nil, errors.New(ERROR_MSG_INVALID_URL)
+		return nil, errors.New(ErrorMsgInvalidUrl)
 	}
 
 	// Setting Docker API version.
@@ -71,12 +71,12 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 	browser := phishdetect.NewBrowser(urlNormalized, "", false, "")
 	err := browser.Run()
 	if err != nil {
-		return nil, errors.New(ERROR_MSG_ANALYSIS_FAILED)
+		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	urlFinal = browser.FinalURL
 
 	if strings.HasPrefix(urlFinal, "chrome-error://") {
-		return nil, errors.New(ERROR_MSG_CONNECTION_FAILED)
+		return nil, errors.New(ErrorMsgConnectionFailed)
 	}
 
 	screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
@@ -86,11 +86,11 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 
 	err = analysis.AnalyzeHTML()
 	if err != nil {
-		return nil, errors.New(ERROR_MSG_ANALYSIS_FAILED)
+		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		return nil, errors.New(ERROR_MSG_ANALYSIS_FAILED)
+		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := analysis.Brands.GetBrand()
 
@@ -114,16 +114,16 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 	urlFinal := url
 
 	if !validateURL(url) {
-		return nil, errors.New(ERROR_MSG_INVALID_URL)
+		return nil, errors.New(ErrorMsgInvalidUrl)
 	}
 
 	if htmlEncoded == "" {
-		return nil, errors.New(ERROR_MSG_INVALID_HTML)
+		return nil, errors.New(ErrorMsgInvalidHtml)
 	}
 
 	htmlData, err := base64.StdEncoding.DecodeString(htmlEncoded)
 	if err != nil {
-		return nil, errors.New(ERROR_MSG_INVALID_HTML)
+		return nil, errors.New(ErrorMsgInvalidHtml)
 	}
 	html := string(htmlData)
 
@@ -132,11 +132,11 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 
 	err = analysis.AnalyzeHTML()
 	if err != nil {
-		return nil, errors.New(ERROR_MSG_ANALYSIS_FAILED)
+		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		return nil, errors.New(ERROR_MSG_ANALYSIS_FAILED)
+		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := analysis.Brands.GetBrand()
 
