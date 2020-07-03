@@ -50,9 +50,9 @@ func getAPIKeyFromRequest(r *http.Request) string {
 		if r.Method == "POST" {
 			r.ParseForm()
 			return r.PostFormValue("key")
-		} else {
-			return ""
 		}
+
+		return ""
 	}
 
 	key := strings.ToLower(keys[0])
@@ -108,11 +108,11 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 			if rolesRank[user.Role] >= rolesRank[requiredRole] {
 				next(w, r)
 				return
-			} else {
-				// Otherwise we return 401.
-				errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
-				return
 			}
+
+			// Otherwise we return 401.
+			errorWithJSON(w, ERROR_MSG_NOT_AUTHORIZED, http.StatusUnauthorized, nil)
+			return
 		}
 
 		errorWithJSON(w, ERROR_MSG_UNEXPECTED_ERROR, http.StatusInternalServerError, nil)
