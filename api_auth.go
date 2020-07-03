@@ -74,7 +74,7 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 		// Try to fetch an API key.
 		apiKey := getAPIKeyFromRequest(r)
 		if apiKey == "" {
-			errorWithJSON(w, ErrorMsgInvalidApiKey, http.StatusUnauthorized, nil)
+			errorWithJSON(w, ErrorMsgInvalidAPIKey, http.StatusUnauthorized, nil)
 			return
 		}
 

@@ -31,7 +31,7 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 	urlFinal := urlNormalized
 
 	if !validateURL(urlNormalized) {
-		return nil, errors.New(ErrorMsgInvalidUrl)
+		return nil, errors.New(ErrorMsgInvalidURL)
 	}
 
 	analysis := phishdetect.NewAnalysis(urlFinal, "")
@@ -62,7 +62,7 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 	var screenshot string
 
 	if !validateURL(urlNormalized) {
-		return nil, errors.New(ErrorMsgInvalidUrl)
+		return nil, errors.New(ErrorMsgInvalidURL)
 	}
 
 	// Setting Docker API version.
@@ -114,7 +114,7 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 	urlFinal := url
 
 	if !validateURL(url) {
-		return nil, errors.New(ErrorMsgInvalidUrl)
+		return nil, errors.New(ErrorMsgInvalidURL)
 	}
 
 	if htmlEncoded == "" {
