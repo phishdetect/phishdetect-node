@@ -17,97 +17,97 @@
 package main
 
 import (
-    "strings"
-    "time"
+	"strings"
+	"time"
 
-    "github.com/manifoldco/promptui"
-    log "github.com/sirupsen/logrus"
-    "gopkg.in/go-playground/validator.v9"
+	"github.com/manifoldco/promptui"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 func checkIfUserExists(email string) (bool, error) {
-    // Check if a user already exists with the specified email address.
-    existingUsers, err := db.GetAllUsers()
-    if err != nil {
-        return false, err
-    }
-    for _, existingUser := range existingUsers {
-        if strings.ToLower(existingUser.Email) == strings.ToLower(email) {
-            return true, nil
-        }
-    }
-    return false, nil
+	// Check if a user already exists with the specified email address.
+	existingUsers, err := db.GetAllUsers()
+	if err != nil {
+		return false, err
+	}
+	for _, existingUser := range existingUsers {
+		if strings.ToLower(existingUser.Email) == strings.ToLower(email) {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 func createNewUser() {
-    log.Info("Creating a new user")
+	log.Info("Creating a new user")
 
-    promptRole := promptui.Select{
-        Label: "Role",
-        Items: []string{roleAdmin, roleSubmitter, roleUser},
-    }
-    _, role, err := promptRole.Run()
-    if err != nil {
-        log.Error("Failed to enter role: ", err)
-        return
-    }
-    log.Info("You chose role: ", role)
+	promptRole := promptui.Select{
+		Label: "Role",
+		Items: []string{roleAdmin, roleSubmitter, roleUser},
+	}
+	_, role, err := promptRole.Run()
+	if err != nil {
+		log.Error("Failed to enter role: ", err)
+		return
+	}
+	log.Info("You chose role: ", role)
 
-    promptName := promptui.Prompt{
-        Label: "Name",
-    }
-    name, err := promptName.Run()
-    if err != nil {
-        log.Error("Failed to enter name: ", err)
-        return
-    }
-    log.Info("You chose name: ", name)
+	promptName := promptui.Prompt{
+		Label: "Name",
+	}
+	name, err := promptName.Run()
+	if err != nil {
+		log.Error("Failed to enter name: ", err)
+		return
+	}
+	log.Info("You chose name: ", name)
 
-    promptEmail := promptui.Prompt{
-        Label: "Email",
-    }
-    email, err := promptEmail.Run()
-    if err != nil {
-        log.Error("Failed to enter email: ", err)
-        return
-    }
-    log.Info("You chose email: ", email)
+	promptEmail := promptui.Prompt{
+		Label: "Email",
+	}
+	email, err := promptEmail.Run()
+	if err != nil {
+		log.Error("Failed to enter email: ", err)
+		return
+	}
+	log.Info("You chose email: ", email)
 
-    exists, _ := checkIfUserExists(email)
-    if exists == true {
-    	log.Error("User with provided email account already exists")
-    	return
-    }
+	exists, _ := checkIfUserExists(email)
+	if exists == true {
+		log.Error("User with provided email account already exists")
+		return
+	}
 
-    apiKey, err := generateAPIKey(email)
-    if err != nil {
-        log.Error("Something went wrong while generating your API key! Please try again.")
-        return
-    }
+	apiKey, err := generateAPIKey(email)
+	if err != nil {
+		log.Error("Something went wrong while generating your API key! Please try again.")
+		return
+	}
 
-    user := User{
-        Name:      name,
-        Email:     email,
-        Key:       apiKey,
-        Role:      role,
-        Activated: true,
-        Datetime:  time.Now().UTC(),
-    }
+	user := User{
+		Name:      name,
+		Email:     email,
+		Key:       apiKey,
+		Role:      role,
+		Activated: true,
+		Datetime:  time.Now().UTC(),
+	}
 
-    // Validate if the user provided proper data.
-    validate = validator.New()
-    err = validate.Struct(user)
-    if err != nil {
-        log.Error("You did not provide a valid name and/or email address")
-        return
-    }
+	// Validate if the user provided proper data.
+	validate = validator.New()
+	err = validate.Struct(user)
+	if err != nil {
+		log.Error("You did not provide a valid name and/or email address")
+		return
+	}
 
-    // Add user to the database.
-    err = db.AddUser(user)
-    if err != nil {
-        log.Error("Failed to register user: ", err)
-        return
-    }
+	// Add user to the database.
+	err = db.AddUser(user)
+	if err != nil {
+		log.Error("Failed to register user: ", err)
+		return
+	}
 
-    log.Info("New user \"", name, "\" created with API key: ", apiKey)
+	log.Info("New user \"", name, "\" created with API key: ", apiKey)
 }
