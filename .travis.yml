@@ -24,10 +24,9 @@ before_install:
 
 install:
 - cd -
-- env GO111MODULE=on make deps
 
 script:
-- env GO111MODULE=on make linux
+- env GO111MODULE=on make build
 
 deploy:
     provider: releases
