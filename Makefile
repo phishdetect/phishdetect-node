@@ -9,6 +9,7 @@ pre: clean
 	@mkdir -p $(BUILD_FOLDER)
 	env GO111MODULE=on go get -d ./
 	env GO111MODULE=on go mod download
+	go get -u github.com/gobuffalo/packr/...
 
 build: pre
 	@echo "[builder] Building PhishDetect Node executable"
