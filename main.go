@@ -28,10 +28,11 @@ import (
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	"github.com/mattn/go-colorable"
-	"github.com/phishdetect/phishdetect"
-	"github.com/phishdetect/phishdetect/brand"
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
+
+	"github.com/phishdetect/phishdetect"
+	"github.com/phishdetect/phishdetect/brand"
 )
 
 const (

@@ -25,8 +25,9 @@ import (
 	pongo "github.com/flosch/pongo2"
 	"github.com/gorilla/mux"
 	"github.com/nu7hatch/gouuid"
-	"github.com/phishdetect/phishdetect"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/phishdetect/phishdetect"
 )
 
 func guiReport(w http.ResponseWriter, r *http.Request) {

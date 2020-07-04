@@ -22,10 +22,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/phishdetect/phishdetect"
-	"github.com/phishdetect/phishdetect/brand"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+
+	"github.com/phishdetect/phishdetect"
+	"github.com/phishdetect/phishdetect/brand"
 )
 
 func compileBrands() []*brand.Brand {
