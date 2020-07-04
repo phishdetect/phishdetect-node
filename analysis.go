@@ -118,12 +118,12 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 	}
 
 	if htmlEncoded == "" {
-		return nil, errors.New(ErrorMsgInvalidHtml)
+		return nil, errors.New(ErrorMsgInvalidHTML)
 	}
 
 	htmlData, err := base64.StdEncoding.DecodeString(htmlEncoded)
 	if err != nil {
-		return nil, errors.New(ErrorMsgInvalidHtml)
+		return nil, errors.New(ErrorMsgInvalidHTML)
 	}
 	html := string(htmlData)
 
