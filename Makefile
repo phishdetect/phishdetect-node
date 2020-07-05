@@ -1,4 +1,4 @@
-.DEFAULT_GOAL = linux
+.DEFAULT_GOAL = build
 BUILD_FOLDER  = $(shell pwd)/build
 FLAGS_LINUX   = GOOS=linux GOARCH=amd64 CGO_ENABLED=1
 
