@@ -25,7 +25,7 @@ import (
 	"github.com/nu7hatch/gouuid"
 )
 
-func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
+func apiAlertsFetch(w http.ResponseWriter, r *http.Request) {
 	var offset int64 = 0
 	keys, ok := r.URL.Query()["offset"]
 	if ok && len(keys) == 1 {
@@ -38,39 +38,39 @@ func apiEventsFetch(w http.ResponseWriter, r *http.Request) {
 		limit, _ = strconv.ParseInt(keys[0], 10, 64)
 	}
 
-	events, err := db.GetAllEvents(offset, limit)
+	alerts, err := db.GetAllAlerts(offset, limit)
 	if err != nil {
-		errorWithJSON(w, "Failed to fetch events from database", http.StatusInternalServerError, err)
+		errorWithJSON(w, "Failed to fetch alerts from database", http.StatusInternalServerError, err)
 		return
 	}
 
-	responseWithJSON(w, events)
+	responseWithJSON(w, alerts)
 }
 
-func apiEventsAdd(w http.ResponseWriter, r *http.Request) {
-	// We decode the request to an Event.
+func apiAlertsAdd(w http.ResponseWriter, r *http.Request) {
+	// We decode the request to an Alert.
 	decoder := json.NewDecoder(r.Body)
-	var event Event
-	err := decoder.Decode(&event)
+	var alert Alert
+	err := decoder.Decode(&alert)
 	if err != nil {
-		errorWithJSON(w, "Unable to parse event", http.StatusBadRequest, err)
+		errorWithJSON(w, "Unable to parse alert", http.StatusBadRequest, err)
 		return
 	}
 
-	event.Datetime = time.Now().UTC()
+	alert.Datetime = time.Now().UTC()
 
 	uuidInstance, _ := uuid.NewV4()
-	event.UUID = uuidInstance.String()
+	alert.UUID = uuidInstance.String()
 
-	err = db.AddEvent(event)
+	err = db.AddAlert(alert)
 	if err != nil {
-		errorWithJSON(w, "Unable to store event in database", http.StatusInternalServerError, err)
+		errorWithJSON(w, "Unable to store alert in database", http.StatusInternalServerError, err)
 		return
 	}
 
 	response := map[string]string{
-		"msg":  "Event added successfully",
-		"uuid": event.UUID,
+		"msg":  "Alert added successfully",
+		"uuid": alert.UUID,
 	}
 
 	responseWithJSON(w, response)

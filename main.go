@@ -214,7 +214,7 @@ func startServer() {
 		router.HandleFunc("/api/indicators/fetch/", authMiddleware(apiIndicatorsFetch, roleUser)).Methods("GET")
 		router.HandleFunc("/api/indicators/fetch/recent/", authMiddleware(apiIndicatorsFetchRecent, roleUser)).Methods("GET")
 		router.HandleFunc("/api/indicators/fetch/all/", authMiddleware(apiIndicatorsFetchAll, roleUser)).Methods("GET")
-		router.HandleFunc("/api/events/add/", authMiddleware(apiEventsAdd, roleUser)).Methods("POST")
+		router.HandleFunc("/api/alerts/add/", authMiddleware(apiAlertsAdd, roleUser)).Methods("POST")
 		router.HandleFunc("/api/reports/add/", authMiddleware(apiReportsAdd, roleUser)).Methods("POST")
 
 		// Submitter routes.
@@ -222,7 +222,7 @@ func startServer() {
 
 		// Admin routes.
 		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", sha256Regex), authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/events/fetch/", authMiddleware(apiEventsFetch, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/alerts/fetch/", authMiddleware(apiAlertsFetch, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/reports/fetch/", authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/reports/details/{uuid:%s}/", uuidRegex), authMiddleware(apiReportsDetails, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/users/pending/", authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")

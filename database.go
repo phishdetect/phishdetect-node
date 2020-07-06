@@ -51,7 +51,7 @@ type Indicator struct {
 	Owner    string    `json:"owner"`
 }
 
-type Event struct {
+type Alert struct {
 	Type        string    `json:"type"`
 	Match       string    `json:"match"`
 	Indicator   string    `json:"indicator"`
@@ -87,7 +87,7 @@ type AnalysisResults struct {
 	Visits     []string               `json:"visits"`
 	Resources  []phishdetect.Resource `json:"resources"`
 	HTML       string                 `json:"html"`
-	EventUUID  string                 `json:"uuid"`
+	AlertUUID  string                 `json:"uuid"`
 }
 
 const IndicatorsLimitAll = 0
@@ -267,8 +267,8 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 	return err
 }
 
-func (d *Database) GetAllEvents(offset, limit int64) ([]Event, error) {
-	coll := d.DB.Collection("events")
+func (d *Database) GetAllAlerts(offset, limit int64) ([]Alert, error) {
+	coll := d.DB.Collection("alerts")
 
 	opts := options.Find()
 	opts.SetSort(bson.D{{"datetime", -1}})
@@ -284,22 +284,22 @@ func (d *Database) GetAllEvents(offset, limit int64) ([]Event, error) {
 	}
 	defer cur.Close(context.Background())
 
-	events := []Event{}
+	alerts := []Alert{}
 	for cur.Next(context.Background()) {
-		var event Event
-		if err := cur.Decode(&event); err != nil {
+		var alert Alert
+		if err := cur.Decode(&alert); err != nil {
 			continue
 		}
-		events = append(events, event)
+		alerts = append(alerts, alert)
 	}
 
-	return events, nil
+	return alerts, nil
 }
 
-func (d *Database) AddEvent(event Event) error {
-	coll := d.DB.Collection("events")
+func (d *Database) AddAlert(alert Alert) error {
+	coll := d.DB.Collection("alerts")
 
-	_, err := coll.InsertOne(context.Background(), event)
+	_, err := coll.InsertOne(context.Background(), alert)
 	return err
 }
 
