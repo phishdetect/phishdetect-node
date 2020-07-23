@@ -122,7 +122,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	// If the site is safelisted, or the final score is low, we offer
 	// to continue to the original link.
-	if (results.Safelisted && !results.Dangerous) || results.Score < 30 {
+	if ((results.Safelisted || results.Score < 30) && !results.Dangerous) {
 		urlFinalEncoded := base64.StdEncoding.EncodeToString([]byte(urlFinal))
 		tpl, err := tmplSet.FromCache("continue.html")
 		err = tpl.ExecuteWriter(pongo.Context{
