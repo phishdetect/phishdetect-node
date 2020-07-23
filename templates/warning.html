@@ -1,11 +1,10 @@
 <div class="text-center mb-6">
     {% if score >= 30 and score <= 50 %}
     <i class="fas fa-question" aria-hidden="true" style="font-size: 60px;"></i>
-    <h1 class="font-normal mt-4"><b>PhishDetect</b> Warning</h1>
     {% elif score > 50 %}
     <i class="fas fa-exclamation-triangle" aria-hidden="true" style="font-size: 60px;"></i>
-    <h1 class="font-normal mt-4"><b>PhishDetect</b> Alert</h1>
     {% endif %}
+    <h1 class="font-normal mt-4"><b>PhishDetect</b> Warning</h1>
 </div>
 
 {% if errors %}
@@ -19,34 +18,40 @@
     </ul>
 </div>
 {% else %}
-    {% if oauth %}
-        <!--TODO:
-            <div class="alert alert-danger">While this is a legitimate Google site, <b>this link would grant an external application access to your account</b>! While this might have legitimate uses, it can also be a popular attack technique called <b>OAuth Phishing</b>. You can find more information about it <a target="_blank" href="https://duo.com/blog/gmail-oauth-phishing-goes-viral">here</a>. Unless you are absolutely certain about its legitimacy, <b>we recommend to not proceed</b>.</div>-->
-    {% else %}
-        {% if safelisted %}
+    {% if dangerous %}
+        <div class="border-l-8 border-yellow-lighter mb-8 bg-yellow-lightest text-yellow-darker p-6 rounded-lg leading-normal">
+            <div style="word-break: break-all;">We analyzed the link: <span class="font-mono bg-yellow-lighter text-yellow-darkest">{{url}}</span></div>
+            <div class="mt-2">While this is a legitimate <i class="fab fa-{{brand}}"></i> {{brand|capfirst}} site, we advise caution. Some services offer functionality often abused by malicious attackers. This link leads to one such risky legitimate services, therefore we are not able to automatically determine whether it's safe to proceed.</div>
 
-        {% else %}
-            {% if score >= 30 and score <= 50 %}
-            <div class="border-l-8 border-yellow-lighter mb-8 bg-yellow-lightest text-yellow-darker p-6 rounded-lg leading-normal">
-                <div style="word-break: break-all;">You tried to visit: <span class="font-mono bg-yellow-lighter text-yellow-darkest">{{url}}</span></div>
-                <div>This website has suspicious properties. This <b>could be a phishing site{% if brand %} impersonating <i class="fab fa-{{brand}}"></i> {{brand|capfirst}}{% endif %}</b>, but we couldn't determine more conclusively. Please proceed with caution.</div>
-            {% elif score > 50 %}
-            <div class="border-l-8 border-red-lighter mb-8 bg-red-lightest text-red-darker p-6 rounded-lg leading-normal">
-                <div style="word-break: break-all;">You tried to visit <span class="font-mono bg-red-lighter text-red-darkest">{{url}}</span></div>
-                <div>This website has very suspicious properties. This is <b>highly likely a phishing site{% if brand %} impersonating <i class="fab fa-{{brand}}"></i> {{brand|capfirst}}{% endif %}</b>. We recommend to not proceed to this page.</div>
-            {% endif %}
-
-                <h4 class="mt-4">Warnings</h4>
-
-                <div id="warnings" class="collapse" role="tabpanel">
-                    <ul>
-                        {% for warning in warnings %}
-                        <li>{{warning.Description}}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+            <h4 class="mt-4 mb-2">Following are some examples:</h4>
+            <div>
+                <ul>
+                    <li>Services like Google or Microsoft allow for <b>third-party applications</b> to connect to your account (for example, to import invitations into an external calendar service). An attacker might try to obtain access to your account by tricking you into granting a malicious third-party application access to it.</li>
+                    <li>Google, for example, offers to host pages at <b>sites.google.com</b>. Attackers often abuse this service to serve their phishing websites.</li>
+                </ul>
             </div>
+        </div>
+    {% else %}
+        {% if score >= 30 and score <= 50 %}
+        <div class="border-l-8 border-yellow-lighter mb-8 bg-yellow-lightest text-yellow-darker p-6 rounded-lg leading-normal">
+            <div style="word-break: break-all;">We analyzed the link: <span class="font-mono bg-yellow-lighter text-yellow-darkest">{{url}}</span></div>
+            <div>This website has suspicious properties. This <b>could be a phishing site{% if brand %} impersonating <i class="fab fa-{{brand}}"></i> {{brand|capfirst}}{% endif %}</b>, but we couldn't determine more conclusively. Please proceed with caution.</div>
+        {% elif score > 50 %}
+        <div class="border-l-8 border-red-lighter mb-8 bg-red-lightest text-red-darker p-6 rounded-lg leading-normal">
+            <div style="word-break: break-all;">We analyzed the link <span class="font-mono bg-red-lighter text-red-darkest">{{url}}</span></div>
+            <div>This website has very suspicious properties. This is <b>highly likely a phishing site{% if brand %} impersonating <i class="fab fa-{{brand}}"></i> {{brand|capfirst}}{% endif %}</b>. We recommend to not proceed to this page.</div>
         {% endif %}
+
+            <h4 class="mt-4">Warnings</h4>
+
+            <div id="warnings" class="collapse" role="tabpanel">
+                <ul>
+                    {% for warning in warnings %}
+                    <li>{{warning.Description}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     {% endif %}
 
     {% if urlFinal and url != urlFinal %}
