@@ -80,6 +80,7 @@ type AnalysisResults struct {
 	URL        string                 `json:"url"`
 	URLFinal   string                 `json:"url_final" bson:"url_final`
 	Safelisted bool                   `json:"safelisted"`
+	Dangerous  bool                   `json:"dangerous"`
 	Brand      string                 `json:"brand"`
 	Score      int                    `json:"score"`
 	Screenshot string                 `json:"screenshot"`
