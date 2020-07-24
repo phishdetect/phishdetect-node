@@ -31,6 +31,8 @@ import (
 
 const IndicatorTypeEmail = "email"
 const IndicatorTypeDomain = "domain"
+const IndicatorsGroupEmails = "emails"
+const IndicatorsGroupDomains = "domains"
 
 type RequestIndicatorsAdd struct {
 	Type       string   `json:"type"`
@@ -80,8 +82,8 @@ func prepareIndicators(iocs []Indicator) map[string][]string {
 	}
 	// We assemble the response.
 	indicators := map[string][]string{
-		"emails":  emails,
-		"domains": domains,
+		IndicatorsGroupEmails:  emails,
+		IndicatorsGroupDomains: domains,
 	}
 
 	return indicators
