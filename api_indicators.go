@@ -18,18 +18,52 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/go-playground/validator.v9"
 )
+
+const IndicatorTypeEmail = "email"
+const IndicatorTypeDomain = "domain"
 
 type RequestIndicatorsAdd struct {
 	Type       string   `json:"type"`
 	Indicators []string `json:"indicators"`
 	Tags       []string `json:"tags"`
+}
+
+func cleanIndicator(indicator string) string {
+	indicator = strings.TrimSpace(indicator)
+	indicator = strings.ToLower(indicator)
+	indicator = strings.Replace(indicator, "[@]", "@", -1)
+	indicator = strings.Replace(indicator, "[.]", ".", -1)
+	indicator = strings.Replace(indicator, "\\@", "@", -1)
+	indicator = strings.Replace(indicator, "\\.", ".", -1)
+
+	if !strings.Contains(indicator, "@") && strings.HasPrefix(indicator, "www.") {
+		indicator = indicator[4:]
+	}
+
+	return indicator
+}
+
+func detectIndicatorType(indicator string) (string, error) {
+	validate := validator.New()
+	if validate.Var(indicator, "email") == nil {
+		return IndicatorTypeEmail, nil
+	}
+
+	if validate.Var(indicator, "fqdn") == nil {
+		return IndicatorTypeDomain, nil
+	}
+
+	return "", errors.New("Invalid indicator type")
 }
 
 func prepareIndicators(iocs []Indicator) map[string][]string {
@@ -38,9 +72,9 @@ func prepareIndicators(iocs []Indicator) map[string][]string {
 	domains := []string{}
 	for _, ioc := range iocs {
 		switch ioc.Type {
-		case "email":
+		case IndicatorTypeEmail:
 			emails = append(emails, ioc.Hashed)
-		case "domain":
+		case IndicatorTypeDomain:
 			domains = append(domains, ioc.Hashed)
 		}
 	}
@@ -120,8 +154,16 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 			hashed = encodeSHA256(indicator)
 		}
 
+		// We try to automatically determine the indicator type.
+		// If we can't, we skip this indicator as it might be of an unsupported
+		// format.
+		indicatorType, err := detectIndicatorType(indicator)
+		if err != nil {
+			continue
+		}
+
 		ioc := Indicator{
-			Type:     req.Type,
+			Type:     indicatorType,
 			Original: indicator,
 			Hashed:   hashed,
 			Tags:     req.Tags,
