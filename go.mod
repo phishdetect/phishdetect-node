@@ -73,7 +73,7 @@ require (
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208 // indirect
 	golang.org/x/sys v0.0.0-20200722175500-76b94024e4b6 // indirect
 	golang.org/x/text v0.3.3 // indirect
-	golang.org/x/tools v0.0.0-20200723000907-a7c6fd066f6d // indirect
+	golang.org/x/tools v0.0.0-20200724022722-7017fd6b1305 // indirect
 	google.golang.org/api v0.10.0 // indirect
 	google.golang.org/appengine v1.6.2 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
