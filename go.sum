@@ -253,6 +253,8 @@ github.com/phishdetect/phishdetect v1.9.1 h1:50lISx95MK4YRuafFzS27/pgdmNlk6orN/D
 github.com/phishdetect/phishdetect v1.9.1/go.mod h1:GFm1nJy3FsIePOTD5KJEbfGoPlJp+QSRL0rgj7nkIm8=
 github.com/phishdetect/phishdetect v1.9.2 h1:u/GCbvoS/AYuAiS+vYxsI19X3hzV55edsW1hMxwQsC0=
 github.com/phishdetect/phishdetect v1.9.2/go.mod h1:GFm1nJy3FsIePOTD5KJEbfGoPlJp+QSRL0rgj7nkIm8=
+github.com/phishdetect/phishdetect v1.10.0 h1:By6G1i6jqcTaQ+lnHfBnEV8f1Y09aCZBsZG//LmkB5Y=
+github.com/phishdetect/phishdetect v1.10.0/go.mod h1:GFm1nJy3FsIePOTD5KJEbfGoPlJp+QSRL0rgj7nkIm8=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
