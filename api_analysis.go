@@ -50,7 +50,7 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 	responseWithJSON(w, results)
 }
 
-func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
+func apiAnalyzeURL(w http.ResponseWriter, r *http.Request) {
 	if !enableAnalysis {
 		errorWithJSON(w, ErrorMsgAnalysisDisabled, http.StatusForbidden, nil)
 		return
@@ -65,6 +65,29 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	results, err := analyzeURL(req.URL)
+	if err != nil {
+		errorWithJSON(w, err.Error(), http.StatusInternalServerError, err)
+		return
+	}
+
+	responseWithJSON(w, results)
+}
+
+func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
+	if !enableAnalysis {
+		errorWithJSON(w, ErrorMsgAnalysisDisabled, http.StatusForbidden, nil)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var req AnalysisRequest
+	err := decoder.Decode(&req)
+	if err != nil {
+		errorWithJSON(w, ErrorMsgInvalidRequest, http.StatusBadRequest, err)
+		return
+	}
+
+	results, err := analyzeLink(req.URL)
 	if err != nil {
 		errorWithJSON(w, err.Error(), http.StatusInternalServerError, err)
 		return

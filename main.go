@@ -208,8 +208,9 @@ func startServer() {
 
 		// User routes.
 		router.HandleFunc("/api/auth/", authMiddleware(apiAuth, roleUser)).Methods("GET")
-		router.HandleFunc("/api/analyze/link/", authMiddleware(apiAnalyzeLink, roleUser)).Methods("POST")
 		router.HandleFunc("/api/analyze/domain/", authMiddleware(apiAnalyzeDomain, roleUser)).Methods("POST")
+		router.HandleFunc("/api/analyze/url/", authMiddleware(apiAnalyzeURL, roleUser)).Methods("POST")
+		router.HandleFunc("/api/analyze/link/", authMiddleware(apiAnalyzeLink, roleUser)).Methods("POST")
 		router.HandleFunc("/api/analyze/html/", authMiddleware(apiAnalyzeHTML, roleUser)).Methods("POST")
 		router.HandleFunc("/api/indicators/fetch/", authMiddleware(apiIndicatorsFetch, roleUser)).Methods("GET")
 		router.HandleFunc("/api/indicators/fetch/recent/", authMiddleware(apiIndicatorsFetchRecent, roleUser)).Methods("GET")

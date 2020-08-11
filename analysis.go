@@ -26,6 +26,7 @@ import (
 	"github.com/phishdetect/phishdetect"
 )
 
+// analyzeDomain is used to statically analyze a domain name.
 func analyzeDomain(domain string) (*AnalysisResults, error) {
 	urlNormalized := phishdetect.NormalizeURL(domain)
 	urlFinal := urlNormalized
@@ -56,7 +57,39 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 	return &results, nil
 }
 
-func analyzeURL(url string) (*AnalysisResults, error) {
+// analyzeURL is used to statically analyze a URL.
+func analyzeURL(domain string) (*AnalysisResults, error) {
+	urlNormalized := phishdetect.NormalizeURL(domain)
+	urlFinal := urlNormalized
+
+	if !validateURL(urlNormalized) {
+		return nil, errors.New(ErrorMsgInvalidURL)
+	}
+
+	analysis := phishdetect.NewAnalysis(urlFinal, "")
+	loadBrands(*analysis)
+
+	err := analysis.AnalyzeURL()
+	if err != nil {
+		return nil, errors.New(ErrorMsgAnalysisFailed)
+	}
+	brand := analysis.Brands.GetBrand()
+
+	results := AnalysisResults{
+		URL:        domain,
+		URLFinal:   urlFinal,
+		Safelisted: analysis.Safelisted,
+		Dangerous:  analysis.Dangerous,
+		Score:      analysis.Score,
+		Brand:      brand,
+		Warnings:   analysis.Warnings,
+	}
+
+	return &results, nil
+}
+
+// analyzeLink is used to dynamically analyze a URL.
+func analyzeLink(url string) (*AnalysisResults, error) {
 	urlNormalized := phishdetect.NormalizeURL(url)
 	urlFinal := urlNormalized
 
@@ -112,6 +145,7 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 	return &results, nil
 }
 
+// analyzeHTML is used to statically analyze an HTML page.
 func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 	urlFinal := url
 

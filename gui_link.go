@@ -101,7 +101,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	// If there is no specified HTML string, it means we need to open the link.
 	if htmlEncoded == "" {
 		alertType = "analysis_link"
-		results, err = analyzeURL(url)
+		results, err = analyzeLink(url)
 		if err != nil {
 			errorPage(w, err.Error())
 			return
