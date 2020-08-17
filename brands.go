@@ -29,7 +29,7 @@ import (
 	"github.com/phishdetect/phishdetect/brand"
 )
 
-func compileBrands() []*brand.Brand {
+func compileBrands() []brand.Brand {
 	if brandsPath == "" {
 		return nil
 	}
@@ -48,7 +48,7 @@ func compileBrands() []*brand.Brand {
 		return nil
 	})
 
-	brands := []*brand.Brand{}
+	brands := []brand.Brand{}
 
 	for _, path := range filePaths {
 		log.Debug("Trying to load custom brand file at path ", path)
@@ -62,7 +62,7 @@ func compileBrands() []*brand.Brand {
 
 		log.Debug("Loaded custom brand with name: ", customBrand.Name)
 
-		brands = append(brands, &customBrand)
+		brands = append(brands, customBrand)
 	}
 
 	return brands
@@ -70,9 +70,9 @@ func compileBrands() []*brand.Brand {
 
 func loadBrands(analysis phishdetect.Analysis) {
 	for _, customBrand := range customBrands {
-		// We reset the matches, otherwise we will have polluted results.
-		customBrand.Matches = 0
-		analysis.Brands.AddBrand(customBrand)
+		log.Debug("Adding brand with name ", customBrand.Name, " to analysis")
+		newBrand := customBrand
+		analysis.Brands.AddBrand(&newBrand)
 	}
 
 	return

@@ -28,7 +28,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/hillu/go-yara v1.2.3-0.20200518212313-9cc0bc27f86c // indirect
 	github.com/juju/errors v0.0.0-20190806202954-0232dcc7464d // indirect
-	github.com/karrick/godirwalk v1.15.8 // indirect
+	github.com/karrick/godirwalk v1.16.1 // indirect
 	github.com/kr/pty v1.1.8 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mafredri/cdp v0.29.2 // indirect
@@ -71,9 +71,9 @@ require (
 	golang.org/x/mobile v0.0.0-20190830201351-c6da95954960 // indirect
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208 // indirect
-	golang.org/x/sys v0.0.0-20200810151505-1b9f1253b3ed // indirect
+	golang.org/x/sys v0.0.0-20200814200057-3d37ad5750ed // indirect
 	golang.org/x/text v0.3.3 // indirect
-	golang.org/x/tools v0.0.0-20200811032001-fd80f4dbb3ea // indirect
+	golang.org/x/tools v0.0.0-20200817023811-d00afeaade8f // indirect
 	google.golang.org/api v0.10.0 // indirect
 	google.golang.org/appengine v1.6.2 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect

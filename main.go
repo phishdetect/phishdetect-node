@@ -65,7 +65,7 @@ var (
 	staticBox    packr.Box
 	tmplSet      *pongo.TemplateSet
 
-	customBrands []*brand.Brand
+	customBrands []brand.Brand
 
 	sha1RegexCompiled *regexp.Regexp
 )
