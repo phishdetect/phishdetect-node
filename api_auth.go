@@ -65,8 +65,10 @@ func getAPIKeyFromRequest(r *http.Request) string {
 
 func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// If there is no role specified, the API is not protected.
-		if enforceUserAuth == false || requiredRole == "" {
+		// Return to the API call immediately either if no role was required,
+		// or if the --disable-user-auth parameter was passed to the command-line
+		// and the required role is just user.
+		if (enforceUserAuth == false && requiredRole == roleUser) || requiredRole == "" {
 			next(w, r)
 			return
 		}
