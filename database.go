@@ -49,6 +49,7 @@ type Indicator struct {
 	Tags     []string  `json:"tags"`
 	Datetime time.Time `json:"datetime"`
 	Owner    string    `json:"owner"`
+	Enabled  bool      `json:"enabled"`
 }
 
 type Alert struct {
@@ -199,18 +200,20 @@ func (d *Database) GetIndicators(limit int) ([]Indicator, error) {
 
 	switch limit {
 	case IndicatorsLimitAll:
-		filter = bson.M{}
+		filter = bson.M{"enabled": true}
 	case IndicatorsLimit6Months:
 		filter = bson.M{
 			"datetime": bson.M{
 				"$gte": now.AddDate(0, -6, 0),
 			},
+			"enabled": true,
 		}
 	case IndicatorsLimit24Hours:
 		filter = bson.M{
 			"datetime": bson.M{
 				"$gte": now.Add(-24 * time.Hour),
 			},
+			"enabled": true,
 		}
 	}
 

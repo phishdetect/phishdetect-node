@@ -38,6 +38,7 @@ type RequestIndicatorsAdd struct {
 	Type       string   `json:"type"`
 	Indicators []string `json:"indicators"`
 	Tags       []string `json:"tags"`
+	Enabled    bool     `json:"enabled"`
 }
 
 func cleanIndicator(indicator string) string {
@@ -171,6 +172,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 			Tags:     req.Tags,
 			Datetime: time.Now().UTC(),
 			Owner:    user.Name,
+			Enabled:  req.Enabled,
 		}
 
 		err = db.AddIndicator(ioc)
