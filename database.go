@@ -190,7 +190,7 @@ func (d *Database) GetUserByKey(key string) (User, error) {
 	return userFound, nil
 }
 
-func (d *Database) GetIndicators(limit int) ([]Indicator, error) {
+func (d *Database) GetIndicators(limit int, enabled bool) ([]Indicator, error) {
 	var iocs []Indicator
 	coll := d.DB.Collection("indicators")
 
@@ -200,20 +200,20 @@ func (d *Database) GetIndicators(limit int) ([]Indicator, error) {
 
 	switch limit {
 	case IndicatorsLimitAll:
-		filter = bson.M{"enabled": true}
+		filter = bson.M{"enabled": enabled}
 	case IndicatorsLimit6Months:
 		filter = bson.M{
 			"datetime": bson.M{
 				"$gte": now.AddDate(0, -6, 0),
 			},
-			"enabled": true,
+			"enabled": enabled,
 		}
 	case IndicatorsLimit24Hours:
 		filter = bson.M{
 			"datetime": bson.M{
 				"$gte": now.Add(-24 * time.Hour),
 			},
-			"enabled": true,
+			"enabled": enabled,
 		}
 	}
 

@@ -223,6 +223,7 @@ func startServer() {
 
 		// Admin routes.
 		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", sha256Regex), authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/indicators/disabled/"), authMiddleware(apiIndicatorsFetchDisabled, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/alerts/fetch/", authMiddleware(apiAlertsFetch, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/reports/fetch/", authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/reports/details/{uuid:%s}/", uuidRegex), authMiddleware(apiReportsDetails, roleAdmin)).Methods("GET")

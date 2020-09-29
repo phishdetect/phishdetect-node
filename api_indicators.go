@@ -92,7 +92,7 @@ func prepareIndicators(iocs []Indicator) map[string][]string {
 
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	// We get the indicators from the DB.
-	iocs, err := db.GetIndicators(IndicatorsLimit6Months)
+	iocs, err := db.GetIndicators(IndicatorsLimit6Months, true)
 	if err != nil {
 		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
@@ -103,7 +103,7 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiIndicatorsFetchRecent(w http.ResponseWriter, r *http.Request) {
-	iocs, err := db.GetIndicators(IndicatorsLimit24Hours)
+	iocs, err := db.GetIndicators(IndicatorsLimit24Hours, true)
 	if err != nil {
 		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
@@ -114,7 +114,7 @@ func apiIndicatorsFetchRecent(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiIndicatorsFetchAll(w http.ResponseWriter, r *http.Request) {
-	iocs, err := db.GetIndicators(IndicatorsLimitAll)
+	iocs, err := db.GetIndicators(IndicatorsLimitAll, true)
 	if err != nil {
 		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
@@ -122,6 +122,16 @@ func apiIndicatorsFetchAll(w http.ResponseWriter, r *http.Request) {
 
 	indicators := prepareIndicators(iocs)
 	responseWithJSON(w, indicators)
+}
+
+func apiIndicatorsFetchDisabled(w http.ResponseWriter, r *http.Request) {
+	iocs, err := db.GetIndicators(IndicatorsLimitAll, false)
+	if err != nil {
+		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
+		return
+	}
+
+	responseWithJSON(w, iocs)
 }
 
 func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
