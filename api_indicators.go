@@ -202,6 +202,44 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	responseWithJSON(w, response)
 }
 
+func apiIndicatorsToggle(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var indicators []string
+	err := decoder.Decode(&indicators)
+	if err != nil {
+		errorWithJSON(w, ErrorMsgParseRequestFailed, http.StatusBadRequest, err)
+		return
+	}
+
+	toggledCounter := 0
+	for _, indicator := range indicators {
+		if !validateSHA256(indicator) {
+			continue
+		}
+
+		ioc, err := db.GetIndicatorByHash(indicator)
+		if err != nil {
+			continue
+		}
+
+		ioc.Enabled = !ioc.Enabled;
+		err = db.UpdateIndicator(ioc)
+		if err != nil {
+			log.Warning("Failed to update indicator: ", err.Error())
+			continue
+		}
+
+		toggledCounter++;
+	}
+
+	response := map[string]interface{}{
+		"msg":     fmt.Sprintf("Toggled %d indicators", toggledCounter),
+		"counter": toggledCounter,
+	}
+
+	responseWithJSON(w, response)
+}
+
 func apiIndicatorsDetails(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 

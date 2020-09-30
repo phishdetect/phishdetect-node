@@ -251,6 +251,10 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 
 	var iocFound Indicator
 	err := coll.FindOne(context.Background(), bson.D{{"hashed", ioc.Hashed}}).Decode(&iocFound)
+	// First, we check if an error was returned.
+	// If it's ErrNoDocuments, then it's all good: it just means that there is
+	// no record created yet. If we get a different error, it means something
+	// failed in the query, so we actually retun straight away.
 	if err != nil {
 		switch err {
 		case mongo.ErrNoDocuments:
@@ -258,7 +262,13 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 			return err
 		}
 	} else {
-		// We update the data of the indicator, so that it get served again.
+		// If no error is returned, it means that a record for the particular
+		// indicator already exists.
+		// NOTE: In this case we refresh the datetime in order to make sure it
+		//       is served again. The rationale behind this is that if an IOC
+		//       was re-added it might be because it is being re-used after
+		//       the first discovery. Updating the datetime will make sure that
+		//       the IOC is served in the list of last 24h/6 months feed.
 		_, err = coll.UpdateOne(context.Background(), bson.D{{"hashed", ioc.Hashed}},
 			bson.M{"$set": bson.M{"datetime": time.Now().UTC()}})
 		if err != nil {
@@ -268,6 +278,25 @@ func (d *Database) AddIndicator(ioc Indicator) error {
 	}
 
 	_, err = coll.InsertOne(context.Background(), ioc)
+	return err
+}
+
+func (d *Database) UpdateIndicator(ioc Indicator) error {
+	coll := d.DB.Collection("indicators")
+
+	var iocFound Indicator
+	err := coll.FindOne(context.Background(), bson.D{{"hashed", ioc.Hashed}}).Decode(&iocFound)
+	if err != nil {
+		return err
+	}
+
+	_, err = coll.UpdateOne(context.Background(), bson.D{{"hashed", ioc.Hashed}},
+		bson.M{"$set": bson.M{
+			"datetime": time.Now().UTC(),
+			"tags":     ioc.Tags,
+			"enabled":  ioc.Enabled,
+		}})
+
 	return err
 }
 

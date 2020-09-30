@@ -33,7 +33,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208 // indirect
 	golang.org/x/sys v0.0.0-20200929083018-4d22bbb62b3c // indirect
-	golang.org/x/tools v0.0.0-20200928201943-a0ef9b62deab // indirect
+	golang.org/x/tools v0.0.0-20200929223013-bf155c11ec6f // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
