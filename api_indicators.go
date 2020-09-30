@@ -29,11 +29,21 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+// IndicatorTypeEmail contains the name of the type of indicator as stored
+// in the database.
 const IndicatorTypeEmail = "email"
+// IndicatorTypeDomain contains the name of the type of indicator as stored
+// in the database.
 const IndicatorTypeDomain = "domain"
+// IndicatorsGroupEmails contains the key name for the type of indicators
+// as returned when the lists is fetched by clients.
 const IndicatorsGroupEmails = "emails"
+// IndicatorsGroupDomains contains the key name for the type of indicators
+// as returned when the lists is fetched by clients.
 const IndicatorsGroupDomains = "domains"
 
+// RequestIndicatorsAdd contains the fields submitted by an administrator or
+// submitter when requesting to add new indicators to the database.
 type RequestIndicatorsAdd struct {
 	Type       string   `json:"type"`
 	Indicators []string `json:"indicators"`

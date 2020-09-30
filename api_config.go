@@ -20,6 +20,7 @@ import (
 	"net/http"
 )
 
+// Config contains information on the configuration of the node.
 type Config struct {
 	EnableAPI             bool   `json:"enable_api"`
 	EnableGUI             bool   `json:"enable_gui"`
