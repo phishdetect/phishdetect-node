@@ -222,14 +222,14 @@ func apiIndicatorsToggle(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		ioc.Enabled = !ioc.Enabled;
+		ioc.Enabled = !ioc.Enabled
 		err = db.UpdateIndicator(ioc)
 		if err != nil {
 			log.Warning("Failed to update indicator: ", err.Error())
 			continue
 		}
 
-		toggledCounter++;
+		toggledCounter++
 	}
 
 	response := map[string]interface{}{

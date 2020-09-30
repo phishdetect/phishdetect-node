@@ -195,8 +195,10 @@ func startServer() {
 		router.HandleFunc("/", guiIndex).Methods("GET")
 		router.HandleFunc("/register/", guiRegister).Methods("GET", "POST")
 		router.HandleFunc("/contacts/", guiContacts).Methods("GET")
-		router.HandleFunc("/link/analyze/", authMiddleware(guiLinkAnalyze, roleUser)).Methods("POST")
-		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", base64Regex), authMiddleware(guiLinkCheck, roleUser)).Methods("GET", "POST")
+		router.HandleFunc("/link/analyze/",
+			authMiddleware(guiLinkAnalyze, roleUser)).Methods("POST")
+		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", base64Regex),
+			authMiddleware(guiLinkCheck, roleUser)).Methods("GET", "POST")
 		router.HandleFunc(fmt.Sprintf("/report/{url:%s}/", base64Regex), guiReport).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}/", sha256Regex), guiReview).Methods("GET")
 	}
@@ -208,31 +210,56 @@ func startServer() {
 
 		// User routes.
 		router.HandleFunc("/api/auth/", authMiddleware(apiAuth, roleUser)).Methods("GET")
-		router.HandleFunc("/api/analyze/domain/", authMiddleware(apiAnalyzeDomain, roleUser)).Methods("POST")
-		router.HandleFunc("/api/analyze/url/", authMiddleware(apiAnalyzeURL, roleUser)).Methods("POST")
-		router.HandleFunc("/api/analyze/link/", authMiddleware(apiAnalyzeLink, roleUser)).Methods("POST")
-		router.HandleFunc("/api/analyze/html/", authMiddleware(apiAnalyzeHTML, roleUser)).Methods("POST")
-		router.HandleFunc("/api/indicators/fetch/", authMiddleware(apiIndicatorsFetch, roleUser)).Methods("GET")
-		router.HandleFunc("/api/indicators/fetch/recent/", authMiddleware(apiIndicatorsFetchRecent, roleUser)).Methods("GET")
-		router.HandleFunc("/api/indicators/fetch/all/", authMiddleware(apiIndicatorsFetchAll, roleUser)).Methods("GET")
-		router.HandleFunc("/api/alerts/add/", authMiddleware(apiAlertsAdd, roleUser)).Methods("POST")
-		router.HandleFunc("/api/reports/add/", authMiddleware(apiReportsAdd, roleUser)).Methods("POST")
+		//--------------------------------------------------
+		router.HandleFunc("/api/analyze/domain/",
+			authMiddleware(apiAnalyzeDomain, roleUser)).Methods("POST")
+		router.HandleFunc("/api/analyze/url/",
+			authMiddleware(apiAnalyzeURL, roleUser)).Methods("POST")
+		router.HandleFunc("/api/analyze/link/",
+			authMiddleware(apiAnalyzeLink, roleUser)).Methods("POST")
+		router.HandleFunc("/api/analyze/html/",
+			authMiddleware(apiAnalyzeHTML, roleUser)).Methods("POST")
+		//--------------------------------------------------
+		router.HandleFunc("/api/indicators/fetch/",
+			authMiddleware(apiIndicatorsFetch, roleUser)).Methods("GET")
+		router.HandleFunc("/api/indicators/fetch/recent/",
+			authMiddleware(apiIndicatorsFetchRecent, roleUser)).Methods("GET")
+		router.HandleFunc("/api/indicators/fetch/all/",
+			authMiddleware(apiIndicatorsFetchAll, roleUser)).Methods("GET")
+		//--------------------------------------------------
+		router.HandleFunc("/api/alerts/add/",
+			authMiddleware(apiAlertsAdd, roleUser)).Methods("POST")
+		router.HandleFunc("/api/reports/add/",
+			authMiddleware(apiReportsAdd, roleUser)).Methods("POST")
 
 		// Submitter routes.
-		router.HandleFunc("/api/indicators/add/", authMiddleware(apiIndicatorsAdd, roleSubmitter)).Methods("POST")
+		router.HandleFunc("/api/indicators/add/",
+			authMiddleware(apiIndicatorsAdd, roleSubmitter)).Methods("POST")
 
 		// Admin routes.
-		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", sha256Regex), authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/indicators/toggle/", authMiddleware(apiIndicatorsToggle, roleAdmin)).Methods("POST")
-		router.HandleFunc(fmt.Sprintf("/api/indicators/disabled/"), authMiddleware(apiIndicatorsFetchDisabled, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/alerts/fetch/", authMiddleware(apiAlertsFetch, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/reports/fetch/", authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/reports/details/{uuid:%s}/", uuidRegex), authMiddleware(apiReportsDetails, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/users/pending/", authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/users/active/", authMiddleware(apiUsersActive, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/users/activate/{apiKey:%s}/", sha1Regex), authMiddleware(apiUsersActivate, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{apiKey:%s}/", sha1Regex), authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/reports/fetch/", authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", sha256Regex),
+			authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/indicators/disabled/"),
+			authMiddleware(apiIndicatorsFetchDisabled, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/indicators/toggle/",
+			authMiddleware(apiIndicatorsToggle, roleAdmin)).Methods("POST")
+		//--------------------------------------------------
+		router.HandleFunc("/api/alerts/fetch/",
+			authMiddleware(apiAlertsFetch, roleAdmin)).Methods("GET")
+		//--------------------------------------------------
+		router.HandleFunc("/api/reports/fetch/",
+			authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/reports/details/{uuid:%s}/", uuidRegex),
+			authMiddleware(apiReportsDetails, roleAdmin)).Methods("GET")
+		//--------------------------------------------------
+		router.HandleFunc("/api/users/pending/",
+			authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")
+		router.HandleFunc("/api/users/active/",
+			authMiddleware(apiUsersActive, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/users/activate/{apiKey:%s}/", sha1Regex),
+			authMiddleware(apiUsersActivate, roleAdmin)).Methods("GET")
+		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{apiKey:%s}/", sha1Regex),
+			authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
 	}
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
