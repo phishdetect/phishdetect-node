@@ -11,7 +11,7 @@ This is the server component of PhishDetect, normally referred to as PhishDetect
 
 PhishDetect Node requires Yara to execute. Yara is optionally used in case you want to provide the server the ability to scan suspicious pages with a set of Yara rules. It is preferable that you compile it from sources, please refer to the [official documentation](https://yara.readthedocs.io/en/stable/).
 
-In order to run PhishDetect Node you only need to download the `phishdetect-node` binary from the [latest release](https://github.com/phishdetect/phishdetect-node/releases/latest). You can simply launch the binary for a default configuration, or explore all of the command-line options available:
+In order to run PhishDetect Node you only need to download the `phishdetect-node` binary from the [latest release](https://github.com/phishdetect/phishdetect-node/releases/latest). You can simply launch the binary for a default configuration, or explore all of the available command-line options:
 
     Usage of phishdetect-node:
           --api-version string    Specify which Docker API version to use (default "1.37")
@@ -33,9 +33,9 @@ For a more exhaustive documentation on how to install and use PhishDetect please
 
 ## License
 
-PhishDetect Node is released under GNU Affero General Public License 3.0 and is copyrighted to Claudio Guarnieri.
+PhishDetect Node is released under [GNU Affero General Public License 3.0](LICENSE) and is copyrighted to [Claudio Guarnieri](https://nex.sx).
 
-The hook icon was created by Alex Fuller from Noun Project.
+The hook icon was created by [Alex Fuller](https://thenounproject.com/alexfuller/) from Noun Project.
 
 [goreportcard]: https://goreportcard.com/report/github.com/phishdetect/phishdetect-node
 [goreportcard-badge]: https://goreportcard.com/badge/github.com/phishdetect/phishdetect-node
