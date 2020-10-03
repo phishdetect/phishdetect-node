@@ -9,31 +9,27 @@ This is the server component of PhishDetect, normally referred to as PhishDetect
 
 ## Install
 
-In order to run PhishDetect Node you only need to download the `phishdetect-node` binary from the [latest release](https://github.com/phishdetect/phishdetect-node/releases/latest).
+PhishDetect Node requires Yara to execute. Yara is optionally used in case you want to provide the server the ability to scan suspicious pages with a set of Yara rules. It is preferable that you compile it from sources, please refer to the [official documentation](https://yara.readthedocs.io/en/stable/).
 
-## Build
+In order to run PhishDetect Node you only need to download the `phishdetect-node` binary from the [latest release](https://github.com/phishdetect/phishdetect-node/releases/latest). You can simply launch the binary for a default configuration, or explore all of the command-line options available:
 
-In order to build PhishDetect Node you need Go 1.12+ installed. You can then proceed with:
+    Usage of phishdetect-node:
+          --api-version string    Specify which Docker API version to use (default "1.37")
+          --brands string         Specify a folder containing YAML files with Brand specifications
+          --contacts string       Specify a link to information or contacts details to be provided to your users
+          --create-user           Create a new user
+          --debug                 Enable debug logging
+          --disable-analysis      Disable the ability to analyze links and pages
+          --disable-api           Disable the API routes
+          --disable-gui           Disable the Web GUI
+          --disable-user-auth     Disable requirement of a valid user API key for all operations
+          --host string           Specify the host to bind the service on (default "127.0.0.1")
+          --mongo string          Specify the mongodb url (default "mongodb://localhost:27017")
+          --port string           Specify which port number to bind the service on (default "7856")
+          --safebrowsing string   Specify a file path containing your Google SafeBrowsing API key (default disabled)
+          --yara string           Specify a path to a file or folder contaning Yara rules
 
-    make deps
-    make linux
-
-For proper documentation please refer to the [Admin Guide](https://phishdetect.gitbook.io/admin-guide/).
-
-## Docker
-
-To build and run PhishDetect Node in a local Docker container, install Docker
-and run
-
-    docker build -t phishdetect-node .
-    docker run -it --rm --name phishdetect-container -p 7856:7856 phishdetect-node
-
-To run both PhishDetect Node and MongoDB in containers, use docker-compose:
-
-    docker-compose build
-    docker-compose up
-
-You can then access the node at `http://localhost:7856`.
+For a more exhaustive documentation on how to install and use PhishDetect please refer to the [Admin Guide](https://phishdetect.gitbook.io/admin-guide/).
 
 ## License
 
