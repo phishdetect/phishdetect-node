@@ -62,6 +62,7 @@ func guiReport(w http.ResponseWriter, r *http.Request) {
 		Content:  urlDecoded,
 		Datetime: time.Now().UTC(),
 		UUID:     uuidInstance.String(),
+		Key:      getAPIKeyFromRequest(r),
 	}
 
 	err = db.AddReport(report)
