@@ -32,12 +32,15 @@ import (
 // IndicatorTypeEmail contains the name of the type of indicator as stored
 // in the database.
 const IndicatorTypeEmail = "email"
+
 // IndicatorTypeDomain contains the name of the type of indicator as stored
 // in the database.
 const IndicatorTypeDomain = "domain"
+
 // IndicatorsGroupEmails contains the key name for the type of indicators
 // as returned when the lists is fetched by clients.
 const IndicatorsGroupEmails = "emails"
+
 // IndicatorsGroupDomains contains the key name for the type of indicators
 // as returned when the lists is fetched by clients.
 const IndicatorsGroupDomains = "domains"
