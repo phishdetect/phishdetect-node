@@ -41,7 +41,7 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 
 	err := analysis.AnalyzeDomain()
 	if err != nil {
-		log.Error("Failed to analyze domain:", err)
+		log.Error("Failed to analyze domain: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := analysis.Brands.GetBrand()
@@ -73,7 +73,7 @@ func analyzeURL(domain string) (*AnalysisResults, error) {
 
 	err := analysis.AnalyzeURL()
 	if err != nil {
-		log.Error("Failed to analyze URL:", err)
+		log.Error("Failed to analyze URL: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := analysis.Brands.GetBrand()
@@ -108,7 +108,7 @@ func analyzeLink(url string) (*AnalysisResults, error) {
 	browser := phishdetect.NewBrowser(urlNormalized, "", false, "")
 	err := browser.Run()
 	if err != nil {
-		log.Error("Failed to instantiate browser:", err)
+		log.Error("Failed to instantiate browser: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	urlFinal = browser.FinalURL
@@ -124,12 +124,12 @@ func analyzeLink(url string) (*AnalysisResults, error) {
 
 	err = analysis.AnalyzeHTML()
 	if err != nil {
-		log.Error("Failed to analyze HTML:", err)
+		log.Error("Failed to analyze HTML: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		log.Error("Failed to analyze URL:", err)
+		log.Error("Failed to analyze URL: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := analysis.Brands.GetBrand()
@@ -174,12 +174,12 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 
 	err = analysis.AnalyzeHTML()
 	if err != nil {
-		log.Error("Failed to analyze HTML:", err)
+		log.Error("Failed to analyze HTML: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	err = analysis.AnalyzeURL()
 	if err != nil {
-		log.Error("Failed to analyze URL:", err)
+		log.Error("Failed to analyze URL: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := analysis.Brands.GetBrand()
