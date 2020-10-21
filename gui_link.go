@@ -133,6 +133,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 			"brand":           results.Brand,
 			"safelisted":      results.Safelisted,
 			"screenshot":      screenshot,
+			"key":             getAPIKeyFromRequest(r),
 		}, w)
 		if err != nil {
 			log.Error(err)
