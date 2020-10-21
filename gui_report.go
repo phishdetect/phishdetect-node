@@ -58,11 +58,11 @@ func guiReport(w http.ResponseWriter, r *http.Request) {
 
 	uuidInstance, _ := uuid.NewV4()
 	report := Report{
-		Type:	 "url",
+		Type:     "url",
 		Content:  urlDecoded,
 		Datetime: time.Now().UTC(),
-		UUID:	 uuidInstance.String(),
-		Key:	  getAPIKeyFromRequest(r),
+		UUID:     uuidInstance.String(),
+		Key:      getAPIKeyFromRequest(r),
 	}
 
 	err = db.AddReport(report)
