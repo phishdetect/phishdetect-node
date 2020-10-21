@@ -73,6 +73,7 @@ func analyzeURL(domain string) (*AnalysisResults, error) {
 
 	err := analysis.AnalyzeURL()
 	if err != nil {
+		log.Error("Failed to analyze URL:", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := analysis.Brands.GetBrand()

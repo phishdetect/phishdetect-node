@@ -103,7 +103,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 		alertType = "analysis_link"
 		results, err = analyzeLink(url)
 		if err != nil {
-			errorPage(w, err.Error())
+			errorMessage(w, err.Error())
 			return
 		}
 
@@ -113,7 +113,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 		alertType = "analysis_html"
 		results, err = analyzeHTML(url, htmlEncoded)
 		if err != nil {
-			errorPage(w, err.Error())
+			errorMessage(w, err.Error())
 			return
 		}
 	}
