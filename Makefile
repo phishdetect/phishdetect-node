@@ -10,6 +10,7 @@ pre: clean
 	env GO111MODULE=on go get -d ./
 	env GO111MODULE=on go mod download
 	go get -u github.com/gobuffalo/packr/...
+	env GO111MODULE=on go mod tidy
 
 build: pre
 	@echo "[builder] Building PhishDetect Node executable"
