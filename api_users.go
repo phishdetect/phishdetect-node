@@ -69,16 +69,16 @@ func apiUsersActivate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	apiKey := vars["apiKey"]
+	uuid := vars["uuid"]
 
-	err := db.ActivateUser(apiKey)
+	err := db.ActivateUser(uuid)
 	if err != nil {
 		errorWithJSON(w, "Failed to activate the user", http.StatusInternalServerError, err)
 		return
 	}
 
 	response := map[string]interface{}{
-		"msg": fmt.Sprintf("User with API key %s activated successfully", apiKey),
+		"msg": fmt.Sprintf("User with UUID %s activated successfully", uuid),
 	}
 
 	responseWithJSON(w, response)
@@ -91,16 +91,16 @@ func apiUsersDeactivate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	apiKey := vars["apiKey"]
+	uuid := vars["uuid"]
 
-	err := db.DeactivateUser(apiKey)
+	err := db.DeactivateUser(uuid)
 	if err != nil {
 		errorWithJSON(w, "Failed to deactivate the user", http.StatusInternalServerError, err)
 		return
 	}
 
 	response := map[string]interface{}{
-		"msg": fmt.Sprintf("User with API key %s deactivated successfully", apiKey),
+		"msg": fmt.Sprintf("User with UUID %s deactivated successfully", uuid),
 	}
 
 	responseWithJSON(w, response)

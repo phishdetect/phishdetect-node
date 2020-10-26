@@ -68,6 +68,10 @@ func apiReportsAdd(w http.ResponseWriter, r *http.Request) {
 	uuidInstance, _ := uuid.NewV4()
 	report.UUID = uuidInstance.String()
 
+	key := getAPIKeyFromRequest(r)
+	user, _ := db.GetUserByKey(key)
+	report.User = user.UUID
+
 	err = db.AddReport(report)
 	if err != nil {
 		errorWithJSON(w, "Unable to store report in database", http.StatusInternalServerError, err)

@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/manifoldco/promptui"
+	"github.com/nu7hatch/gouuid"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -85,7 +86,9 @@ func createNewUser() {
 		return
 	}
 
+	uuidInstance, _ := uuid.NewV4()
 	user := User{
+		UUID:      uuidInstance.String(),
 		Name:      name,
 		Email:     email,
 		Key:       apiKey,

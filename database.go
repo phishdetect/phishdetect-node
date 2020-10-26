@@ -34,6 +34,7 @@ type Database struct {
 }
 
 type User struct {
+	UUID      string    `json:"uuid"`
 	Name      string    `json:"name" validate:"required"`
 	Email     string    `json:"email" validate:"required,email"`
 	Key       string    `json:"key"`
@@ -53,28 +54,29 @@ type Indicator struct {
 }
 
 type Alert struct {
+	UUID        string    `json:"uuid"`
+	Datetime    time.Time `json:"datetime"`
 	Type        string    `json:"type"`
 	Match       string    `json:"match"`
 	Indicator   string    `json:"indicator"`
 	UserContact string    `json:"user_contact" bson:"user_contact"`
-	Datetime    time.Time `json:"datetime"`
-	UUID        string    `json:"uuid"`
-	Key         string    `json:"key"`
+	User        string    `json:"user"`
 }
 
 type Report struct {
+	UUID        string    `json:"uuid"`
+	Datetime    time.Time `json:"datetime"`
 	Type        string    `json:"type"`
 	Content     string    `json:"content"`
 	UserContact string    `json:"user_contact" bson:"user_contact"`
-	Datetime    time.Time `json:"datetime"`
-	UUID        string    `json:"uuid"`
-	Key         string    `json:"key"`
+	User        string    `json:"user"`
 }
 
 type Review struct {
+	UUID      string    `json:"uuid"`
 	Indicator string    `json:"indicator"`
 	Datetime  time.Time `json:"datetime"`
-	Key       string    `json:"key"`
+	User      string    `json:"user"`
 }
 
 type AnalysisResults struct {
@@ -137,10 +139,10 @@ func (d *Database) GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
-func (d *Database) ActivateUser(key string) error {
+func (d *Database) ActivateUser(uuid string) error {
 	coll := d.DB.Collection("users")
 
-	_, err := coll.UpdateOne(context.Background(), bson.D{{"key", key}},
+	_, err := coll.UpdateOne(context.Background(), bson.D{{"uuid", uuid}},
 		bson.M{"$set": bson.M{"activated": true}})
 	if err != nil {
 		return err
@@ -149,10 +151,10 @@ func (d *Database) ActivateUser(key string) error {
 	return nil
 }
 
-func (d *Database) DeactivateUser(key string) error {
+func (d *Database) DeactivateUser(uuid string) error {
 	coll := d.DB.Collection("users")
 
-	_, err := coll.UpdateOne(context.Background(), bson.D{{"key", key}},
+	_, err := coll.UpdateOne(context.Background(), bson.D{{"uuid", uuid}},
 		bson.M{"$set": bson.M{"activated": false}})
 	if err != nil {
 		return err
@@ -183,6 +185,18 @@ func (d *Database) GetUserByKey(key string) (User, error) {
 
 	var userFound User
 	err := coll.FindOne(context.Background(), bson.D{{"key", key}}).Decode(&userFound)
+	if err != nil {
+		return User{}, err
+	}
+
+	return userFound, nil
+}
+
+func (d *Database) GetUserByUUID(uuid string) (User, error) {
+	coll := d.DB.Collection("users")
+
+	var userFound User
+	err := coll.FindOne(context.Background(), bson.D{{"uuid", uuid}}).Decode(&userFound)
 	if err != nil {
 		return User{}, err
 	}

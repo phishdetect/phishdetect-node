@@ -258,9 +258,9 @@ func startServer() {
 			authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/users/active/",
 			authMiddleware(apiUsersActive, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/users/activate/{apiKey:%s}/", sha1Regex),
+		router.HandleFunc(fmt.Sprintf("/api/users/activate/{uuid:%s}/", uuidRegex),
 			authMiddleware(apiUsersActivate, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{apiKey:%s}/", sha1Regex),
+		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{uuid:%s}/", uuidRegex),
 			authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
 	}
 

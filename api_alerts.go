@@ -62,6 +62,10 @@ func apiAlertsAdd(w http.ResponseWriter, r *http.Request) {
 	uuidInstance, _ := uuid.NewV4()
 	alert.UUID = uuidInstance.String()
 
+	key := getAPIKeyFromRequest(r)
+	user, _ := db.GetUserByKey(key)
+	alert.User = user.UUID
+
 	err = db.AddAlert(alert)
 	if err != nil {
 		errorWithJSON(w, "Unable to store alert in database", http.StatusInternalServerError, err)

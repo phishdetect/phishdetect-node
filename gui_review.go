@@ -23,6 +23,7 @@ import (
 
 	pongo "github.com/flosch/pongo2"
 	"github.com/gorilla/mux"
+	"github.com/nu7hatch/gouuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -36,10 +37,15 @@ func guiReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	key := getAPIKeyFromRequest(r)
+	user, _ := db.GetUserByKey(key)
+
+	uuidInstance, _ := uuid.NewV4()
 	review := Review{
+		UUID:      uuidInstance.String(),
 		Indicator: ioc,
 		Datetime:  time.Now().UTC(),
-		Key:       getAPIKeyFromRequest(r),
+		User:      user.UUID,
 	}
 
 	err = db.AddReview(review)
