@@ -245,8 +245,10 @@ func startServer() {
 			authMiddleware(apiIndicatorsFetchPending, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/indicators/disabled/"),
 			authMiddleware(apiIndicatorsFetchDisabled, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/indicators/toggle/",
-			authMiddleware(apiIndicatorsToggle, roleAdmin)).Methods("POST")
+		router.HandleFunc("/api/indicators/enable/",
+			authMiddleware(apiIndicatorsEnable, roleAdmin)).Methods("POST")
+		router.HandleFunc("/api/indicators/disable/",
+			authMiddleware(apiIndicatorsEnable, roleAdmin)).Methods("POST")
 		//--------------------------------------------------
 		router.HandleFunc("/api/alerts/fetch/",
 			authMiddleware(apiAlertsFetch, roleAdmin)).Methods("GET")

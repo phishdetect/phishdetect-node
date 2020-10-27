@@ -235,7 +235,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	responseWithJSON(w, response)
 }
 
-func apiIndicatorsToggle(w http.ResponseWriter, r *http.Request) {
+func apiIndicatorsChangeStatus(w http.ResponseWriter, r *http.Request, newStatus string) {
 	decoder := json.NewDecoder(r.Body)
 	var indicators []string
 	err := decoder.Decode(&indicators)
@@ -255,15 +255,7 @@ func apiIndicatorsToggle(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		// If the status of the indicator is not "enabled", it's either
-		// "pending" or "disabled". In either case, we want to turn it
-		// to "enabled".
-		if ioc.Status != IndicatorsStatusEnabled {
-			ioc.Status = IndicatorsStatusEnabled
-		} else {
-			// If it's currently "enabled", we turn it to "disabled".
-			ioc.Status = IndicatorsStatusDisabled
-		}
+		ioc.Status = newStatus
 
 		err = db.UpdateIndicator(ioc)
 		if err != nil {
@@ -275,11 +267,19 @@ func apiIndicatorsToggle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]interface{}{
-		"msg":     fmt.Sprintf("Toggled %d indicators", toggledCounter),
+		"msg":     fmt.Sprintf("Changed status to %s for %d indicators", newStatus, toggledCounter),
 		"counter": toggledCounter,
 	}
 
 	responseWithJSON(w, response)
+}
+
+func apiIndicatorsEnable(w http.ResponseWriter, r *http.Request) {
+	apiIndicatorsChangeStatus(w, r, IndicatorsStatusEnabled)
+}
+
+func apiIndicatorsDisable(w http.ResponseWriter, r *http.Request) {
+	apiIndicatorsChangeStatus(w, r, IndicatorsStatusDisabled)
 }
 
 func apiIndicatorsDetails(w http.ResponseWriter, r *http.Request) {

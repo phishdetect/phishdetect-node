@@ -312,7 +312,7 @@ func (d *Database) UpdateIndicator(ioc Indicator) error {
 		bson.M{"$set": bson.M{
 			"datetime": time.Now().UTC(),
 			"tags":     ioc.Tags,
-			"status":  ioc.Status,
+			"status":   ioc.Status,
 		}})
 
 	return err
