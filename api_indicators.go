@@ -105,7 +105,7 @@ func prepareIndicators(iocs []Indicator) map[string][]string {
 
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	// We get the indicators from the DB.
-	iocs, err := db.GetIndicators(IndicatorsLimit6Months, true)
+	iocs, err := db.GetIndicators(IndicatorsLimit6Months, IndicatorsStatusEnabled)
 	if err != nil {
 		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
@@ -116,7 +116,7 @@ func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiIndicatorsFetchRecent(w http.ResponseWriter, r *http.Request) {
-	iocs, err := db.GetIndicators(IndicatorsLimit24Hours, true)
+	iocs, err := db.GetIndicators(IndicatorsLimit24Hours, IndicatorsStatusEnabled)
 	if err != nil {
 		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
@@ -127,7 +127,7 @@ func apiIndicatorsFetchRecent(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiIndicatorsFetchAll(w http.ResponseWriter, r *http.Request) {
-	iocs, err := db.GetIndicators(IndicatorsLimitAll, true)
+	iocs, err := db.GetIndicators(IndicatorsLimitAll, IndicatorsStatusEnabled)
 	if err != nil {
 		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
@@ -137,8 +137,18 @@ func apiIndicatorsFetchAll(w http.ResponseWriter, r *http.Request) {
 	responseWithJSON(w, indicators)
 }
 
+func apiIndicatorsFetchPending(w http.ResponseWriter, r *http.Request) {
+	iocs, err := db.GetIndicators(IndicatorsLimitAll, IndicatorsStatusPending)
+	if err != nil {
+		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
+		return
+	}
+
+	responseWithJSON(w, iocs)
+}
+
 func apiIndicatorsFetchDisabled(w http.ResponseWriter, r *http.Request) {
-	iocs, err := db.GetIndicators(IndicatorsLimitAll, false)
+	iocs, err := db.GetIndicators(IndicatorsLimitAll, IndicatorsStatusDisabled)
 	if err != nil {
 		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
@@ -188,6 +198,16 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
+		// By default, we add indicators as enabled.
+		status := IndicatorsStatusEnabled
+		if !req.Enabled {
+			// If the submitter specifies enabled=False,
+			// then we add the indicators as "pending".
+			// NOTE: We don't add indicators directly "disabled", as that does
+			//       not make much sense.
+			status = IndicatorsStatusPending
+		}
+
 		ioc := Indicator{
 			Type:     indicatorType,
 			Original: indicator,
@@ -195,7 +215,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 			Tags:     req.Tags,
 			Datetime: time.Now().UTC(),
 			Owner:    user.Name,
-			Enabled:  req.Enabled,
+			Status:   status,
 		}
 
 		err = db.AddIndicator(ioc)
@@ -235,7 +255,16 @@ func apiIndicatorsToggle(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		ioc.Enabled = !ioc.Enabled
+		// If the status of the indicator is not "enabled", it's either
+		// "pending" or "disabled". In either case, we want to turn it
+		// to "enabled".
+		if ioc.Status != IndicatorsStatusEnabled {
+			ioc.Status = IndicatorsStatusEnabled
+		} else {
+			// If it's currently "enabled", we turn it to "disabled".
+			ioc.Status = IndicatorsStatusDisabled
+		}
+
 		err = db.UpdateIndicator(ioc)
 		if err != nil {
 			log.Warning("Failed to update indicator: ", err.Error())

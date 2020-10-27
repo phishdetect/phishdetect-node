@@ -50,7 +50,7 @@ type Indicator struct {
 	Tags     []string  `json:"tags"`
 	Datetime time.Time `json:"datetime"`
 	Owner    string    `json:"owner"`
-	Enabled  bool      `json:"enabled"`
+	Status   string    `json:"status"`
 }
 
 type Alert struct {
@@ -97,6 +97,10 @@ type AnalysisResults struct {
 const IndicatorsLimitAll = 0
 const IndicatorsLimit6Months = 1
 const IndicatorsLimit24Hours = 2
+
+const IndicatorsStatusPending = "pending"
+const IndicatorsStatusEnabled = "enabled"
+const IndicatorsStatusDisabled = "disabled"
 
 func NewDatabase(url string) (*Database, error) {
 	client, err := mongo.NewClient(options.Client().ApplyURI(url))
@@ -204,7 +208,7 @@ func (d *Database) GetUserByUUID(uuid string) (User, error) {
 	return userFound, nil
 }
 
-func (d *Database) GetIndicators(limit int, enabled bool) ([]Indicator, error) {
+func (d *Database) GetIndicators(limit int, status string) ([]Indicator, error) {
 	var iocs []Indicator
 	coll := d.DB.Collection("indicators")
 
@@ -214,20 +218,20 @@ func (d *Database) GetIndicators(limit int, enabled bool) ([]Indicator, error) {
 
 	switch limit {
 	case IndicatorsLimitAll:
-		filter = bson.M{"enabled": enabled}
+		filter = bson.M{"status": status}
 	case IndicatorsLimit6Months:
 		filter = bson.M{
 			"datetime": bson.M{
 				"$gte": now.AddDate(0, -6, 0),
 			},
-			"enabled": enabled,
+			"status": status,
 		}
 	case IndicatorsLimit24Hours:
 		filter = bson.M{
 			"datetime": bson.M{
 				"$gte": now.Add(-24 * time.Hour),
 			},
-			"enabled": enabled,
+			"status": status,
 		}
 	}
 
@@ -308,7 +312,7 @@ func (d *Database) UpdateIndicator(ioc Indicator) error {
 		bson.M{"$set": bson.M{
 			"datetime": time.Now().UTC(),
 			"tags":     ioc.Tags,
-			"enabled":  ioc.Enabled,
+			"status":  ioc.Status,
 		}})
 
 	return err
