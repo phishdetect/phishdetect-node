@@ -248,7 +248,7 @@ func startServer() {
 		router.HandleFunc("/api/indicators/enable/",
 			authMiddleware(apiIndicatorsEnable, roleAdmin)).Methods("POST")
 		router.HandleFunc("/api/indicators/disable/",
-			authMiddleware(apiIndicatorsEnable, roleAdmin)).Methods("POST")
+			authMiddleware(apiIndicatorsDisable, roleAdmin)).Methods("POST")
 		//--------------------------------------------------
 		router.HandleFunc("/api/alerts/fetch/",
 			authMiddleware(apiAlertsFetch, roleAdmin)).Methods("GET")
