@@ -288,6 +288,7 @@ func apiIndicatorsDetails(w http.ResponseWriter, r *http.Request) {
 	ioc, err := db.GetIndicatorByHash(vars["ioc"])
 	if err != nil {
 		errorWithJSON(w, "Failed to fetch indicator from database", http.StatusInternalServerError, err)
+		return
 	}
 
 	responseWithJSON(w, ioc)
