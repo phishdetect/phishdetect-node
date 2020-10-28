@@ -30,4 +30,5 @@ const (
 	ErrorMsgParseRequestFailed    = "Unable to parse request"
 	ErrorMsgNoAuthRequired        = "The Node does not enforce user authentication"
 	ErrorMsgConnectionFailed      = "An error occurred while visiting the link: the website might be offline"
+	ErrorMsgInvalidIndicatorsType = "The indicators type you provided is not supported"
 )

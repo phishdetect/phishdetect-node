@@ -167,62 +167,96 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// This should not typically raise an error because we should have already
+	// gone through the authMiddleware, but we need to do this anyway in
+	// order to store a reference of the owner of the indicator in the DB.
 	user, err := db.GetUserByKey(getAPIKeyFromRequest(r))
 	if err != nil {
 		errorWithJSON(w, ErrorMsgNotAuthorized, http.StatusUnauthorized, nil)
 		return
 	}
 
+	// If the user provided a type, we first check if it is valid,
+	// and if so we just use that.
+	// NOTE: This should be typically specified only when the submitter is
+	//       trying to add hashed indicators for which the type can't be
+	//       automatically determined.
+	if req.Type != "" {
+		log.Debug("Received request to add indicators with type ", req.Type)
+
+		// First we lower-case and trim the specified type.
+		req.Type = strings.TrimSpace(strings.ToLower(req.Type))
+		// Then we check if it's a valid "domain" or "email".
+		// TODO: Eventually we might want to add some flexibility or ability
+		//       to configure supported indicators types.
+		if req.Type != IndicatorTypeDomain && req.Type != IndicatorTypeEmail {
+			errorWithJSON(w, ErrorMsgInvalidIndicatorsType, http.StatusBadRequest, nil)
+			return
+		}
+	}
+
 	// We loop through the submitted indicators and try to add them to the DB.
 	addedCounter := 0
 	for _, indicator := range req.Indicators {
-		var hashed string
-		// Check if we received an already hashed IOC.
-		if validateSHA256(indicator) {
-			// If we do, the indicator is already the hashed version.
-			hashed = indicator
-			// And the original indicator value shall be blank.
-			indicator = ""
-		} else {
-			// Otherwise, we first clean the indicator...
-			indicator = cleanIndicator(indicator)
-			// ... then we hash the original indicator.
-			hashed = encodeSHA256(indicator)
+		ioc := Indicator{
+			Tags:     req.Tags,
+			Datetime: time.Now().UTC(),
+			Owner:    user.Name,
 		}
 
-		// We try to automatically determine the indicator type.
-		// If we can't, we skip this indicator as it might be of an unsupported
-		// format.
-		indicatorType, err := detectIndicatorType(indicator)
-		if err != nil {
-			continue
+		// Check if we received an already hashed IOC.
+		if validateSHA256(indicator) {
+			// If the submitted sent an hashed indicator but did not
+			// specify the type, we have to skip it because we can't
+			// automatically determine one.
+			if req.Type == "" {
+				log.Debug("Indicator ", indicator, " is hashed, but no type specified. Skip.")
+				continue
+			}
+
+			// Use the indicator as hashed value.
+			ioc.Hashed = indicator
+			// The original value shall be blank.
+			ioc.Original = ""
+			// Use the type specified by the submitter.
+			ioc.Type = req.Type
+		} else {
+			// Otherwise, we first clean the indicator...
+			ioc.Original = cleanIndicator(indicator)
+			// ... then we hash the original indicator.
+			ioc.Hashed = encodeSHA256(indicator)
+
+			// If the user did not specify a type, we try to automatically
+			// determine it.
+			if req.Type == "" {
+				ioc.Type, err = detectIndicatorType(indicator)
+				// If we can't, we skip this indicator as it might be of an
+				// unsupported format.
+				if err != nil {
+					log.Debug("Failed to detect type for indicator:", indicator)
+					continue
+				}
+			}
 		}
 
 		// By default, we add indicators as enabled.
-		status := IndicatorsStatusEnabled
+		ioc.Status = IndicatorsStatusEnabled
 		if !req.Enabled {
 			// If the submitter specifies enabled=False,
 			// then we add the indicators as "pending".
 			// NOTE: We don't add indicators directly "disabled", as that does
-			//       not make much sense.
-			status = IndicatorsStatusPending
+			//       not make much sense. Anything new should be either approved
+			//       or pending approval.
+			ioc.Status = IndicatorsStatusPending
 		}
 
-		ioc := Indicator{
-			Type:     indicatorType,
-			Original: indicator,
-			Hashed:   hashed,
-			Tags:     req.Tags,
-			Datetime: time.Now().UTC(),
-			Owner:    user.Name,
-			Status:   status,
-		}
-
+		// Finally add the indicator to the database.
 		err = db.AddIndicator(ioc)
 		if err != nil {
 			log.Warning("Failed to add indicator to database: ", err.Error())
 			continue
 		}
+
 		// If the addition was successful, we increase the counter.
 		addedCounter++
 	}
