@@ -27,6 +27,31 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
+	link, err := phishdetect.NewLink(target)
+	toCheck := []string{
+		encodeSHA256(strings.ToLower(strings.TrimSpace(link.Domain))),
+		encodeSHA256(strings.ToLower(strings.TrimSpace(link.TopDomain))),
+	}
+
+	iocs, err := db.GetIndicators(IndicatorsLimitAll, IndicatorsStatusEnabled)
+	if err != nil {
+		return phishdetect.Warning{}, err
+	}
+	for _, ioc := range iocs {
+		if phishdetect.SliceContains(toCheck, ioc.Hashed) {
+			log.Debug("Target ", target, " is blocklisted by indicator with hash ", ioc.Hashed)
+			return phishdetect.Warning{
+				Score: 100,
+				Name: "blocklisted",
+				Description: fmt.Sprintf("The domain was blocklisted in PhishDetect Node by indicator with hash %s", ioc.Hashed),
+			}, nil
+		}
+	}
+
+	return phishdetect.Warning{}, nil
+}
+
 // analyzeDomain is used to statically analyze a domain name.
 func analyzeDomain(domain string) (*AnalysisResults, error) {
 	urlNormalized := phishdetect.NormalizeURL(domain)
@@ -54,6 +79,12 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 		Score:      analysis.Score,
 		Brand:      brand,
 		Warnings:   analysis.Warnings,
+	}
+
+	blocklisted, err := checkIfBlocklisted(domain)
+	if err == nil && blocklisted.Score > 0 {
+		results.Score += blocklisted.Score
+		results.Warnings = append(results.Warnings, blocklisted)
 	}
 
 	return &results, nil
@@ -86,6 +117,12 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 		Score:      analysis.Score,
 		Brand:      brand,
 		Warnings:   analysis.Warnings,
+	}
+
+	blocklisted, err := checkIfBlocklisted(urlFinal)
+	if err == nil && blocklisted.Score > 0 {
+		results.Score += blocklisted.Score
+		results.Warnings = append(results.Warnings, blocklisted)
 	}
 
 	return &results, nil
@@ -148,6 +185,12 @@ func analyzeLink(url string) (*AnalysisResults, error) {
 		HTML:       browser.HTML,
 	}
 
+	blocklisted, err := checkIfBlocklisted(urlFinal)
+	if err == nil && blocklisted.Score > 0 {
+		results.Score += blocklisted.Score
+		results.Warnings = append(results.Warnings, blocklisted)
+	}
+
 	return &results, nil
 }
 
@@ -193,6 +236,12 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 		Brand:      brand,
 		Warnings:   analysis.Warnings,
 		HTML:       html,
+	}
+
+	blocklisted, err := checkIfBlocklisted(urlFinal)
+	if err == nil && blocklisted.Score > 0 {
+		results.Score += blocklisted.Score
+		results.Warnings = append(results.Warnings, blocklisted)
 	}
 
 	return &results, nil
