@@ -60,8 +60,8 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 }
 
 // analyzeURL is used to statically analyze a URL.
-func analyzeURL(domain string) (*AnalysisResults, error) {
-	urlNormalized := phishdetect.NormalizeURL(domain)
+func analyzeURL(url string) (*AnalysisResults, error) {
+	urlNormalized := phishdetect.NormalizeURL(url)
 	urlFinal := urlNormalized
 
 	if !validateURL(urlNormalized) {
@@ -79,7 +79,7 @@ func analyzeURL(domain string) (*AnalysisResults, error) {
 	brand := analysis.Brands.GetBrand()
 
 	results := AnalysisResults{
-		URL:        domain,
+		URL:        url,
 		URLFinal:   urlFinal,
 		Safelisted: analysis.Safelisted,
 		Dangerous:  analysis.Dangerous,
