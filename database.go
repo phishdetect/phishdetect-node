@@ -90,6 +90,8 @@ type AnalysisResults struct {
 	Warnings   []phishdetect.Warning  `json:"warnings"`
 	Visits     []string               `json:"visits"`
 	Resources  []phishdetect.Resource `json:"resources"`
+	Dialogs    []phishdetect.Dialog   `json:"dialogs"`
+	Downloads  []phishdetect.Download `json:"downloads"`
 	HTML       string                 `json:"html"`
 	AlertUUID  string                 `json:"uuid"`
 }

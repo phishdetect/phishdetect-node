@@ -142,7 +142,7 @@ func analyzeLink(url string) (*AnalysisResults, error) {
 	// Setting Docker API version.
 	os.Setenv("DOCKER_API_VERSION", apiVersion)
 	// Instantiate new browser and open the link.
-	browser := phishdetect.NewBrowser(urlNormalized, "", false, "")
+	browser := phishdetect.NewBrowser(urlNormalized, "", false, false, "")
 	err := browser.Run()
 	if err != nil {
 		log.Error("Failed to instantiate browser: ", err)
@@ -182,6 +182,8 @@ func analyzeLink(url string) (*AnalysisResults, error) {
 		Warnings:   analysis.Warnings,
 		Visits:     browser.Visits,
 		Resources:  browser.Resources,
+		Dialogs:    browser.Dialogs,
+		Downloads:  browser.Downloads,
 		HTML:       browser.HTML,
 	}
 
