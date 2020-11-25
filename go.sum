@@ -158,6 +158,8 @@ github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3I
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/phishdetect/phishdetect v1.13.0 h1:/qdMZgEOLq1RyfDEeS5/hCT0Vbd30McBgK6GEZPSdS0=
 github.com/phishdetect/phishdetect v1.13.0/go.mod h1:78rW9trV0rUlWBCkMnzTX5gYf8MjFUNJ3rMZFFz8bu8=
+github.com/phishdetect/phishdetect v1.13.1 h1:th5XNMO0a27VW8QGrodIALSN0jhn27KeF7b5517rRpc=
+github.com/phishdetect/phishdetect v1.13.1/go.mod h1:78rW9trV0rUlWBCkMnzTX5gYf8MjFUNJ3rMZFFz8bu8=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
