@@ -91,8 +91,8 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	htmlEncoded := r.PostFormValue("html")
 	screenshot := r.PostFormValue("screenshot")
 
-	// For the moment, urlFinal will be the original URL.
-	urlFinal := url
+	// For the moment, finalURL will be the original URL.
+	finalURL := url
 
 	var alertType string
 	var results *AnalysisResults
@@ -101,13 +101,13 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	// If there is no specified HTML string, it means we need to open the link.
 	if htmlEncoded == "" {
 		alertType = "analysis_link"
-		results, err = analyzeLink(url)
+		results, err = analyzeURLDynamic(url)
 		if err != nil {
 			errorMessage(w, err.Error())
 			return
 		}
 
-		urlFinal = results.URLFinal
+		finalURL = results.FinalURL
 		screenshot = results.Screenshot
 	} else {
 		alertType = "analysis_html"
@@ -123,12 +123,12 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	// If the site is safelisted, or the final score is low, we offer
 	// to continue to the original link.
 	if (results.Safelisted || results.Score < 30) && !results.Dangerous {
-		urlFinalEncoded := base64.StdEncoding.EncodeToString([]byte(urlFinal))
+		finalURLEncoded := base64.StdEncoding.EncodeToString([]byte(finalURL))
 		tpl, err := tmplSet.FromCache("continue.html")
 		err = tpl.ExecuteWriter(pongo.Context{
 			"url":             url,
-			"urlFinalEncoded": urlFinalEncoded,
-			"urlFinal":        urlFinal,
+			"finalURLEncoded": finalURLEncoded,
+			"finalURL":        finalURL,
 			"sha1":            urlSHA1,
 			"brand":           results.Brand,
 			"safelisted":      results.Safelisted,
@@ -169,7 +169,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 	tpl, err := tmplSet.FromCache("warning.html")
 	err = tpl.ExecuteWriter(pongo.Context{
 		"url":        url,
-		"urlFinal":   urlFinal,
+		"finalURL":   finalURL,
 		"sha1":       urlSHA1,
 		"warnings":   results.Warnings,
 		"brand":      results.Brand,

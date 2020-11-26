@@ -42,8 +42,8 @@ func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
 		if phishdetect.SliceContains(toCheck, ioc.Hashed) {
 			log.Debug("Target ", target, " is blocklisted by indicator with hash ", ioc.Hashed)
 			return phishdetect.Warning{
-				Score: 100,
-				Name: "blocklisted",
+				Score:       100,
+				Name:        "blocklisted",
 				Description: fmt.Sprintf("The domain was blocklisted in PhishDetect Node by indicator with hash %s", ioc.Hashed),
 			}, nil
 		}
@@ -55,13 +55,13 @@ func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
 // analyzeDomain is used to statically analyze a domain name.
 func analyzeDomain(domain string) (*AnalysisResults, error) {
 	urlNormalized := phishdetect.NormalizeURL(domain)
-	urlFinal := urlNormalized
+	finalURL := urlNormalized
 
 	if !validateURL(urlNormalized) {
 		return nil, errors.New(ErrorMsgInvalidURL)
 	}
 
-	analysis := phishdetect.NewAnalysis(urlFinal, "")
+	analysis := phishdetect.NewAnalysis(finalURL, "")
 	loadBrands(*analysis)
 
 	err := analysis.AnalyzeDomain()
@@ -73,7 +73,7 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 
 	results := AnalysisResults{
 		URL:        domain,
-		URLFinal:   urlFinal,
+		FinalURL:   finalURL,
 		Safelisted: analysis.Safelisted,
 		Dangerous:  analysis.Dangerous,
 		Score:      analysis.Score,
@@ -93,13 +93,13 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 // analyzeURL is used to statically analyze a URL.
 func analyzeURL(url string) (*AnalysisResults, error) {
 	urlNormalized := phishdetect.NormalizeURL(url)
-	urlFinal := urlNormalized
+	finalURL := urlNormalized
 
 	if !validateURL(urlNormalized) {
 		return nil, errors.New(ErrorMsgInvalidURL)
 	}
 
-	analysis := phishdetect.NewAnalysis(urlFinal, "")
+	analysis := phishdetect.NewAnalysis(finalURL, "")
 	loadBrands(*analysis)
 
 	err := analysis.AnalyzeURL()
@@ -111,7 +111,7 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 
 	results := AnalysisResults{
 		URL:        url,
-		URLFinal:   urlFinal,
+		FinalURL:   finalURL,
 		Safelisted: analysis.Safelisted,
 		Dangerous:  analysis.Dangerous,
 		Score:      analysis.Score,
@@ -119,70 +119,7 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 		Warnings:   analysis.Warnings,
 	}
 
-	blocklisted, err := checkIfBlocklisted(urlFinal)
-	if err == nil && blocklisted.Score > 0 {
-		results.Score += blocklisted.Score
-		results.Warnings = append(results.Warnings, blocklisted)
-	}
-
-	return &results, nil
-}
-
-// analyzeLink is used to dynamically analyze a URL.
-func analyzeLink(url string) (*AnalysisResults, error) {
-	urlNormalized := phishdetect.NormalizeURL(url)
-	urlFinal := urlNormalized
-
-	var screenshot string
-
-	if !validateURL(urlNormalized) {
-		return nil, errors.New(ErrorMsgInvalidURL)
-	}
-
-	// Setting Docker API version.
-	os.Setenv("DOCKER_API_VERSION", apiVersion)
-	// Instantiate new browser and open the link.
-	browser := phishdetect.NewBrowser(urlNormalized, "", false, false, "")
-	err := browser.Run()
-	if err != nil {
-		log.Error("Failed to instantiate browser: ", err)
-		return nil, errors.New(ErrorMsgAnalysisFailed)
-	}
-	urlFinal = browser.FinalURL
-
-	screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
-	analysis := phishdetect.NewAnalysis(urlFinal, browser.HTML)
-
-	loadBrands(*analysis)
-
-	err = analysis.AnalyzeBrowserResults(browser.Requests)
-	if err != nil {
-		log.Error("Failed to analyze HTML: ", err)
-		return nil, errors.New(ErrorMsgAnalysisFailed)
-	}
-	err = analysis.AnalyzeURL()
-	if err != nil {
-		log.Error("Failed to analyze URL: ", err)
-		return nil, errors.New(ErrorMsgAnalysisFailed)
-	}
-	brand := analysis.Brands.GetBrand()
-
-	results := AnalysisResults{
-		URL:        url,
-		URLFinal:   urlFinal,
-		Safelisted: analysis.Safelisted,
-		Dangerous:  analysis.Dangerous,
-		Score:      analysis.Score,
-		Brand:      brand,
-		Screenshot: screenshot,
-		Warnings:   analysis.Warnings,
-		Requests:   browser.Requests,
-		Dialogs:    browser.Dialogs,
-		Downloads:  browser.Downloads,
-		HTML:       browser.HTML,
-	}
-
-	blocklisted, err := checkIfBlocklisted(urlFinal)
+	blocklisted, err := checkIfBlocklisted(finalURL)
 	if err == nil && blocklisted.Score > 0 {
 		results.Score += blocklisted.Score
 		results.Warnings = append(results.Warnings, blocklisted)
@@ -193,7 +130,7 @@ func analyzeLink(url string) (*AnalysisResults, error) {
 
 // analyzeHTML is used to statically analyze an HTML page.
 func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
-	urlFinal := url
+	finalURL := url
 
 	if !validateURL(url) {
 		return nil, errors.New(ErrorMsgInvalidURL)
@@ -209,7 +146,7 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 	}
 	html := string(htmlData)
 
-	analysis := phishdetect.NewAnalysis(urlFinal, html)
+	analysis := phishdetect.NewAnalysis(finalURL, html)
 	loadBrands(*analysis)
 
 	err = analysis.AnalyzeHTML()
@@ -226,16 +163,82 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 
 	results := AnalysisResults{
 		URL:        url,
-		URLFinal:   urlFinal,
+		FinalURL:   finalURL,
 		Safelisted: analysis.Safelisted,
 		Dangerous:  analysis.Dangerous,
 		Score:      analysis.Score,
 		Brand:      brand,
 		Warnings:   analysis.Warnings,
 		HTML:       html,
+		HTMLSHA256: phishdetect.GetSHA256Hash(html),
 	}
 
-	blocklisted, err := checkIfBlocklisted(urlFinal)
+	blocklisted, err := checkIfBlocklisted(finalURL)
+	if err == nil && blocklisted.Score > 0 {
+		results.Score += blocklisted.Score
+		results.Warnings = append(results.Warnings, blocklisted)
+	}
+
+	return &results, nil
+}
+
+// analyzeURLDynamic is used to dynamically analyze a URL.
+func analyzeURLDynamic(url string) (*AnalysisResults, error) {
+	urlNormalized := phishdetect.NormalizeURL(url)
+	finalURL := urlNormalized
+
+	var screenshot string
+
+	if !validateURL(urlNormalized) {
+		return nil, errors.New(ErrorMsgInvalidURL)
+	}
+
+	// Setting Docker API version.
+	os.Setenv("DOCKER_API_VERSION", apiVersion)
+	// Instantiate new browser and open the link.
+	browser := phishdetect.NewBrowser(urlNormalized, "", false, false, "")
+	err := browser.Run()
+	if err != nil {
+		log.Error("Failed to instantiate browser: ", err)
+		return nil, errors.New(ErrorMsgAnalysisFailed)
+	}
+	finalURL = browser.FinalURL
+
+	screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
+	analysis := phishdetect.NewAnalysis(finalURL, browser.HTML)
+
+	loadBrands(*analysis)
+
+	err = analysis.AnalyzeBrowserResults(browser.Resources)
+	if err != nil {
+		log.Error("Failed to analyze HTML: ", err)
+		return nil, errors.New(ErrorMsgAnalysisFailed)
+	}
+	err = analysis.AnalyzeURL()
+	if err != nil {
+		log.Error("Failed to analyze URL: ", err)
+		return nil, errors.New(ErrorMsgAnalysisFailed)
+	}
+	brand := analysis.Brands.GetBrand()
+
+	results := AnalysisResults{
+		URL:        url,
+		FinalURL:   finalURL,
+		Safelisted: analysis.Safelisted,
+		Dangerous:  analysis.Dangerous,
+		Score:      analysis.Score,
+		Brand:      brand,
+		Screenshot: screenshot,
+		Warnings:   analysis.Warnings,
+		Visits:     browser.Visits,
+		Resources:  browser.Resources,
+		Dialogs:    browser.Dialogs,
+		Downloads:  browser.Downloads,
+		HTML:       browser.HTML,
+		HTMLSHA256: browser.HTMLSHA256,
+	}
+
+	blocklisted, err := checkIfBlocklisted(finalURL)
 	if err == nil && blocklisted.Score > 0 {
 		results.Score += blocklisted.Score
 		results.Warnings = append(results.Warnings, blocklisted)

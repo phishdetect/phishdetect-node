@@ -50,8 +50,8 @@
         </div>
     {% endif %}
 
-    {% if urlFinal and url != urlFinal %}
-    <div class="mb-8">The original link <span class="font-mono bg-grey-lighter" style="word-break: break-all;">{{url}}</span> redirected to the final URL <span class="font-mono bg-grey-lighter" style="word-break: break-all;">{{urlFinal}}</span></div>
+    {% if finalURL and url != finalURL %}
+    <div class="mb-8">The original link <span class="font-mono bg-grey-lighter" style="word-break: break-all;">{{url}}</span> redirected to the final URL <span class="font-mono bg-grey-lighter" style="word-break: break-all;">{{finalURL}}</span></div>
     {% endif %}
 
     <div class="mb-4">Following is a screenshot preview of the website.{% if brand and not safelisted %} Bear in mind, <b>this website is not a legitimate {{brand|capfirst}} site.</b>{% endif %}</div>
