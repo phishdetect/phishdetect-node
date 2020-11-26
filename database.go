@@ -88,8 +88,7 @@ type AnalysisResults struct {
 	Score      int                    `json:"score"`
 	Screenshot string                 `json:"screenshot"`
 	Warnings   []phishdetect.Warning  `json:"warnings"`
-	Visits     []phishdetect.Visit    `json:"visits"`
-	Resources  []phishdetect.Resource `json:"resources"`
+	Requests   []phishdetect.Request  `json:"requests"`
 	Dialogs    []phishdetect.Dialog   `json:"dialogs"`
 	Downloads  []phishdetect.Download `json:"downloads"`
 	HTML       string                 `json:"html"`

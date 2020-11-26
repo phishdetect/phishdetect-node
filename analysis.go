@@ -159,7 +159,7 @@ func analyzeLink(url string) (*AnalysisResults, error) {
 
 	loadBrands(*analysis)
 
-	err = analysis.AnalyzeHTML()
+	err = analysis.AnalyzeLink(browser.Requests)
 	if err != nil {
 		log.Error("Failed to analyze HTML: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
@@ -180,8 +180,7 @@ func analyzeLink(url string) (*AnalysisResults, error) {
 		Brand:      brand,
 		Screenshot: screenshot,
 		Warnings:   analysis.Warnings,
-		Visits:     browser.Visits,
-		Resources:  browser.Resources,
+		Requests:   browser.Requests,
 		Dialogs:    browser.Dialogs,
 		Downloads:  browser.Downloads,
 		HTML:       browser.HTML,
