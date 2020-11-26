@@ -20,9 +20,9 @@ require (
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mafredri/cdp v0.30.0 // indirect
 	github.com/manifoldco/promptui v0.7.0
-	github.com/mattn/go-colorable v0.1.7
+	github.com/mattn/go-colorable v0.1.8
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/phishdetect/phishdetect v1.15.0
+	github.com/phishdetect/phishdetect v1.16.0
 	github.com/rogpeppe/go-internal v1.6.2 // indirect
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/pflag v1.0.5
@@ -40,5 +40,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
-	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v2 v2.4.0
 )

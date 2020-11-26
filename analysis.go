@@ -150,16 +150,12 @@ func analyzeLink(url string) (*AnalysisResults, error) {
 	}
 	urlFinal = browser.FinalURL
 
-	if strings.HasPrefix(urlFinal, "chrome-error://") {
-		return nil, errors.New(ErrorMsgConnectionFailed)
-	}
-
 	screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
 	analysis := phishdetect.NewAnalysis(urlFinal, browser.HTML)
 
 	loadBrands(*analysis)
 
-	err = analysis.AnalyzeLink(browser.Requests)
+	err = analysis.AnalyzeBrowserResults(browser.Requests)
 	if err != nil {
 		log.Error("Failed to analyze HTML: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
