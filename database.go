@@ -80,21 +80,21 @@ type Review struct {
 }
 
 type AnalysisResults struct {
-	URL        string                 `json:"url"`
-	FinalURL   string                 `json:"final_url" bson:"final_url`
-	Safelisted bool                   `json:"safelisted"`
-	Dangerous  bool                   `json:"dangerous"`
-	Brand      string                 `json:"brand"`
-	Score      int                    `json:"score"`
-	Screenshot string                 `json:"screenshot"`
-	Visits     []phishdetect.Visit    `json:"visits"`
-	Resources  []phishdetect.Resource `json:"resources"`
-	Warnings   []phishdetect.Warning  `json:"warnings"`
-	Dialogs    []phishdetect.Dialog   `json:"dialogs"`
-	Downloads  []phishdetect.Download `json:"downloads"`
-	HTML       string                 `json:"html"`
-	HTMLSHA256 string                 `json:"html_sha256"`
-	AlertUUID  string                 `json:"uuid"`
+	URL           string                    `json:"url"`
+	FinalURL      string                    `json:"final_url" bson:"final_url`
+	Safelisted    bool                      `json:"safelisted"`
+	Dangerous     bool                      `json:"dangerous"`
+	Brand         string                    `json:"brand"`
+	Score         int                       `json:"score"`
+	Screenshot    string                    `json:"screenshot"`
+	Visits        []phishdetect.Visit       `json:"visits"`
+	ResourcesData phishdetect.ResourcesData `json:"resources_data"`
+	Warnings      []phishdetect.Warning     `json:"warnings"`
+	Dialogs       []phishdetect.Dialog      `json:"dialogs"`
+	Downloads     []phishdetect.Download    `json:"downloads"`
+	HTML          string                    `json:"html"`
+	HTMLSHA256    string                    `json:"html_sha256"`
+	AlertUUID     string                    `json:"uuid"`
 }
 
 const IndicatorsLimitAll = 0

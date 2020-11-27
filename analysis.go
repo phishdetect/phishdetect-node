@@ -209,7 +209,7 @@ func analyzeURLDynamic(url string) (*AnalysisResults, error) {
 
 	loadBrands(*analysis)
 
-	err = analysis.AnalyzeBrowserResults(browser.Resources)
+	err = analysis.AnalyzeBrowserResults(browser.ResourcesData)
 	if err != nil {
 		log.Error("Failed to analyze HTML: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
@@ -222,20 +222,20 @@ func analyzeURLDynamic(url string) (*AnalysisResults, error) {
 	brand := analysis.Brands.GetBrand()
 
 	results := AnalysisResults{
-		URL:        url,
-		FinalURL:   finalURL,
-		Safelisted: analysis.Safelisted,
-		Dangerous:  analysis.Dangerous,
-		Score:      analysis.Score,
-		Brand:      brand,
-		Screenshot: screenshot,
-		Warnings:   analysis.Warnings,
-		Visits:     browser.Visits,
-		Resources:  browser.Resources,
-		Dialogs:    browser.Dialogs,
-		Downloads:  browser.Downloads,
-		HTML:       browser.HTML,
-		HTMLSHA256: browser.HTMLSHA256,
+		URL:           url,
+		FinalURL:      finalURL,
+		Safelisted:    analysis.Safelisted,
+		Dangerous:     analysis.Dangerous,
+		Score:         analysis.Score,
+		Brand:         brand,
+		Screenshot:    screenshot,
+		Warnings:      analysis.Warnings,
+		Visits:        browser.Visits,
+		ResourcesData: browser.ResourcesData,
+		Dialogs:       browser.Dialogs,
+		Downloads:     browser.Downloads,
+		HTML:          browser.HTML,
+		HTMLSHA256:    browser.HTMLSHA256,
 	}
 
 	blocklisted, err := checkIfBlocklisted(finalURL)
