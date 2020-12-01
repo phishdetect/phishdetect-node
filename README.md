@@ -29,7 +29,7 @@ In order to run PhishDetect Node you only need to download the `phishdetect-node
           --safebrowsing string   Specify a file path containing your Google SafeBrowsing API key (default disabled)
           --yara string           Specify a path to a file or folder contaning Yara rules
 
-For a more exhaustive documentation on how to install and use PhishDetect please refer to the [Admin Guide](https://phishdetect.gitbook.io/admin-guide/).
+For a more exhaustive documentation on how to install and use PhishDetect please refer to the [Official Documentation](https://docs.phishdetect.io).
 
 ## License
 
