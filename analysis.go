@@ -23,8 +23,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/phishdetect/phishdetect"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/phishdetect/phishdetect"
 )
 
 func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
@@ -62,7 +63,7 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 	}
 
 	analysis := phishdetect.NewAnalysis(finalURL, "")
-	loadBrands(*analysis)
+	customBrands.LoadBrands(*analysis)
 
 	err := analysis.AnalyzeDomain()
 	if err != nil {
@@ -100,7 +101,7 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 	}
 
 	analysis := phishdetect.NewAnalysis(finalURL, "")
-	loadBrands(*analysis)
+	customBrands.LoadBrands(*analysis)
 
 	err := analysis.AnalyzeURL()
 	if err != nil {
@@ -147,7 +148,7 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 	html := string(htmlData)
 
 	analysis := phishdetect.NewAnalysis(finalURL, html)
-	loadBrands(*analysis)
+	customBrands.LoadBrands(*analysis)
 
 	err = analysis.AnalyzeHTML()
 	if err != nil {
@@ -207,7 +208,7 @@ func analyzeURLDynamic(url string) (*AnalysisResults, error) {
 	screenshot = fmt.Sprintf("data:image/png;base64,%s", browser.ScreenshotData)
 	analysis := phishdetect.NewAnalysis(finalURL, browser.HTML)
 
-	loadBrands(*analysis)
+	customBrands.LoadBrands(*analysis)
 
 	err = analysis.AnalyzeBrowserResults(browser.ResourcesData)
 	if err != nil {

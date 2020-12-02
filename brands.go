@@ -17,11 +17,13 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/fsnotify/fsnotify"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
@@ -29,18 +31,22 @@ import (
 	"github.com/phishdetect/phishdetect/brand"
 )
 
-func compileBrands() []brand.Brand {
-	if brandsPath == "" {
+type CustomBrands struct {
+	Path   string
+	Brands []brand.Brand
+}
+
+func (b *CustomBrands) CompileBrands() error {
+	if b.Path == "" {
 		return nil
 	}
 
-	if _, err := os.Stat(brandsPath); os.IsNotExist(err) {
-		log.Warning("The specified brands folder does not exist, skipping")
-		return nil
+	if _, err := os.Stat(b.Path); os.IsNotExist(err) {
+		return fmt.Errorf("The specified brands folder does not exist, skipping")
 	}
 
 	filePaths := []string{}
-	filepath.Walk(brandsPath, func(path string, info os.FileInfo, err error) error {
+	filepath.Walk(b.Path, func(path string, info os.FileInfo, err error) error {
 		ext := filepath.Ext(strings.ToLower(path))
 		if ext == ".yaml" || ext == ".yml" {
 			filePaths = append(filePaths, path)
@@ -48,8 +54,7 @@ func compileBrands() []brand.Brand {
 		return nil
 	})
 
-	brands := []brand.Brand{}
-
+	b.Brands = []brand.Brand{}
 	for _, path := range filePaths {
 		log.Debug("Trying to load custom brand file at path ", path)
 		customBrand := brand.Brand{}
@@ -60,20 +65,57 @@ func compileBrands() []brand.Brand {
 			continue
 		}
 
+		b.Brands = append(b.Brands, customBrand)
 		log.Debug("Loaded custom brand with name: ", customBrand.Name)
-
-		brands = append(brands, customBrand)
 	}
 
-	return brands
+	log.Info("Loaded ", len(b.Brands), " custom brand definitions")
+
+	return nil
 }
 
-func loadBrands(analysis phishdetect.Analysis) {
-	for _, customBrand := range customBrands {
+func (b *CustomBrands) LoadBrands(analysis phishdetect.Analysis) {
+	for _, customBrand := range b.Brands {
 		log.Debug("Adding brand with name ", customBrand.Name, " to analysis")
 		newBrand := customBrand
 		analysis.Brands.AddBrand(&newBrand)
 	}
+}
 
-	return
+func (b *CustomBrands) WatchBrandsFolder() error {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return fmt.Errorf("Unable to create a filesystem watch for brands folder: %s", err)
+	}
+	defer watcher.Close()
+
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Remove == fsnotify.Remove {
+					log.Info("The file ", event.Name, " was modified in brands folder ", b.Path)
+					b.CompileBrands()
+				}
+			}
+		}
+	}()
+
+	err = watcher.Add(b.Path)
+	if err != nil {
+		if err.Error() == "no space left on device" {
+			return fmt.Errorf("You might be out of inotify watches, increase the value of " +
+				"fs.inotify.max_user_watches in /etc/sysctl.conf")
+		}
+		return fmt.Errorf("Unable to add %s to filesystem watcher: %s", b.Path, err)
+	}
+	<-done
+
+	log.Info("Filesystem watcher for brands folder ", b.Path, " started")
+
+	return nil
 }

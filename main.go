@@ -32,7 +32,6 @@ import (
 	flag "github.com/spf13/pflag"
 
 	"github.com/phishdetect/phishdetect"
-	"github.com/phishdetect/phishdetect/brand"
 )
 
 const (
@@ -65,9 +64,9 @@ var (
 	staticBox    packr.Box
 	tmplSet      *pongo.TemplateSet
 
-	customBrands []brand.Brand
-
 	sha1RegexCompiled *regexp.Regexp
+
+	customBrands CustomBrands
 )
 
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -160,13 +159,22 @@ func initServer() {
 
 	// Initialize Yara scanner if rule files were specified.
 	if yaraPath != "" {
-		if _, err := os.Stat(yaraPath); err == nil {
-			err = phishdetect.InitializeYara(yaraPath)
-			if err != nil {
-				log.Warning("Failed to initialize Yara scanner: ", err.Error())
-			}
-		} else {
-			log.Warning("The specified path to the Yara rules does not exist")
+		err := phishdetect.InitializeYara(yaraPath)
+		if err != nil {
+			log.Warning("Failed to initialize Yara scanner: ", err.Error())
+		}
+	}
+
+	// Load custom brands.
+	if brandsPath != "" {
+		customBrands.Path = brandsPath
+		err := customBrands.CompileBrands()
+		if err != nil {
+			log.Error("Failed to compile brands: ", err)
+		}
+		err = customBrands.WatchBrandsFolder()
+		if err != nil {
+			log.Error("Failed to set up filesystem watcher for brands path: ", err)
 		}
 	}
 
@@ -174,9 +182,6 @@ func initServer() {
 	templatesBox = packr.NewBox("templates")
 	staticBox = packr.NewBox("static")
 	tmplSet = pongo.NewSet("templates", packrBoxLoader{&templatesBox})
-
-	// Load custom brands.
-	customBrands = compileBrands()
 
 	// Compile sha1 regex (used for key validation).
 	sha1RegexCompiled = regexp.MustCompile(sha1Regex)
