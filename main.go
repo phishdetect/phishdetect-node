@@ -168,10 +168,13 @@ func initServer() {
 	// Load custom brands.
 	if brandsPath != "" {
 		customBrands.Path = brandsPath
+		// We do a first compilation of the brand definitions.
 		err := customBrands.CompileBrands()
 		if err != nil {
 			log.Error("Failed to compile brands: ", err)
 		}
+		// Then we setup a fsnofity watcher in order to auto-reload brand
+		// definitions in case one is created or removed.
 		err = customBrands.WatchBrandsFolder()
 		if err != nil {
 			log.Error("Failed to set up filesystem watcher for brands path: ", err)
