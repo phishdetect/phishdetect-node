@@ -23,7 +23,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fsnotify/fsnotify"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
@@ -80,42 +79,4 @@ func (b *CustomBrands) LoadBrands(analysis phishdetect.Analysis) {
 		newBrand := customBrand
 		analysis.Brands.AddBrand(&newBrand)
 	}
-}
-
-func (b *CustomBrands) WatchBrandsFolder() error {
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		return fmt.Errorf("Unable to create a filesystem watch for brands folder: %s", err)
-	}
-	defer watcher.Close()
-
-	done := make(chan bool)
-	go func() {
-		for {
-			select {
-			case event, ok := <-watcher.Events:
-				if !ok {
-					return
-				}
-				if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Remove == fsnotify.Remove {
-					log.Info("The file ", event.Name, " was modified in brands folder ", b.Path)
-					b.CompileBrands()
-				}
-			}
-		}
-	}()
-
-	err = watcher.Add(b.Path)
-	if err != nil {
-		if err.Error() == "no space left on device" {
-			return fmt.Errorf("You might be out of inotify watches, increase the value of " +
-				"fs.inotify.max_user_watches in /etc/sysctl.conf")
-		}
-		return fmt.Errorf("Unable to add %s to filesystem watcher: %s", b.Path, err)
-	}
-	<-done
-
-	log.Info("Filesystem watcher for brands folder ", b.Path, " started")
-
-	return nil
 }
