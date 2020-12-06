@@ -210,7 +210,7 @@ func analyzeURLDynamic(url string) (*AnalysisResults, error) {
 
 	customBrands.LoadBrands(*analysis)
 
-	err = analysis.AnalyzeBrowserResults(browser.ResourcesData)
+	err = analysis.AnalyzeBrowserResults(browser)
 	if err != nil {
 		log.Error("Failed to analyze HTML: ", err)
 		return nil, errors.New(ErrorMsgAnalysisFailed)
