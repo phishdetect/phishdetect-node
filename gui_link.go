@@ -21,6 +21,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/botherder/go-savetime/hashes"
 	pongo "github.com/flosch/pongo2"
 	"github.com/gorilla/mux"
 	"github.com/nu7hatch/gouuid"
@@ -87,7 +88,7 @@ func guiLinkAnalyze(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 	url := r.PostFormValue("url")
-	urlSHA1 := encodeSHA1(url)
+	urlSHA1, _ := hashes.StringSHA1(url)
 	htmlEncoded := r.PostFormValue("html")
 	screenshot := r.PostFormValue("screenshot")
 

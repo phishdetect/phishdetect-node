@@ -17,11 +17,6 @@
 package main
 
 import (
-	"crypto/sha1"
-	"crypto/sha256"
-	"encoding/hex"
-	"regexp"
-
 	"github.com/phishdetect/phishdetect"
 )
 
@@ -36,21 +31,4 @@ func validateURL(url string) bool {
 	}
 
 	return true
-}
-
-func encodeSHA1(target string) string {
-	h := sha1.New()
-	h.Write([]byte(target))
-	return hex.EncodeToString(h.Sum(nil))
-}
-
-func encodeSHA256(target string) string {
-	h := sha256.New()
-	h.Write([]byte(target))
-	return hex.EncodeToString(h.Sum(nil))
-}
-
-func validateSHA256(target string) bool {
-	rxp := regexp.MustCompile(`[a-fA-F0-9]{64}`)
-	return rxp.MatchString(target)
 }

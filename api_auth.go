@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/botherder/go-savetime/hashes"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -41,7 +42,7 @@ func generateAPIKey(source string) (string, error) {
 		return "", err
 	}
 
-	return encodeSHA1(string(hash)), nil
+	return hashes.StringSHA1(string(hash))
 }
 
 func getAPIKeyFromRequest(r *http.Request) string {

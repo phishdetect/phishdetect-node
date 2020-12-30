@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/botherder/go-savetime/hashes"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
@@ -205,7 +206,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Check if we received an already hashed IOC.
-		if validateSHA256(indicator) {
+		if hashes.ValidateSHA256(indicator) {
 			// If the submitted sent an hashed indicator but did not
 			// specify the type, we have to skip it because we can't
 			// automatically determine one.
@@ -224,7 +225,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 			// Otherwise, we first clean the indicator...
 			ioc.Original = cleanIndicator(indicator)
 			// ... then we hash the original indicator.
-			ioc.Hashed = encodeSHA256(indicator)
+			ioc.Hashed, _ = hashes.StringSHA256(indicator)
 
 			// If the user did not specify a type, we try to automatically
 			// determine it.
@@ -280,7 +281,7 @@ func apiIndicatorsChangeStatus(w http.ResponseWriter, r *http.Request, newStatus
 
 	toggledCounter := 0
 	for _, indicator := range indicators {
-		if !validateSHA256(indicator) {
+		if !hashes.ValidateSHA256(indicator) {
 			continue
 		}
 

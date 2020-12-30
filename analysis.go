@@ -23,17 +23,16 @@ import (
 	"os"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-
+	"github.com/botherder/go-savetime/hashes"
 	"github.com/phishdetect/phishdetect"
+	log "github.com/sirupsen/logrus"
 )
 
 func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
 	link, err := phishdetect.NewLink(target)
-	toCheck := []string{
-		encodeSHA256(strings.ToLower(strings.TrimSpace(link.Domain))),
-		encodeSHA256(strings.ToLower(strings.TrimSpace(link.TopDomain))),
-	}
+	domainHash, _ := hashes.StringSHA256(strings.ToLower(strings.TrimSpace(link.Domain)))
+	topDomainHash, _ := hashes.StringSHA256(strings.ToLower(strings.TrimSpace(link.TopDomain)))
+	toCheck := []string{domainHash, topDomainHash}
 
 	iocs, err := db.GetIndicators(IndicatorsLimitAll, IndicatorsStatusEnabled)
 	if err != nil {
