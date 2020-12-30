@@ -23,6 +23,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/botherder/go-savetime/slices"
 	"github.com/botherder/go-savetime/hashes"
 	"github.com/phishdetect/phishdetect"
 	log "github.com/sirupsen/logrus"
@@ -32,14 +33,14 @@ func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
 	link, err := phishdetect.NewLink(target)
 	domainHash, _ := hashes.StringSHA256(strings.ToLower(strings.TrimSpace(link.Domain)))
 	topDomainHash, _ := hashes.StringSHA256(strings.ToLower(strings.TrimSpace(link.TopDomain)))
-	toCheck := []string{domainHash, topDomainHash}
+	targetHashes := []string{domainHash, topDomainHash}
 
 	iocs, err := db.GetIndicators(IndicatorsLimitAll, IndicatorsStatusEnabled)
 	if err != nil {
 		return phishdetect.Warning{}, err
 	}
 	for _, ioc := range iocs {
-		if phishdetect.SliceContains(toCheck, ioc.Hashed) {
+		if slices.IsStringInSliceNoCase(ioc.Hashed, targetHashes) {
 			log.Debug("Target ", target, " is blocklisted by indicator with hash ", ioc.Hashed)
 			return phishdetect.Warning{
 				Score:       100,
