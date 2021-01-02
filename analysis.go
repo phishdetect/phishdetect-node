@@ -23,8 +23,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/botherder/go-savetime/slices"
 	"github.com/botherder/go-savetime/hashes"
+	"github.com/botherder/go-savetime/slice"
 	"github.com/phishdetect/phishdetect"
 	log "github.com/sirupsen/logrus"
 )
@@ -40,7 +40,7 @@ func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
 		return phishdetect.Warning{}, err
 	}
 	for _, ioc := range iocs {
-		if slices.IsStringInSliceNoCase(ioc.Hashed, targetHashes) {
+		if slice.ContainsNoCase(targetHashes, ioc.Hashed) {
 			log.Debug("Target ", target, " is blocklisted by indicator with hash ", ioc.Hashed)
 			return phishdetect.Warning{
 				Score:       100,
@@ -162,6 +162,7 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 	}
 	brand := analysis.Brands.GetBrand()
 
+	htmlSHA256, _ := hashes.StringSHA256(html)
 	results := AnalysisResults{
 		URL:        url,
 		FinalURL:   finalURL,
@@ -171,7 +172,7 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 		Brand:      brand,
 		Warnings:   analysis.Warnings,
 		HTML:       html,
-		HTMLSHA256: phishdetect.GetSHA256Hash(html),
+		HTMLSHA256: htmlSHA256,
 	}
 
 	blocklisted, err := checkIfBlocklisted(finalURL)
