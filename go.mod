@@ -3,9 +3,8 @@ module github.com/phishdetect/phishdetect-node
 go 1.14
 
 require (
-	github.com/botherder/go-savetime v1.1.0
+	github.com/botherder/go-savetime v1.2.1
 	github.com/flosch/pongo2 v0.0.0-20190707114632-bbf5a6c351f4
-	github.com/fsnotify/fsnotify v1.4.7
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
