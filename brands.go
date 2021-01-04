@@ -27,12 +27,12 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/phishdetect/phishdetect"
-	"github.com/phishdetect/phishdetect/brand"
+	"github.com/phishdetect/phishdetect/brands"
 )
 
 type CustomBrands struct {
 	Path   string
-	Brands []brand.Brand
+	Brands []brands.Brand
 }
 
 func (b *CustomBrands) CompileBrands() error {
@@ -53,10 +53,10 @@ func (b *CustomBrands) CompileBrands() error {
 		return nil
 	})
 
-	b.Brands = []brand.Brand{}
+	b.Brands = []brands.Brand{}
 	for _, path := range filePaths {
 		log.Debug("Trying to load custom brand file at path ", path)
-		customBrand := brand.Brand{}
+		customBrand := brands.Brand{}
 		yamlFile, err := ioutil.ReadFile(path)
 		err = yaml.Unmarshal(yamlFile, &customBrand)
 		if err != nil {

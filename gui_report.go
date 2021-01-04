@@ -27,7 +27,7 @@ import (
 	"github.com/nu7hatch/gouuid"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/phishdetect/phishdetect"
+	"github.com/phishdetect/phishdetect/link"
 )
 
 func guiReport(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +49,7 @@ func guiReport(w http.ResponseWriter, r *http.Request) {
 
 	urlDecoded := string(data)
 
-	_, err = phishdetect.NewLink(urlDecoded)
+	_, err = link.New(urlDecoded)
 	if err != nil {
 		log.Error(err)
 		errorPage(w, "The URL you reported does not seem valid.")

@@ -26,6 +26,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/phishdetect/phishdetect"
+	"github.com/phishdetect/phishdetect/browser"
 )
 
 type Database struct {
@@ -80,22 +81,22 @@ type Review struct {
 }
 
 type AnalysisResults struct {
-	URL               string                        `json:"url"`
-	FinalURL          string                        `json:"final_url" bson:"final_url`
-	Safelisted        bool                          `json:"safelisted"`
-	Dangerous         bool                          `json:"dangerous"`
-	Brand             string                        `json:"brand"`
-	Score             int                           `json:"score"`
-	Screenshot        string                        `json:"screenshot"`
-	Visits            []phishdetect.Visit           `json:"visits"`
-	NavigationHistory phishdetect.NavigationHistory `json:"navigation_history"`
-	ResourcesData     phishdetect.ResourcesData     `json:"resources_data"`
-	Warnings          []phishdetect.Warning         `json:"warnings"`
-	Dialogs           []phishdetect.Dialog          `json:"dialogs"`
-	Downloads         []phishdetect.Download        `json:"downloads"`
-	HTML              string                        `json:"html"`
-	HTMLSHA256        string                        `json:"html_sha256"`
-	AlertUUID         string                        `json:"uuid"`
+	URL               string                    `json:"url"`
+	FinalURL          string                    `json:"final_url" bson:"final_url`
+	Safelisted        bool                      `json:"safelisted"`
+	Dangerous         bool                      `json:"dangerous"`
+	Brand             string                    `json:"brand"`
+	Score             int                       `json:"score"`
+	Screenshot        string                    `json:"screenshot"`
+	Visits            []browser.Visit           `json:"visits"`
+	NavigationHistory browser.NavigationHistory `json:"navigation_history"`
+	ResourcesData     browser.ResourcesData     `json:"resources_data"`
+	Warnings          []phishdetect.Warning     `json:"warnings"`
+	Dialogs           []browser.Dialog          `json:"dialogs"`
+	Downloads         []browser.Download        `json:"downloads"`
+	HTML              string                    `json:"html"`
+	HTMLSHA256        string                    `json:"html_sha256"`
+	AlertUUID         string                    `json:"uuid"`
 }
 
 const IndicatorsLimitAll = 0

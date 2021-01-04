@@ -3,7 +3,7 @@ module github.com/phishdetect/phishdetect-node
 go 1.14
 
 require (
-	github.com/botherder/go-savetime v1.0.1
+	github.com/botherder/go-savetime v1.1.0
 	github.com/flosch/pongo2 v0.0.0-20190707114632-bbf5a6c351f4
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -21,7 +21,7 @@ require (
 	github.com/mattn/go-colorable v0.1.8
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/phishdetect/phishdetect v1.19.1
+	github.com/phishdetect/phishdetect v1.20.0
 	github.com/rogpeppe/go-internal v1.6.2 // indirect
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/pflag v1.0.5

@@ -17,11 +17,11 @@
 package main
 
 import (
-	"github.com/phishdetect/phishdetect"
+	"github.com/phishdetect/phishdetect/link"
 )
 
 func validateURL(url string) bool {
-	linkTest, err := phishdetect.NewLink(url)
+	linkTest, err := link.New(url)
 	if err != nil {
 		return false
 	}

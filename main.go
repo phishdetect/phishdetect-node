@@ -150,7 +150,7 @@ func initServer() {
 			buf, _ := ioutil.ReadFile(safeBrowsing)
 			key := string(buf)
 			if key != "" {
-				phishdetect.SafeBrowsingKey = key
+				phishdetect.AddSafeBrowsingKey(key)
 			}
 		} else {
 			log.Warning("The specified Google SafeBrowsing API key file does not exist: check disabled")
@@ -160,14 +160,14 @@ func initServer() {
 	// Initialize Yara scanner if rule files were specified.
 	if yaraPath != "" {
 		// We do a first compilation of the Yara rules.
-		err := phishdetect.InitializeYara(yaraPath)
+		err := phishdetect.LoadYaraRules(yaraPath)
 		if err != nil {
 			log.Error("Failed to initialize Yara scanner: ", err.Error())
 		}
 		// Then we set up a fsnotify watcher in order to auto-reload Yara
 		// rules in case one is created, modified, or removed.
 		go watchFolder(yaraPath, func() {
-			phishdetect.InitializeYara(yaraPath)
+			phishdetect.LoadYaraRules(yaraPath)
 		})
 	}
 
