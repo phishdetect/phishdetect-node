@@ -33,14 +33,14 @@ func guiIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func guiContacts(w http.ResponseWriter, r *http.Request) {
-	if adminContacts == "" {
+	if flagAdminContacts == "" {
 		errorPage(w, "This PhishDetect Node's administrator did not provide any contact details")
 		return
 	}
 
 	tpl, err := tmplSet.FromCache("contacts.html")
 	err = tpl.ExecuteWriter(pongo.Context{
-		"contacts": adminContacts,
+		"contacts": flagAdminContacts,
 	}, w)
 	if err != nil {
 		log.Error(err)

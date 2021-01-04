@@ -35,7 +35,7 @@ func apiConfig(w http.ResponseWriter, r *http.Request) {
 		EnableGUI:             enableGUI,
 		EnableAnalysis:        enableAnalysis,
 		EnforceUserAuth:       enforceUserAuth,
-		AdministratorContacts: adminContacts,
+		AdministratorContacts: flagAdminContacts,
 	}
 
 	responseWithJSON(w, cfg)

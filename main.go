@@ -44,14 +44,14 @@ const (
 var (
 	createNewUserFlag bool
 
-	host          string
-	portNumber    string
-	mongoURL      string
-	apiVersion    string
-	safeBrowsing  string
-	brandsPath    string
-	yaraPath      string
-	adminContacts string
+	flagHost             string
+	flagPortNumber       string
+	flagMongoURL         string
+	flagDockerAPIVersion string
+	flagSafeBrowsing     string
+	flagBrandsPath       string
+	flagYaraPath         string
+	flagAdminContacts    string
 
 	enableAPI       bool
 	enableGUI       bool
@@ -88,29 +88,29 @@ func init() {
 	flag.BoolVar(&createNewUserFlag, "create-user", false, "Create a new user")
 
 	// Disable default functionality.
-	disableAPI := flag.Bool("disable-api", false, "Disable the API routes")
-	disableGUI := flag.Bool("disable-gui", false, "Disable the Web GUI")
-	disableAnalysis := flag.Bool("disable-analysis", false, "Disable the ability to analyze links and pages")
-	disableUserAuth := flag.Bool("disable-user-auth", false, "Disable requirement of a valid user API key for all operations")
+	flagDisableAPI := flag.Bool("disable-api", false, "Disable the API routes")
+	flagDisableGUI := flag.Bool("disable-gui", false, "Disable the Web GUI")
+	flagDisableAnalysis := flag.Bool("disable-analysis", false, "Disable the ability to analyze links and pages")
+	flagDisableUserAuth := flag.Bool("disable-user-auth", false, "Disable requirement of a valid user API key for all operations")
 
 	// Server connection details.
-	flag.StringVar(&host, "host", "127.0.0.1", "Specify the host to bind the service on")
-	flag.StringVar(&portNumber, "port", "7856", "Specify which port number to bind the service on")
-	flag.StringVar(&mongoURL, "mongo", "mongodb://localhost:27017", "Specify the mongodb url")
+	flag.StringVar(&flagHost, "host", "127.0.0.1", "Specify the host to bind the service on")
+	flag.StringVar(&flagPortNumber, "port", "7856", "Specify which port number to bind the service on")
+	flag.StringVar(&flagMongoURL, "mongo", "mongodb://localhost:27017", "Specify the mongodb url")
 
 	// Docker API version.
 	// TODO: I should look into deprecating this.
-	flag.StringVar(&apiVersion, "api-version", "1.37", "Specify which Docker API version to use")
+	flag.StringVar(&flagDockerAPIVersion, "api-version", "1.37", "Specify which Docker API version to use")
 
 	// Following are optional configuration values.
 	// Path to additional brands YAML definitions.
-	flag.StringVar(&brandsPath, "brands", "", "Specify a folder containing YAML files with Brand specifications")
+	flag.StringVar(&flagBrandsPath, "brands", "", "Specify a folder containing YAML files with Brand specifications")
 	// Path to Yara rules.
-	flag.StringVar(&yaraPath, "yara", "", "Specify a path to a file or folder contaning Yara rules")
+	flag.StringVar(&flagYaraPath, "yara", "", "Specify a path to a file or folder contaning Yara rules")
 	// Path to a file containing a Google Safebrowsing key.
-	flag.StringVar(&safeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
+	flag.StringVar(&flagSafeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
 	// URL to a page providing contact details for the Node operators.
-	flag.StringVar(&adminContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
+	flag.StringVar(&flagAdminContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
 	flag.Parse()
 
 	if *debug {
@@ -124,14 +124,14 @@ func init() {
 	log.SetOutput(colorable.NewColorableStdout())
 
 	// Initialize configuration values.
-	enableAPI = !*disableAPI
-	enableGUI = !*disableGUI
-	enableAnalysis = !*disableAnalysis
-	enforceUserAuth = !*disableUserAuth
+	enableAPI = !*flagDisableAPI
+	enableGUI = !*flagDisableGUI
+	enableAnalysis = !*flagDisableAnalysis
+	enforceUserAuth = !*flagDisableUserAuth
 
 	// Initiate connection to database.
 	var err error
-	db, err = NewDatabase(mongoURL)
+	db, err = NewDatabase(flagMongoURL)
 	if err != nil {
 		log.Fatal("Failed connection to database: ", err.Error())
 		return
@@ -145,9 +145,9 @@ func initServer() {
 	log.Info("Enforce User Auth: ", enforceUserAuth)
 
 	// Initialize SafeBrowsing if an API key was provided.
-	if safeBrowsing != "" {
-		if _, err := os.Stat(safeBrowsing); err == nil {
-			buf, _ := ioutil.ReadFile(safeBrowsing)
+	if flagSafeBrowsing != "" {
+		if _, err := os.Stat(flagSafeBrowsing); err == nil {
+			buf, _ := ioutil.ReadFile(flagSafeBrowsing)
 			key := string(buf)
 			if key != "" {
 				phishdetect.AddSafeBrowsingKey(key)
@@ -158,22 +158,22 @@ func initServer() {
 	}
 
 	// Initialize Yara scanner if rule files were specified.
-	if yaraPath != "" {
+	if flagYaraPath != "" {
 		// We do a first compilation of the Yara rules.
-		err := phishdetect.LoadYaraRules(yaraPath)
+		err := phishdetect.LoadYaraRules(flagYaraPath)
 		if err != nil {
 			log.Error("Failed to initialize Yara scanner: ", err.Error())
 		}
 		// Then we set up a fsnotify watcher in order to auto-reload Yara
 		// rules in case one is created, modified, or removed.
-		go watchFolder(yaraPath, func() {
-			phishdetect.LoadYaraRules(yaraPath)
+		go watchFolder(flagYaraPath, func() {
+			phishdetect.LoadYaraRules(flagYaraPath)
 		})
 	}
 
 	// Load custom brands.
-	if brandsPath != "" {
-		customBrands.Path = brandsPath
+	if flagBrandsPath != "" {
+		customBrands.Path = flagBrandsPath
 		// We do a first compilation of the brand definitions.
 		err := customBrands.CompileBrands()
 		if err != nil {
@@ -286,7 +286,7 @@ func startServer() {
 		errorWithJSON(w, "File not found", http.StatusNotFound, nil)
 	})
 
-	hostPort := fmt.Sprintf("%s:%s", host, portNumber)
+	hostPort := fmt.Sprintf("%s:%s", flagHost, flagPortNumber)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         hostPort,
