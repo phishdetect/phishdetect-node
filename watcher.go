@@ -45,7 +45,7 @@ func watchFolder(folder string, callback func()) error {
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		return fmt.Errorf("Unable to create a filesystem watch for brands folder: %s", err)
+		return fmt.Errorf("Unable to create a filesystem watch for folder: %s", err)
 	}
 	defer watcher.Close()
 

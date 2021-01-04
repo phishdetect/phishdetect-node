@@ -57,7 +57,7 @@ func getAPIKeyFromRequest(r *http.Request) string {
 	}
 
 	key := strings.ToLower(keys[0])
-	if !sha1RegexCompiled.MatchString(key) {
+	if !regexSHA1Compiled.MatchString(key) {
 		return ""
 	}
 

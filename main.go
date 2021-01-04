@@ -35,14 +35,14 @@ import (
 )
 
 const (
-	uuidRegex   = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[4|5|6|7|8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
-	base64Regex = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
-	sha1Regex   = "[a-fA-F0-9]{40}"
-	sha256Regex = "[a-fA-F0-9]{64}"
+	regexUUID   = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[4|5|6|7|8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
+	regexBase64 = "(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})"
+	regexSHA1   = "[a-fA-F0-9]{40}"
+	regexSHA256 = "[a-fA-F0-9]{64}"
 )
 
 var (
-	createNewUserFlag bool
+	flagCreateNewUser bool
 
 	flagHost             string
 	flagPortNumber       string
@@ -60,11 +60,11 @@ var (
 
 	db *Database
 
-	templatesBox packr.Box
-	staticBox    packr.Box
+	boxTemplates packr.Box
+	boxStatic    packr.Box
 	tmplSet      *pongo.TemplateSet
 
-	sha1RegexCompiled *regexp.Regexp
+	regexSHA1Compiled *regexp.Regexp
 
 	customBrands CustomBrands
 )
@@ -85,7 +85,7 @@ func init() {
 	debug := flag.Bool("debug", false, "Enable debug logging")
 
 	// With this flag, instead of starting the server, we create a new user.
-	flag.BoolVar(&createNewUserFlag, "create-user", false, "Create a new user")
+	flag.BoolVar(&flagCreateNewUser, "create-user", false, "Create a new user")
 
 	// Disable default functionality.
 	flagDisableAPI := flag.Bool("disable-api", false, "Disable the API routes")
@@ -187,16 +187,16 @@ func initServer() {
 	}
 
 	// Load templates.
-	templatesBox = packr.NewBox("templates")
-	staticBox = packr.NewBox("static")
-	tmplSet = pongo.NewSet("templates", packrBoxLoader{&templatesBox})
+	boxTemplates = packr.NewBox("templates")
+	boxStatic = packr.NewBox("static")
+	tmplSet = pongo.NewSet("templates", packrBoxLoader{&boxTemplates})
 
 	// Compile sha1 regex (used for key validation).
-	sha1RegexCompiled = regexp.MustCompile(sha1Regex)
+	regexSHA1Compiled = regexp.MustCompile(regexSHA1)
 }
 
 func startServer() {
-	fs := http.FileServer(staticBox)
+	fs := http.FileServer(boxStatic)
 
 	router := mux.NewRouter()
 	router.StrictSlash(true)
@@ -210,11 +210,11 @@ func startServer() {
 		router.HandleFunc("/contacts/", guiContacts).Methods("GET")
 		router.HandleFunc("/link/analyze/",
 			authMiddleware(guiLinkAnalyze, roleUser)).Methods("POST")
-		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", base64Regex),
+		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", regexBase64),
 			authMiddleware(guiLinkCheck, roleUser)).Methods("GET", "POST")
-		router.HandleFunc(fmt.Sprintf("/report/{url:%s}/", base64Regex),
+		router.HandleFunc(fmt.Sprintf("/report/{url:%s}/", regexBase64),
 			authMiddleware(guiReport, roleUser)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}/", sha256Regex),
+		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}/", regexSHA256),
 			authMiddleware(guiReview, roleUser)).Methods("GET")
 	}
 
@@ -252,7 +252,7 @@ func startServer() {
 			authMiddleware(apiIndicatorsAdd, roleSubmitter)).Methods("POST")
 
 		// Admin routes.
-		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", sha256Regex),
+		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", regexSHA256),
 			authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/api/indicators/pending/"),
 			authMiddleware(apiIndicatorsFetchPending, roleAdmin)).Methods("GET")
@@ -268,16 +268,16 @@ func startServer() {
 		//--------------------------------------------------
 		router.HandleFunc("/api/reports/fetch/",
 			authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/reports/details/{uuid:%s}/", uuidRegex),
+		router.HandleFunc(fmt.Sprintf("/api/reports/details/{uuid:%s}/", regexUUID),
 			authMiddleware(apiReportsDetails, roleAdmin)).Methods("GET")
 		//--------------------------------------------------
 		router.HandleFunc("/api/users/pending/",
 			authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")
 		router.HandleFunc("/api/users/active/",
 			authMiddleware(apiUsersActive, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/users/activate/{uuid:%s}/", uuidRegex),
+		router.HandleFunc(fmt.Sprintf("/api/users/activate/{uuid:%s}/", regexUUID),
 			authMiddleware(apiUsersActivate, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{uuid:%s}/", uuidRegex),
+		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{uuid:%s}/", regexUUID),
 			authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
 	}
 
@@ -299,7 +299,7 @@ func startServer() {
 }
 
 func main() {
-	if createNewUserFlag {
+	if flagCreateNewUser {
 		createNewUser()
 		return
 	}
