@@ -23,6 +23,7 @@ import (
 	"time"
 
 	pongo "github.com/flosch/pongo2"
+	"github.com/nu7hatch/gouuid"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -63,7 +64,9 @@ func guiRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	uuidInstance, _ := uuid.NewV4()
 	user := User{
+		UUID:      uuidInstance.String(),
 		Name:      name,
 		Email:     email,
 		Key:       apiKey,

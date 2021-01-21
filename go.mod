@@ -21,7 +21,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 	github.com/phishdetect/phishdetect v1.20.0
-	github.com/rogpeppe/go-internal v1.6.2 // indirect
+	github.com/rogpeppe/go-internal v1.7.0 // indirect
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/pflag v1.0.5
 	github.com/tidwall/pretty v1.0.1 // indirect
@@ -31,7 +31,7 @@ require (
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
-	golang.org/x/sys v0.0.0-20201231184435-2d18734c6014 // indirect
+	golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4 // indirect
 	golang.org/x/text v0.3.4 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/genproto v0.0.0-20201214200347-8c77b98c765d // indirect
