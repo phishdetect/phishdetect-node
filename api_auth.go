@@ -46,22 +46,30 @@ func generateAPIKey(source string) (string, error) {
 }
 
 func getAPIKeyFromRequest(r *http.Request) string {
+	// Try to get the key from the URL query.
 	keys, ok := r.URL.Query()["key"]
+
+	// If we did not retrieve any key from the URL query, we might be
+	// processing a POST request.
 	if !ok || len(keys) < 1 {
 		if r.Method == "POST" {
 			r.ParseForm()
-			return r.PostFormValue("key")
+			keys = append(keys, r.PostFormValue("key"))
+		} else {
+			// If it's not a POST request, we return an empty string.
+			return ""
 		}
-
-		return ""
 	}
 
 	key := strings.ToLower(keys[0])
-	if !regexSHA1Compiled.MatchString(key) {
-		return ""
+
+	// If the key is a valid SHA1 hash, then we return it.
+	if regexSHA1Compiled.MatchString(key) {
+		return key
 	}
 
-	return key
+	// Otherwise we return an empty string.
+	return ""
 }
 
 func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc {
