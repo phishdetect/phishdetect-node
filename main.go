@@ -209,12 +209,6 @@ func startServer() {
 		router.HandleFunc("/", guiIndex).Methods("GET")
 		router.HandleFunc("/register/", guiRegister).Methods("GET", "POST")
 		router.HandleFunc("/contacts/", guiContacts).Methods("GET")
-		router.HandleFunc("/link/analyze/",
-			authMiddleware(guiLinkAnalyze, roleUser)).Methods("POST")
-		router.HandleFunc(fmt.Sprintf("/link/{url:%s}/", regexBase64),
-			authMiddleware(guiLinkCheck, roleUser)).Methods("GET", "POST")
-		router.HandleFunc(fmt.Sprintf("/report/{url:%s}/", regexBase64),
-			authMiddleware(guiReport, roleUser)).Methods("GET")
 		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}/", regexSHA256),
 			authMiddleware(guiReview, roleUser)).Methods("GET")
 	}
