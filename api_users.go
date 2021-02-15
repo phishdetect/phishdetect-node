@@ -55,7 +55,7 @@ func apiUsersRegister(w http.ResponseWriter, r *http.Request) {
 
 	exists, _ := checkIfUserExists(user.Email)
 	if exists == true {
-		errorWithJSON(w, "A user was already registered with the same email address!",
+		errorWithJSON(w, "A user already registered with the same email address",
 			http.StatusForbidden, nil)
 		return
 	}
