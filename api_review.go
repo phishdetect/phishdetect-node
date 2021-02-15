@@ -17,37 +17,37 @@
 package main
 
 import (
-    "encoding/json"
-    "net/http"
-    "time"
+	"encoding/json"
+	"net/http"
+	"time"
 
-    "github.com/nu7hatch/gouuid"
+	"github.com/nu7hatch/gouuid"
 )
 
 func apiReviewsAdd(w http.ResponseWriter, r *http.Request) {
-    decoder := json.NewDecoder(r.Body)
-    var review Review
-    err := decoder.Decode(&review)
-    if err != nil {
-        errorWithJSON(w, "Unable to parse review", http.StatusBadRequest, err)
-        return
-    }
+	decoder := json.NewDecoder(r.Body)
+	var review Review
+	err := decoder.Decode(&review)
+	if err != nil {
+		errorWithJSON(w, "Unable to parse review", http.StatusBadRequest, err)
+		return
+	}
 
 	_, err = db.GetIndicatorByHash(review.Indicator)
 	if err != nil {
 		errorWithJSON(w, "Unable to find the indicator you requested to be reviewed",
-            http.StatusBadRequest, err)
+			http.StatusBadRequest, err)
 		return
 	}
 
-    review.Datetime = time.Now().UTC()
+	review.Datetime = time.Now().UTC()
 
-    uuidInstance, _ := uuid.NewV4()
-    review.UUID = uuidInstance.String()
+	uuidInstance, _ := uuid.NewV4()
+	review.UUID = uuidInstance.String()
 
-    key := getAPIKeyFromRequest(r)
-    user, _ := db.GetUserByKey(key)
-    review.User = user.UUID
+	key := getAPIKeyFromRequest(r)
+	user, _ := db.GetUserByKey(key)
+	review.User = user.UUID
 
 	err = db.AddReview(review)
 	if err != nil {
@@ -55,10 +55,10 @@ func apiReviewsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    response := map[string]string{
-        "msg":  "Review request submitted successfully",
-        "uuid": review.UUID,
-    }
+	response := map[string]string{
+		"msg":  "Review request submitted successfully",
+		"uuid": review.UUID,
+	}
 
-    responseWithJSON(w, response)
+	responseWithJSON(w, response)
 }

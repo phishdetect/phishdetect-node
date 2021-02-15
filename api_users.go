@@ -17,11 +17,79 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/nu7hatch/gouuid"
+	"gopkg.in/go-playground/validator.v9"
 )
+
+func apiUsersRegister(w http.ResponseWriter, r *http.Request) {
+	if !enforceUserAuth {
+		errorWithJSON(w, ErrorMsgNoAuthRequired, http.StatusBadRequest, nil)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var user User
+	err := decoder.Decode(&user)
+	if err != nil {
+		errorWithJSON(w, "You did not provide a valid registration request", http.StatusBadRequest, err)
+		return
+	}
+
+	user.Email = strings.ToLower(user.Email)
+
+	// Validate if the user provided proper data.
+	validate := validator.New()
+	err = validate.Struct(user)
+	if err != nil {
+		errorWithJSON(w, "You did not provide a valid name and/or email address",
+			http.StatusBadRequest, nil)
+		return
+	}
+
+	exists, _ := checkIfUserExists(user.Email)
+	if exists == true {
+		errorWithJSON(w, "A user was already registered with the same email address!",
+			http.StatusForbidden, nil)
+		return
+	}
+
+	apiKey, err := generateAPIKey(user.Email)
+	if err != nil {
+		errorWithJSON(w, "Something went wrong while generating your API key! Please try again.",
+			http.StatusInternalServerError, err)
+		return
+	}
+
+	uuidInstance, _ := uuid.NewV4()
+	user.UUID = uuidInstance.String()
+	user.Key = apiKey
+	user.Role = roleUser
+	user.Activated = false
+	user.Datetime = time.Now().UTC()
+
+	// Add user to the database.
+	err = db.AddUser(user)
+	if err != nil {
+		errorWithJSON(w, "Failed to store new user in database",
+			http.StatusInternalServerError, err)
+		return
+	}
+
+	response := map[string]interface{}{
+		"msg":       "User registered successfully",
+		"activated": user.Activated,
+		"key":       user.Key,
+	}
+
+	responseWithJSON(w, response)
+}
 
 func apiUsersPending(w http.ResponseWriter, r *http.Request) {
 	if !enforceUserAuth {
@@ -31,7 +99,8 @@ func apiUsersPending(w http.ResponseWriter, r *http.Request) {
 
 	users, err := db.GetAllUsers()
 	if err != nil {
-		errorWithJSON(w, "Failed to fetch the list of users", http.StatusInternalServerError, err)
+		errorWithJSON(w, "Failed to fetch the list of users",
+			http.StatusInternalServerError, err)
 		return
 	}
 
@@ -48,7 +117,8 @@ func apiUsersPending(w http.ResponseWriter, r *http.Request) {
 func apiUsersActive(w http.ResponseWriter, r *http.Request) {
 	users, err := db.GetAllUsers()
 	if err != nil {
-		errorWithJSON(w, "Failed to fetch the list of users", http.StatusInternalServerError, err)
+		errorWithJSON(w, "Failed to fetch the list of users",
+			http.StatusInternalServerError, err)
 		return
 	}
 
@@ -73,7 +143,8 @@ func apiUsersActivate(w http.ResponseWriter, r *http.Request) {
 
 	err := db.ActivateUser(uuid)
 	if err != nil {
-		errorWithJSON(w, "Failed to activate the user", http.StatusInternalServerError, err)
+		errorWithJSON(w, "Failed to activate the user",
+			http.StatusInternalServerError, err)
 		return
 	}
 
@@ -95,7 +166,8 @@ func apiUsersDeactivate(w http.ResponseWriter, r *http.Request) {
 
 	err := db.DeactivateUser(uuid)
 	if err != nil {
-		errorWithJSON(w, "Failed to deactivate the user", http.StatusInternalServerError, err)
+		errorWithJSON(w, "Failed to deactivate the user",
+			http.StatusInternalServerError, err)
 		return
 	}
 

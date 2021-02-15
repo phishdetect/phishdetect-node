@@ -28,7 +28,7 @@ const (
 	ErrorMsgInvalidHTML           = "Invalid HTML"
 	ErrorMsgIndicatorsFetchFailed = "Failed to fetch indicators from database"
 	ErrorMsgParseRequestFailed    = "Unable to parse request"
-	ErrorMsgNoAuthRequired        = "The Node does not enforce user authentication"
+	ErrorMsgNoAuthRequired        = "This Node does not require user authentication"
 	ErrorMsgConnectionFailed      = "An error occurred while visiting the link: the website might be offline"
 	ErrorMsgInvalidIndicatorsType = "The indicators type you provided is not supported"
 )

@@ -200,10 +200,10 @@ func startServer() {
 	// Graphical interface routes.
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 	router.HandleFunc("/", guiIndex).Methods("GET")
-	router.HandleFunc("/register/", guiRegister).Methods("GET", "POST")
 
 	// Non-auth routes.
 	router.HandleFunc("/api/config/", apiConfig).Methods("GET")
+	router.HandleFunc("/api/users/register/", apiUsersRegister).Methods("POST")
 
 	// User routes.
 	router.HandleFunc("/api/auth/", authMiddleware(apiAuth, roleUser)).Methods("GET")

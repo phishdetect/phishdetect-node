@@ -98,7 +98,7 @@ func createNewUser() {
 	}
 
 	// Validate if the user provided proper data.
-	validate = validator.New()
+	validate := validator.New()
 	err = validate.Struct(user)
 	if err != nil {
 		log.Error("You did not provide a valid name and/or email address")
