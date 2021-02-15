@@ -54,8 +54,6 @@ var (
 	flagAdminName        string
 	flagAdminContacts    string
 
-	enableAPI       bool
-	enableGUI       bool
 	enableAnalysis  bool
 	enforceUserAuth bool
 
@@ -89,8 +87,6 @@ func init() {
 	flag.BoolVar(&flagCreateNewUser, "create-user", false, "Create a new user")
 
 	// Disable default functionality.
-	flagDisableAPI := flag.Bool("disable-api", false, "Disable the API routes")
-	flagDisableGUI := flag.Bool("disable-gui", false, "Disable the Web GUI")
 	flagDisableAnalysis := flag.Bool("disable-analysis", false, "Disable the ability to analyze links and pages")
 	flagDisableUserAuth := flag.Bool("disable-user-auth", false, "Disable requirement of a valid user API key for all operations")
 
@@ -127,8 +123,6 @@ func init() {
 	log.SetOutput(colorable.NewColorableStdout())
 
 	// Initialize configuration values.
-	enableAPI = !*flagDisableAPI
-	enableGUI = !*flagDisableGUI
 	enableAnalysis = !*flagDisableAnalysis
 	enforceUserAuth = !*flagDisableUserAuth
 
@@ -142,8 +136,6 @@ func init() {
 }
 
 func initServer() {
-	log.Info("Enable API: ", enableAPI)
-	log.Info("Enable GUI: ", enableGUI)
 	log.Info("Enable Analysis: ", enableAnalysis)
 	log.Info("Enforce User Auth: ", enforceUserAuth)
 
@@ -206,77 +198,72 @@ func startServer() {
 	router.Use(loggingMiddleware)
 
 	// Graphical interface routes.
-	if enableGUI {
-		router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-		router.HandleFunc("/", guiIndex).Methods("GET")
-		router.HandleFunc("/register/", guiRegister).Methods("GET", "POST")
-	}
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
+	router.HandleFunc("/", guiIndex).Methods("GET")
+	router.HandleFunc("/register/", guiRegister).Methods("GET", "POST")
 
-	// REST API routes.
-	if enableAPI {
-		// Non-auth routes.
-		router.HandleFunc("/api/config/", apiConfig).Methods("GET")
+	// Non-auth routes.
+	router.HandleFunc("/api/config/", apiConfig).Methods("GET")
 
-		// User routes.
-		router.HandleFunc("/api/auth/", authMiddleware(apiAuth, roleUser)).Methods("GET")
-		//--------------------------------------------------
-		router.HandleFunc("/api/analyze/domain/",
-			authMiddleware(apiAnalyzeDomain, roleUser)).Methods("POST")
-		router.HandleFunc("/api/analyze/url/",
-			authMiddleware(apiAnalyzeURL, roleUser)).Methods("POST")
-		router.HandleFunc("/api/analyze/link/",
-			authMiddleware(apiAnalyzeLink, roleUser)).Methods("POST")
-		router.HandleFunc("/api/analyze/html/",
-			authMiddleware(apiAnalyzeHTML, roleUser)).Methods("POST")
-		//--------------------------------------------------
-		router.HandleFunc("/api/indicators/fetch/",
-			authMiddleware(apiIndicatorsFetch, roleUser)).Methods("GET")
-		router.HandleFunc("/api/indicators/fetch/recent/",
-			authMiddleware(apiIndicatorsFetchRecent, roleUser)).Methods("GET")
-		router.HandleFunc("/api/indicators/fetch/all/",
-			authMiddleware(apiIndicatorsFetchAll, roleUser)).Methods("GET")
-		//--------------------------------------------------
-		router.HandleFunc("/api/alerts/add/",
-			authMiddleware(apiAlertsAdd, roleUser)).Methods("POST")
-		router.HandleFunc("/api/reports/add/",
-			authMiddleware(apiReportsAdd, roleUser)).Methods("POST")
-		//--------------------------------------------------
-		router.HandleFunc("/api/reviews/add/",
-			authMiddleware(apiReviewsAdd, roleUser)).Methods("POST")
+	// User routes.
+	router.HandleFunc("/api/auth/", authMiddleware(apiAuth, roleUser)).Methods("GET")
+	//--------------------------------------------------
+	router.HandleFunc("/api/analyze/domain/",
+		authMiddleware(apiAnalyzeDomain, roleUser)).Methods("POST")
+	router.HandleFunc("/api/analyze/url/",
+		authMiddleware(apiAnalyzeURL, roleUser)).Methods("POST")
+	router.HandleFunc("/api/analyze/link/",
+		authMiddleware(apiAnalyzeLink, roleUser)).Methods("POST")
+	router.HandleFunc("/api/analyze/html/",
+		authMiddleware(apiAnalyzeHTML, roleUser)).Methods("POST")
+	//--------------------------------------------------
+	router.HandleFunc("/api/indicators/fetch/",
+		authMiddleware(apiIndicatorsFetch, roleUser)).Methods("GET")
+	router.HandleFunc("/api/indicators/fetch/recent/",
+		authMiddleware(apiIndicatorsFetchRecent, roleUser)).Methods("GET")
+	router.HandleFunc("/api/indicators/fetch/all/",
+		authMiddleware(apiIndicatorsFetchAll, roleUser)).Methods("GET")
+	//--------------------------------------------------
+	router.HandleFunc("/api/alerts/add/",
+		authMiddleware(apiAlertsAdd, roleUser)).Methods("POST")
+	router.HandleFunc("/api/reports/add/",
+		authMiddleware(apiReportsAdd, roleUser)).Methods("POST")
+	//--------------------------------------------------
+	router.HandleFunc("/api/reviews/add/",
+		authMiddleware(apiReviewsAdd, roleUser)).Methods("POST")
 
-		// Submitter routes.
-		router.HandleFunc("/api/indicators/add/",
-			authMiddleware(apiIndicatorsAdd, roleSubmitter)).Methods("POST")
+	// Submitter routes.
+	router.HandleFunc("/api/indicators/add/",
+		authMiddleware(apiIndicatorsAdd, roleSubmitter)).Methods("POST")
 
-		// Admin routes.
-		router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", regexSHA256),
-			authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/indicators/pending/"),
-			authMiddleware(apiIndicatorsFetchPending, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/indicators/disabled/"),
-			authMiddleware(apiIndicatorsFetchDisabled, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/indicators/enable/",
-			authMiddleware(apiIndicatorsEnable, roleAdmin)).Methods("POST")
-		router.HandleFunc("/api/indicators/disable/",
-			authMiddleware(apiIndicatorsDisable, roleAdmin)).Methods("POST")
-		//--------------------------------------------------
-		router.HandleFunc("/api/alerts/fetch/",
-			authMiddleware(apiAlertsFetch, roleAdmin)).Methods("GET")
-		//--------------------------------------------------
-		router.HandleFunc("/api/reports/fetch/",
-			authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/reports/details/{uuid:%s}/", regexUUID),
-			authMiddleware(apiReportsDetails, roleAdmin)).Methods("GET")
-		//--------------------------------------------------
-		router.HandleFunc("/api/users/pending/",
-			authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")
-		router.HandleFunc("/api/users/active/",
-			authMiddleware(apiUsersActive, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/users/activate/{uuid:%s}/", regexUUID),
-			authMiddleware(apiUsersActivate, roleAdmin)).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{uuid:%s}/", regexUUID),
-			authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
-	}
+	// Admin routes.
+	router.HandleFunc(fmt.Sprintf("/api/indicators/details/{ioc:%s}/", regexSHA256),
+		authMiddleware(apiIndicatorsDetails, roleAdmin)).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("/api/indicators/pending/"),
+		authMiddleware(apiIndicatorsFetchPending, roleAdmin)).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("/api/indicators/disabled/"),
+		authMiddleware(apiIndicatorsFetchDisabled, roleAdmin)).Methods("GET")
+	router.HandleFunc("/api/indicators/enable/",
+		authMiddleware(apiIndicatorsEnable, roleAdmin)).Methods("POST")
+	router.HandleFunc("/api/indicators/disable/",
+		authMiddleware(apiIndicatorsDisable, roleAdmin)).Methods("POST")
+	//--------------------------------------------------
+	router.HandleFunc("/api/alerts/fetch/",
+		authMiddleware(apiAlertsFetch, roleAdmin)).Methods("GET")
+	//--------------------------------------------------
+	router.HandleFunc("/api/reports/fetch/",
+		authMiddleware(apiReportsFetch, roleAdmin)).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("/api/reports/details/{uuid:%s}/", regexUUID),
+		authMiddleware(apiReportsDetails, roleAdmin)).Methods("GET")
+	//--------------------------------------------------
+	router.HandleFunc("/api/users/pending/",
+		authMiddleware(apiUsersPending, roleAdmin)).Methods("GET")
+	router.HandleFunc("/api/users/active/",
+		authMiddleware(apiUsersActive, roleAdmin)).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("/api/users/activate/{uuid:%s}/", regexUUID),
+		authMiddleware(apiUsersActivate, roleAdmin)).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("/api/users/deactivate/{uuid:%s}/", regexUUID),
+		authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Warning("File not found: ", r.RequestURI)

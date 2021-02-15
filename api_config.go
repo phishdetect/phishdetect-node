@@ -22,8 +22,6 @@ import (
 
 // Config contains information on the configuration of the node.
 type Config struct {
-	EnableAPI             bool   `json:"enable_api"`
-	EnableGUI             bool   `json:"enable_gui"`
 	EnableAnalysis        bool   `json:"enable_analysis"`
 	EnforceUserAuth       bool   `json:"enforce_user_auth"`
 	AdministatorName      string `json:"admin_name"`
@@ -32,8 +30,6 @@ type Config struct {
 
 func apiConfig(w http.ResponseWriter, r *http.Request) {
 	cfg := Config{
-		EnableAPI:             enableAPI,
-		EnableGUI:             enableGUI,
 		EnableAnalysis:        enableAnalysis,
 		EnforceUserAuth:       enforceUserAuth,
 		AdministatorName:      flagAdminName,
