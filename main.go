@@ -208,8 +208,6 @@ func startServer() {
 		router.HandleFunc("/", guiIndex).Methods("GET")
 		router.HandleFunc("/register/", guiRegister).Methods("GET", "POST")
 		router.HandleFunc("/contacts/", guiContacts).Methods("GET")
-		router.HandleFunc(fmt.Sprintf("/review/{ioc:%s}/", regexSHA256),
-			authMiddleware(guiReview, roleUser)).Methods("GET")
 	}
 
 	// REST API routes.
@@ -240,6 +238,9 @@ func startServer() {
 			authMiddleware(apiAlertsAdd, roleUser)).Methods("POST")
 		router.HandleFunc("/api/reports/add/",
 			authMiddleware(apiReportsAdd, roleUser)).Methods("POST")
+		//--------------------------------------------------
+		router.HandleFunc("/api/reviews/add/",
+			authMiddleware(apiReviewsAdd, roleUser)).Methods("POST")
 
 		// Submitter routes.
 		router.HandleFunc("/api/indicators/add/",

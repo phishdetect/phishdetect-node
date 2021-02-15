@@ -17,36 +17,37 @@
 package main
 
 import (
-	"net/http"
-	"strings"
-	"time"
+    "encoding/json"
+    "net/http"
+    "time"
 
-	pongo "github.com/flosch/pongo2"
-	"github.com/gorilla/mux"
-	"github.com/nu7hatch/gouuid"
-	log "github.com/sirupsen/logrus"
+    "github.com/nu7hatch/gouuid"
 )
 
-func guiReview(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ioc := strings.TrimSpace(vars["ioc"])
+func apiReviewsAdd(w http.ResponseWriter, r *http.Request) {
+    decoder := json.NewDecoder(r.Body)
+    var review Review
+    err := decoder.Decode(&review)
+    if err != nil {
+        errorWithJSON(w, "Unable to parse review", http.StatusBadRequest, err)
+        return
+    }
 
-	indicator, err := db.GetIndicatorByHash(ioc)
+	_, err = db.GetIndicatorByHash(review.Indicator)
 	if err != nil {
-		errorPage(w, "Unable to find the indicator you requested to be reviewed")
+		errorWithJSON(w, "Unable to find the indicator you requested to be reviewed",
+            http.StatusBadRequest, err)
 		return
 	}
 
-	key := getAPIKeyFromRequest(r)
-	user, _ := db.GetUserByKey(key)
+    review.Datetime = time.Now().UTC()
 
-	uuidInstance, _ := uuid.NewV4()
-	review := Review{
-		UUID:      uuidInstance.String(),
-		Indicator: ioc,
-		Datetime:  time.Now().UTC(),
-		User:      user.UUID,
-	}
+    uuidInstance, _ := uuid.NewV4()
+    review.UUID = uuidInstance.String()
+
+    key := getAPIKeyFromRequest(r)
+    user, _ := db.GetUserByKey(key)
+    review.User = user.UUID
 
 	err = db.AddReview(review)
 	if err != nil {
@@ -54,12 +55,10 @@ func guiReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tpl, err := tmplSet.FromCache("review.html")
-	err = tpl.ExecuteWriter(pongo.Context{
-		"original": indicator.Original,
-	}, w)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+    response := map[string]string{
+        "msg":  "Review request submitted successfully",
+        "uuid": review.UUID,
+    }
+
+    responseWithJSON(w, response)
 }

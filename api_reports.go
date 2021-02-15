@@ -79,7 +79,7 @@ func apiReportsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]string{
-		"msg":  "Report message added successfully",
+		"msg":  "Report submitted successfully",
 		"uuid": report.UUID,
 	}
 
