@@ -51,6 +51,7 @@ var (
 	flagSafeBrowsing     string
 	flagBrandsPath       string
 	flagYaraPath         string
+	flagAdminName        string
 	flagAdminContacts    string
 
 	enableAPI       bool
@@ -109,6 +110,8 @@ func init() {
 	flag.StringVar(&flagYaraPath, "yara", "", "Specify a path to a file or folder contaning Yara rules")
 	// Path to a file containing a Google Safebrowsing key.
 	flag.StringVar(&flagSafeBrowsing, "safebrowsing", "", "Specify a file path containing your Google SafeBrowsing API key (default disabled)")
+	// Name of the node or of the administrators.
+	flag.StringVar(&flagAdminName, "name", "", "Specify a name to the Node or identifying the administrators")
 	// URL to a page providing contact details for the Node operators.
 	flag.StringVar(&flagAdminContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
 	flag.Parse()
@@ -207,7 +210,6 @@ func startServer() {
 		router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 		router.HandleFunc("/", guiIndex).Methods("GET")
 		router.HandleFunc("/register/", guiRegister).Methods("GET", "POST")
-		router.HandleFunc("/contacts/", guiContacts).Methods("GET")
 	}
 
 	// REST API routes.

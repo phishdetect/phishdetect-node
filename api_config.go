@@ -26,6 +26,7 @@ type Config struct {
 	EnableGUI             bool   `json:"enable_gui"`
 	EnableAnalysis        bool   `json:"enable_analysis"`
 	EnforceUserAuth       bool   `json:"enforce_user_auth"`
+	AdministatorName      string `json:"admin_name"`
 	AdministratorContacts string `json:"admin_contacts"`
 }
 
@@ -35,6 +36,7 @@ func apiConfig(w http.ResponseWriter, r *http.Request) {
 		EnableGUI:             enableGUI,
 		EnableAnalysis:        enableAnalysis,
 		EnforceUserAuth:       enforceUserAuth,
+		AdministatorName:      flagAdminName,
 		AdministratorContacts: flagAdminContacts,
 	}
 

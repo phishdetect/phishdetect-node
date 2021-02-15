@@ -18,32 +18,12 @@ package main
 
 import (
 	"net/http"
-
-	pongo "github.com/flosch/pongo2"
-	log "github.com/sirupsen/logrus"
 )
 
 func guiIndex(w http.ResponseWriter, r *http.Request) {
 	tpl, err := tmplSet.FromCache("index.html")
 	err = tpl.ExecuteWriter(nil, w)
 	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-func guiContacts(w http.ResponseWriter, r *http.Request) {
-	if flagAdminContacts == "" {
-		errorPage(w, "This PhishDetect Node's administrator did not provide any contact details")
-		return
-	}
-
-	tpl, err := tmplSet.FromCache("contacts.html")
-	err = tpl.ExecuteWriter(pongo.Context{
-		"contacts": flagAdminContacts,
-	}, w)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		errorPage(w, err.Error())
 	}
 }
