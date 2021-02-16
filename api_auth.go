@@ -131,6 +131,27 @@ func authMiddleware(next http.HandlerFunc, requiredRole string) http.HandlerFunc
 }
 
 func apiAuth(w http.ResponseWriter, r *http.Request) {
+	apiKey := getAPIKeyFromRequest(r)
+	if apiKey == "" {
+		errorWithJSON(w, ErrorMsgInvalidAPIKey, http.StatusUnauthorized, nil)
+		return
+	}
+
+	// Look for a user with this API key.
+	user, err := db.GetUserByKey(apiKey)
+	if err != nil {
+		// The user does not exist with that API key.
+		errorWithJSON(w, "There is no user with the provided key", http.StatusUnauthorized, nil)
+		return
+	}
+
+	response := map[string]interface{}{
+		"name":      user.Name,
+		"email":     user.Email,
+		"activated": user.Activated,
+		"role":      user.Role,
+	}
+
 	// This is just a dummy request used to test users.
-	responseWithJSON(w, map[string]string{})
+	responseWithJSON(w, response)
 }
