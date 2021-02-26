@@ -99,14 +99,6 @@ type AnalysisResults struct {
 	AlertUUID         string                    `json:"uuid"`
 }
 
-const IndicatorsLimitAll = 0
-const IndicatorsLimit6Months = 1
-const IndicatorsLimit24Hours = 2
-
-const IndicatorsStatusPending = "pending"
-const IndicatorsStatusEnabled = "enabled"
-const IndicatorsStatusDisabled = "disabled"
-
 func NewDatabase(url string) (*Database, error) {
 	client, err := mongo.NewClient(options.Client().ApplyURI(url))
 	if err != nil {
@@ -224,6 +216,13 @@ func (d *Database) GetIndicators(limit int, status string) ([]Indicator, error) 
 	switch limit {
 	case IndicatorsLimitAll:
 		filter = bson.M{"status": status}
+	case IndicatorsLimit3Months:
+		filter = bson.M{
+			"datetime": bson.M{
+				"$gte": now.AddDate(0, -3, 0),
+			},
+			"status": status,
+		}
 	case IndicatorsLimit6Months:
 		filter = bson.M{
 			"datetime": bson.M{

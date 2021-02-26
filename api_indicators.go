@@ -30,21 +30,21 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-// IndicatorTypeEmail contains the name of the type of indicator as stored
-// in the database.
-const IndicatorTypeEmail = "email"
+const (
+	IndicatorTypeEmail     = "email"
+	IndicatorTypeDomain    = "domain"
+	IndicatorsGroupEmails  = "emails"
+	IndicatorsGroupDomains = "domains"
 
-// IndicatorTypeDomain contains the name of the type of indicator as stored
-// in the database.
-const IndicatorTypeDomain = "domain"
+	IndicatorsLimitAll     = 0
+	IndicatorsLimit3Months = 1
+	IndicatorsLimit6Months = 2
+	IndicatorsLimit24Hours = 3
 
-// IndicatorsGroupEmails contains the key name for the type of indicators
-// as returned when the lists is fetched by clients.
-const IndicatorsGroupEmails = "emails"
-
-// IndicatorsGroupDomains contains the key name for the type of indicators
-// as returned when the lists is fetched by clients.
-const IndicatorsGroupDomains = "domains"
+	IndicatorsStatusPending  = "pending"
+	IndicatorsStatusEnabled  = "enabled"
+	IndicatorsStatusDisabled = "disabled"
+)
 
 // RequestIndicatorsAdd contains the fields submitted by an administrator or
 // submitter when requesting to add new indicators to the database.
@@ -106,7 +106,7 @@ func prepareIndicators(iocs []Indicator) map[string][]string {
 
 func apiIndicatorsFetch(w http.ResponseWriter, r *http.Request) {
 	// We get the indicators from the DB.
-	iocs, err := db.GetIndicators(IndicatorsLimit6Months, IndicatorsStatusEnabled)
+	iocs, err := db.GetIndicators(IndicatorsLimit3Months, IndicatorsStatusEnabled)
 	if err != nil {
 		errorWithJSON(w, ErrorMsgIndicatorsFetchFailed, http.StatusInternalServerError, err)
 		return
