@@ -201,7 +201,7 @@ func analyzeURLDynamic(url string) (*AnalysisResults, error) {
 	// Setting Docker API version.
 	os.Setenv("DOCKER_API_VERSION", flagDockerAPIVersion)
 	// Instantiate new browser and open the link.
-	b := browser.New(urlNormalized, "", false, false, "")
+	b := browser.New(urlNormalized, "", "", false, "")
 	err := b.Run()
 	if err != nil {
 		log.Error("Failed to instantiate browser: ", err)
