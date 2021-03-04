@@ -229,6 +229,7 @@ func analyzeURLDynamic(url string) (*AnalysisResults, error) {
 	results := AnalysisResults{
 		URL:               url,
 		FinalURL:          finalURL,
+		FinalURLError:     b.FinalURLError,
 		Safelisted:        a.Safelisted,
 		Dangerous:         a.Dangerous,
 		Score:             a.Score,

@@ -82,7 +82,8 @@ type Review struct {
 
 type AnalysisResults struct {
 	URL               string                    `json:"url"`
-	FinalURL          string                    `json:"final_url" bson:"final_url`
+	FinalURL          string                    `json:"final_url" bson:"final_url"`
+	FinalURLError     string                    `json:"final_url_error" bson:"final_url_error"`
 	Safelisted        bool                      `json:"safelisted"`
 	Dangerous         bool                      `json:"dangerous"`
 	Brand             string                    `json:"brand"`
