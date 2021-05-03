@@ -1,6 +1,6 @@
 <p align="center">
-     <img src="https://raw.githubusercontent.com/phishdetect/assets/main/logos/phishdetect.png" />
-     <p>
+     <img src="https://raw.githubusercontent.com/phishdetect/assets/main/logos/phishdetect.png" width="300" />
+     <p align="center">
           <a href="https://travis-ci.org/phishdetect/phishdetect-node"><img src="https://api.travis-ci.org/phishdetect/phishdetect-node.png?branch=master" alt="Build Status" />
           <a href="https://goreportcard.com/report/github.com/phishdetect/phishdetect-node"><img src="https://goreportcard.com/badge/github.com/phishdetect/phishdetect-node" alt="Report Card" />
      </p>
