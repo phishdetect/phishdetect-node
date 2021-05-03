@@ -5,7 +5,6 @@ go 1.14
 require (
 	github.com/botherder/go-savetime v1.2.1
 	github.com/docker/docker v20.10.5+incompatible // indirect
-	github.com/flosch/pongo2 v0.0.0-20190707114632-bbf5a6c351f4
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
@@ -16,7 +15,6 @@ require (
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/mux v1.8.0
-	github.com/juju/errors v0.0.0-20190806202954-0232dcc7464d // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/manifoldco/promptui v0.7.0
 	github.com/mattn/go-colorable v0.1.8
@@ -34,7 +32,7 @@ require (
 	go.mongodb.org/mongo-driver v1.1.1
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20210426230700-d19ff857e887 // indirect
+	golang.org/x/sys v0.0.0-20210503080704-8803ae5d1324 // indirect
 	golang.org/x/text v0.3.5 // indirect
 	google.golang.org/genproto v0.0.0-20210303154014-9728d6b83eeb // indirect
 	google.golang.org/grpc v1.36.0 // indirect

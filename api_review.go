@@ -51,7 +51,8 @@ func apiReviewsAdd(w http.ResponseWriter, r *http.Request) {
 
 	err = db.AddReview(review)
 	if err != nil {
-		errorPage(w, "Unable to store review request in database")
+		errorWithJSON(w, "Unable to store review request in database",
+			http.StatusInternalServerError, err)
 		return
 	}
 

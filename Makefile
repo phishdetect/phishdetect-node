@@ -20,13 +20,12 @@ pre: clean
 	@mkdir -p $(BUILD_FOLDER)
 	env GO111MODULE=on go get -d ./
 	env GO111MODULE=on go mod download
-	go get -u github.com/gobuffalo/packr/...
 	env GO111MODULE=on go mod tidy
 
 .PHONY: build
 build: pre
 	@echo "[builder] Building PhishDetect Node executable"
-	$(FLAGS_LINUX) packr build -o $(BUILD_FOLDER)/phishdetect-node
+	$(FLAGS_LINUX) go build -o $(BUILD_FOLDER)/phishdetect-node
 	@echo "[builder] Done!"
 
 .PHONY: lint

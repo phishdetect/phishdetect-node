@@ -25,8 +25,6 @@ import (
 	"time"
 
 	"github.com/botherder/go-savetime/files"
-	pongo "github.com/flosch/pongo2"
-	"github.com/gobuffalo/packr"
 	"github.com/gorilla/mux"
 	"github.com/mattn/go-colorable"
 	log "github.com/sirupsen/logrus"
@@ -58,10 +56,6 @@ var (
 	enforceUserAuth bool
 
 	db *Database
-
-	boxTemplates packr.Box
-	boxStatic    packr.Box
-	tmplSet      *pongo.TemplateSet
 
 	regexSHA1Compiled *regexp.Regexp
 
@@ -181,25 +175,14 @@ func initServer() {
 		})
 	}
 
-	// Load templates.
-	boxTemplates = packr.NewBox("templates")
-	boxStatic = packr.NewBox("static")
-	tmplSet = pongo.NewSet("templates", packrBoxLoader{&boxTemplates})
-
 	// Compile sha1 regex (used for key validation).
 	regexSHA1Compiled = regexp.MustCompile(regexSHA1)
 }
 
 func startServer() {
-	fs := http.FileServer(boxStatic)
-
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 	router.Use(loggingMiddleware)
-
-	// Graphical interface routes.
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-	router.HandleFunc("/", guiIndex).Methods("GET")
 
 	// Non-auth routes.
 	router.HandleFunc("/api/config/", apiConfig).Methods("GET")
