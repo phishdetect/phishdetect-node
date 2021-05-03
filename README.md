@@ -1,9 +1,12 @@
-![](https://raw.githubusercontent.com/phishdetect/assets/main/logos/phishdetect_small.png)
+<p align="center">
+     <img src="https://raw.githubusercontent.com/phishdetect/assets/main/logos/phishdetect.png" />
+     <p>
+          <a href="https://travis-ci.org/phishdetect/phishdetect-node"><img src="https://api.travis-ci.org/phishdetect/phishdetect-node.png?branch=master" alt="Build Status" />
+          <a href="https://goreportcard.com/report/github.com/phishdetect/phishdetect-node"><img src="https://goreportcard.com/badge/github.com/phishdetect/phishdetect-node" alt="Report Card" />
+     </p>
+</p>
 
 # PhishDetect Node
-
-[![Build Status](https://api.travis-ci.org/phishdetect/phishdetect-node.png?branch=master)](https://travis-ci.org/phishdetect/phishdetect-node)
-[![Go Report Card][goreportcard-badge]][goreportcard]
 
 This software is part of the PhishDetect project.
 
@@ -35,6 +38,3 @@ For a more exhaustive documentation on how to install and use PhishDetect please
 ## License
 
 PhishDetect Node is released under [GNU Affero General Public License 3.0](LICENSE) and is copyrighted to [Claudio Guarnieri](https://nex.sx).
-
-[goreportcard]: https://goreportcard.com/report/github.com/phishdetect/phishdetect-node
-[goreportcard-badge]: https://goreportcard.com/badge/github.com/phishdetect/phishdetect-node
