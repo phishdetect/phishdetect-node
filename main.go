@@ -119,13 +119,12 @@ func initLogging() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 }
 
-func initServer() {
+func initServer() error {
 	// Initiate connection to database.
 	var err error
 	db, err = NewDatabase(flagMongoURL)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed connection to database")
-		return
+		return err
 	}
 
 	log.Info().Bool("enable_analysis", enableAnalysis)
@@ -175,6 +174,8 @@ func initServer() {
 
 	// Compile sha1 regex (used for key validation).
 	regexSHA1Compiled = regexp.MustCompile(regexSHA1)
+
+	return nil
 }
 
 func startServer() {
@@ -270,6 +271,12 @@ func main() {
 	}
 
 	initLogging()
-	initServer()
+
+	err := initServer()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Unable to initialize server")
+		return
+	}
+
 	startServer()
 }
