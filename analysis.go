@@ -64,6 +64,7 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 	finalURL := urlNormalized
 
 	if !validateURL(urlNormalized) {
+		log.Error().Str("domain", urlNormalized).Msg("Invalid domain format")
 		return nil, errors.New(ErrorMsgInvalidDomain)
 	}
 

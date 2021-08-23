@@ -19,6 +19,8 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
 
 // AnalysisRequest contains the information required to start an analysis.
@@ -41,11 +43,15 @@ func apiAnalyzeDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Debug().Str("url", req.URL).Msg("Received request to analyze domain")
+
 	results, err := analyzeDomain(req.URL)
 	if err != nil {
 		errorWithJSON(w, err.Error(), http.StatusInternalServerError, err)
 		return
 	}
+
+	log.Debug().Str("url", req.URL).Msg("Analysis of domain completed")
 
 	responseWithJSON(w, results)
 }
@@ -64,11 +70,15 @@ func apiAnalyzeURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Debug().Str("url", req.URL).Msg("Received request to analyze URL")
+
 	results, err := analyzeURL(req.URL)
 	if err != nil {
 		errorWithJSON(w, err.Error(), http.StatusInternalServerError, err)
 		return
 	}
+
+	log.Debug().Str("url", req.URL).Msg("Analysis of URL completed")
 
 	responseWithJSON(w, results)
 }
@@ -87,11 +97,15 @@ func apiAnalyzeHTML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Debug().Str("url", req.URL).Msg("Received request to analyze HTML")
+
 	results, err := analyzeHTML(req.URL, req.HTML)
 	if err != nil {
 		errorWithJSON(w, err.Error(), http.StatusInternalServerError, err)
 		return
 	}
+
+	log.Debug().Str("url", req.URL).Msg("Analysis of HTML completed")
 
 	responseWithJSON(w, results)
 }
@@ -110,11 +124,15 @@ func apiAnalyzeLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Debug().Str("url", req.URL).Msg("Received request to dynamically analyze URL")
+
 	results, err := analyzeURLDynamic(req.URL)
 	if err != nil {
 		errorWithJSON(w, err.Error(), http.StatusInternalServerError, err)
 		return
 	}
+
+	log.Debug().Str("url", req.URL).Msg("Dynamic analysis of URL completed")
 
 	responseWithJSON(w, results)
 }

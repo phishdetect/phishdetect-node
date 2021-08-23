@@ -127,8 +127,8 @@ func initServer() error {
 		return err
 	}
 
-	log.Info().Bool("enable_analysis", enableAnalysis)
-	log.Info().Bool("enforce_user_auth", enforceUserAuth)
+	log.Info().Bool("value", enableAnalysis).Msg("Enable analysis")
+	log.Info().Bool("value", enforceUserAuth).Msg("Enforce user auth")
 
 	// Initialize SafeBrowsing if an API key was provided.
 	if flagSafeBrowsing != "" {
