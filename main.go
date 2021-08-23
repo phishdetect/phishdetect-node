@@ -42,6 +42,7 @@ const (
 var (
 	flagCreateNewUser bool
 
+	flagDebug            bool
 	flagHost             string
 	flagPortNumber       int
 	flagMongoURL         string
@@ -75,7 +76,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func init() {
 	// Enable debug logging.
-	debug := flag.Bool("debug", false, "Enable debug logging")
+	flag.BoolVar(&flagDebug, "debug", false, "Enable debug logging")
 
 	// With this flag, instead of starting the server, we create a new user.
 	flag.BoolVar(&flagCreateNewUser, "create-user", false, "Create a new user")
@@ -106,15 +107,19 @@ func init() {
 	flag.StringVar(&flagAdminContacts, "contacts", "", "Specify a link to information or contacts details to be provided to your users")
 	flag.Parse()
 
-	if *debug {
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	}
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-
 	// Initialize configuration values.
 	enableAnalysis = !*flagDisableAnalysis
 	enforceUserAuth = !*flagDisableUserAuth
+}
 
+func initLogging() {
+	if flagDebug {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	}
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+}
+
+func initServer() {
 	// Initiate connection to database.
 	var err error
 	db, err = NewDatabase(flagMongoURL)
@@ -122,9 +127,7 @@ func init() {
 		log.Fatal().Err(err).Msg("Failed connection to database")
 		return
 	}
-}
 
-func initServer() {
 	log.Info().Bool("enable_analysis", enableAnalysis)
 	log.Info().Bool("enforce_user_auth", enforceUserAuth)
 
@@ -266,6 +269,7 @@ func main() {
 		return
 	}
 
+	initLogging()
 	initServer()
 	startServer()
 }
