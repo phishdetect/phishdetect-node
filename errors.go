@@ -24,6 +24,7 @@ const (
 	ErrorMsgAnalysisDisabled      = "Analysis was disabled by administrator"
 	ErrorMsgInvalidRequest        = "Invalid request"
 	ErrorMsgInvalidURL            = "Invalid URL"
+	ErrorMsgInvalidDomain         = "Invalid domain"
 	ErrorMsgAnalysisFailed        = "Something failed during the analysis"
 	ErrorMsgInvalidHTML           = "Invalid HTML"
 	ErrorMsgIndicatorsFetchFailed = "Failed to fetch indicators from database"

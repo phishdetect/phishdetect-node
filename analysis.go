@@ -29,7 +29,7 @@ import (
 	"github.com/phishdetect/phishdetect/browser"
 	"github.com/phishdetect/phishdetect/link"
 	"github.com/phishdetect/phishdetect/utils"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
@@ -44,11 +44,13 @@ func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
 	}
 	for _, ioc := range iocs {
 		if slice.ContainsNoCase(targetHashes, ioc.Hashed) {
-			log.Debug("Target ", target, " is blocklisted by indicator with hash ", ioc.Hashed)
+			log.Debug().Str("target", target).Str("indicator", ioc.Hashed).Msg(
+				"Target is blocklisted by indicator")
 			return phishdetect.Warning{
-				Score:       100,
-				Name:        "blocklisted",
-				Description: fmt.Sprintf("The domain was blocklisted in PhishDetect Node by indicator with hash %s", ioc.Hashed),
+				Score: 100,
+				Name:  "blocklisted",
+				Description: fmt.Sprintf("The domain was blocklisted in PhishDetect Node by indicator with hash %s",
+					ioc.Hashed),
 			}, nil
 		}
 	}
@@ -62,7 +64,7 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 	finalURL := urlNormalized
 
 	if !validateURL(urlNormalized) {
-		return nil, errors.New(ErrorMsgInvalidURL)
+		return nil, errors.New(ErrorMsgInvalidDomain)
 	}
 
 	a := phishdetect.NewAnalysis(finalURL, "")
@@ -70,7 +72,7 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 
 	err := a.AnalyzeDomain()
 	if err != nil {
-		log.Error("Failed to analyze domain: ", err)
+		log.Error().Err(err).Msg("Failed to analyze domain")
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := a.Brands.GetBrand()
@@ -108,7 +110,7 @@ func analyzeURL(url string) (*AnalysisResults, error) {
 
 	err := a.AnalyzeURL()
 	if err != nil {
-		log.Error("Failed to analyze URL: ", err)
+		log.Error().Err(err).Msg("Failed to analyze URL")
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := a.Brands.GetBrand()
@@ -155,12 +157,12 @@ func analyzeHTML(url, htmlEncoded string) (*AnalysisResults, error) {
 
 	err = a.AnalyzeHTML()
 	if err != nil {
-		log.Error("Failed to analyze HTML: ", err)
+		log.Error().Err(err).Msg("Failed to analyze HTML")
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	err = a.AnalyzeURL()
 	if err != nil {
-		log.Error("Failed to analyze URL: ", err)
+		log.Error().Err(err).Msg("Failed to analyze URL")
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := a.Brands.GetBrand()
@@ -204,7 +206,7 @@ func analyzeURLDynamic(url string) (*AnalysisResults, error) {
 	b := browser.New(urlNormalized, "", "", false, "")
 	err := b.Run()
 	if err != nil {
-		log.Error("Failed to instantiate browser: ", err)
+		log.Error().Err(err).Msg("Failed to instantiate browser")
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	finalURL = b.FinalURL
@@ -216,12 +218,12 @@ func analyzeURLDynamic(url string) (*AnalysisResults, error) {
 
 	err = a.AnalyzeBrowserResults(b)
 	if err != nil {
-		log.Error("Failed to analyze HTML: ", err)
+		log.Error().Err(err).Msg("Failed to analyze HTML")
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	err = a.AnalyzeURL()
 	if err != nil {
-		log.Error("Failed to analyze URL: ", err)
+		log.Error().Err(err).Msg("Failed to analyze URL")
 		return nil, errors.New(ErrorMsgAnalysisFailed)
 	}
 	brand := a.Brands.GetBrand()

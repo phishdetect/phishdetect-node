@@ -26,8 +26,8 @@ import (
 
 	"github.com/botherder/go-savetime/watch"
 	"github.com/gorilla/mux"
-	"github.com/mattn/go-colorable"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	flag "github.com/spf13/pflag"
 
 	"github.com/phishdetect/phishdetect"
@@ -43,7 +43,7 @@ var (
 	flagCreateNewUser bool
 
 	flagHost             string
-	flagPortNumber       string
+	flagPortNumber       int
 	flagMongoURL         string
 	flagDockerAPIVersion string
 	flagSafeBrowsing     string
@@ -68,7 +68,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		if remote == "" {
 			remote = r.RemoteAddr
 		}
-		log.Debug(remote, " ", r.Method, " ", r.RequestURI)
+		log.Debug().Str("ip_address", remote).Str("method", r.Method).Str("uri", r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -86,7 +86,7 @@ func init() {
 
 	// Server connection details.
 	flag.StringVar(&flagHost, "host", "127.0.0.1", "Specify the host to bind the service on")
-	flag.StringVar(&flagPortNumber, "port", "7856", "Specify which port number to bind the service on")
+	flag.IntVar(&flagPortNumber, "port", 7856, "Specify which port number to bind the service on")
 	flag.StringVar(&flagMongoURL, "mongo", "mongodb://localhost:27017", "Specify the mongodb url")
 
 	// Docker API version.
@@ -107,14 +107,9 @@ func init() {
 	flag.Parse()
 
 	if *debug {
-		log.SetLevel(log.DebugLevel)
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
-	log.SetFormatter(&log.TextFormatter{
-		ForceColors:     true,
-		TimestampFormat: "2006-01-02 15:04:05 -0700",
-		FullTimestamp:   true,
-	})
-	log.SetOutput(colorable.NewColorableStdout())
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	// Initialize configuration values.
 	enableAnalysis = !*flagDisableAnalysis
@@ -124,14 +119,14 @@ func init() {
 	var err error
 	db, err = NewDatabase(flagMongoURL)
 	if err != nil {
-		log.Fatal("Failed connection to database: ", err.Error())
+		log.Fatal().Err(err).Msg("Failed connection to database")
 		return
 	}
 }
 
 func initServer() {
-	log.Info("Enable Analysis: ", enableAnalysis)
-	log.Info("Enforce User Auth: ", enforceUserAuth)
+	log.Info().Bool("enable_analysis", enableAnalysis)
+	log.Info().Bool("enforce_user_auth", enforceUserAuth)
 
 	// Initialize SafeBrowsing if an API key was provided.
 	if flagSafeBrowsing != "" {
@@ -142,7 +137,7 @@ func initServer() {
 				phishdetect.AddSafeBrowsingKey(key)
 			}
 		} else {
-			log.Warning("The specified Google SafeBrowsing API key file does not exist: check disabled")
+			log.Warn().Msg("The specified Google SafeBrowsing API key file does not exist: check disabled")
 		}
 	}
 
@@ -151,7 +146,7 @@ func initServer() {
 		// We do a first compilation of the Yara rules.
 		err := phishdetect.LoadYaraRules(flagYaraPath)
 		if err != nil {
-			log.Error("Failed to initialize Yara scanner: ", err.Error())
+			log.Error().Err(err).Msg("Failed to initialize Yara scanner")
 		}
 		// Then we set up a fsnotify watcher in order to auto-reload Yara
 		// rules in case one is created, modified, or removed.
@@ -166,7 +161,7 @@ func initServer() {
 		// We do a first compilation of the brand definitions.
 		err := customBrands.CompileBrands()
 		if err != nil {
-			log.Error("Failed to compile brands: ", err)
+			log.Error().Err(err).Msg("Failed to compile brands")
 		}
 		// Then we setup a fsnofity watcher in order to auto-reload brand
 		// definitions in case one is created, modified or removed.
@@ -249,11 +244,11 @@ func startServer() {
 		authMiddleware(apiUsersDeactivate, roleAdmin)).Methods("GET")
 
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Warning("File not found: ", r.RequestURI)
+		log.Warn().Str("uri", r.RequestURI).Msg("File not found")
 		errorWithJSON(w, "File not found", http.StatusNotFound, nil)
 	})
 
-	hostPort := fmt.Sprintf("%s:%s", flagHost, flagPortNumber)
+	hostPort := fmt.Sprintf("%s:%d", flagHost, flagPortNumber)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         hostPort,
@@ -261,8 +256,8 @@ func startServer() {
 		ReadTimeout:  2 * time.Minute,
 	}
 
-	log.Info("Starting PhishDetect Node on ", hostPort, " and waiting for requests...")
-	log.Fatal(srv.ListenAndServe())
+	log.Info().Str("host", flagHost).Int("port", flagPortNumber).Msg("Starting PhishDetect Node and waiting for requests")
+	log.Fatal().Err(srv.ListenAndServe())
 }
 
 func main() {

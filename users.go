@@ -17,12 +17,12 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/nu7hatch/gouuid"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -41,7 +41,7 @@ func checkIfUserExists(email string) (bool, error) {
 }
 
 func createNewUser() {
-	log.Info("Creating a new user")
+	fmt.Println("Creating a new user")
 
 	promptRole := promptui.Select{
 		Label: "Role",
@@ -49,40 +49,40 @@ func createNewUser() {
 	}
 	_, role, err := promptRole.Run()
 	if err != nil {
-		log.Error("Failed to enter role: ", err)
+		fmt.Println("Failed to enter role:", err.Error())
 		return
 	}
-	log.Info("You chose role: ", role)
+	fmt.Println("You picked role:", role)
 
 	promptName := promptui.Prompt{
 		Label: "Name",
 	}
 	name, err := promptName.Run()
 	if err != nil {
-		log.Error("Failed to enter name: ", err)
+		fmt.Println("Failed to enter name:", err.Error())
 		return
 	}
-	log.Info("You chose name: ", name)
+	fmt.Println("You chose name:", name)
 
 	promptEmail := promptui.Prompt{
 		Label: "Email",
 	}
 	email, err := promptEmail.Run()
 	if err != nil {
-		log.Error("Failed to enter email: ", err)
+		fmt.Println("Failed to enter email:", err.Error())
 		return
 	}
-	log.Info("You chose email: ", email)
+	fmt.Println("You chose email:", email)
 
 	exists, _ := checkIfUserExists(email)
 	if exists == true {
-		log.Error("User with provided email account already exists")
+		fmt.Println("User with provided email account already exists")
 		return
 	}
 
 	apiKey, err := generateAPIKey(email)
 	if err != nil {
-		log.Error("Something went wrong while generating your API key! Please try again.")
+		fmt.Println("Something went wrong while generating your API key! Please try again.")
 		return
 	}
 
@@ -101,16 +101,16 @@ func createNewUser() {
 	validate := validator.New()
 	err = validate.Struct(user)
 	if err != nil {
-		log.Error("You did not provide a valid name and/or email address")
+		fmt.Println("You did not provide a valid name and/or email address")
 		return
 	}
 
 	// Add user to the database.
 	err = db.AddUser(user)
 	if err != nil {
-		log.Error("Failed to register user: ", err)
+		fmt.Println("Failed to register user:", err.Error())
 		return
 	}
 
-	log.Info("New user \"", name, "\" created with API key: ", apiKey)
+	fmt.Println("New user \"", name, "\" created with API key:", apiKey)
 }

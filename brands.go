@@ -17,17 +17,16 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
-
 	"github.com/phishdetect/phishdetect"
 	"github.com/phishdetect/phishdetect/brands"
+	"github.com/rs/zerolog/log"
+	"gopkg.in/yaml.v2"
 )
 
 type CustomBrands struct {
@@ -41,7 +40,7 @@ func (b *CustomBrands) CompileBrands() error {
 	}
 
 	if _, err := os.Stat(b.Path); os.IsNotExist(err) {
-		return fmt.Errorf("The specified brands folder does not exist, skipping")
+		return errors.New("The specified brands folder does not exist, skipping")
 	}
 
 	filePaths := []string{}
@@ -55,27 +54,27 @@ func (b *CustomBrands) CompileBrands() error {
 
 	b.Brands = []brands.Brand{}
 	for _, path := range filePaths {
-		log.Debug("Trying to load custom brand file at path ", path)
+		log.Debug().Str("path", path).Msg("Trying to load custom brand file")
 		customBrand := brands.Brand{}
 		yamlFile, err := ioutil.ReadFile(path)
 		err = yaml.Unmarshal(yamlFile, &customBrand)
 		if err != nil {
-			log.Warning("Failed to load brand file: ", err.Error())
+			log.Warn().Err(err).Msg("Failed to load brand file")
 			continue
 		}
 
 		b.Brands = append(b.Brands, customBrand)
-		log.Debug("Loaded custom brand with name: ", customBrand.Name)
+		log.Debug().Str("brand_name", customBrand.Name).Msg("Loaded custom brand")
 	}
 
-	log.Info("Loaded ", len(b.Brands), " custom brand definitions")
+	log.Info().Int("total", len(b.Brands)).Msg("Loaded custom brand definitions")
 
 	return nil
 }
 
 func (b *CustomBrands) LoadBrands(analysis phishdetect.Analysis) {
 	for _, customBrand := range b.Brands {
-		log.Debug("Adding brand with name ", customBrand.Name, " to analysis")
+		log.Debug().Str("brand_name", customBrand.Name).Msg("Adding custom brand to analysis")
 		newBrand := customBrand
 		analysis.Brands.AddBrand(&newBrand)
 	}

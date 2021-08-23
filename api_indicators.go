@@ -26,7 +26,7 @@ import (
 
 	"github.com/botherder/go-savetime/hashes"
 	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -183,7 +183,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 	//       trying to add hashed indicators for which the type can't be
 	//       automatically determined.
 	if req.Type != "" {
-		log.Debug("Received request to add indicators with type ", req.Type)
+		log.Debug().Str("type", req.Type).Msg("Received request to add indicators")
 
 		// First we lower-case and trim the specified type.
 		req.Type = strings.TrimSpace(strings.ToLower(req.Type))
@@ -211,7 +211,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 			// specify the type, we have to skip it because we can't
 			// automatically determine one.
 			if req.Type == "" {
-				log.Debug("Indicator ", indicator, " is hashed, but no type specified. Skip.")
+				log.Debug().Str("indicator", indicator).Msg("Indicator is hashed, but no type specified. Skip.")
 				continue
 			}
 
@@ -234,7 +234,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 				// If we can't, we skip this indicator as it might be of an
 				// unsupported format.
 				if err != nil {
-					log.Debug("Failed to detect type for indicator:", indicator)
+					log.Debug().Str("indicator", indicator).Msg("Failed to detect type for indicator")
 					continue
 				}
 			}
@@ -254,7 +254,7 @@ func apiIndicatorsAdd(w http.ResponseWriter, r *http.Request) {
 		// Finally add the indicator to the database.
 		err = db.AddIndicator(ioc)
 		if err != nil {
-			log.Warning("Failed to add indicator to database: ", err.Error())
+			log.Error().Err(err).Msg("Failed to add indicator to database")
 			continue
 		}
 
@@ -294,7 +294,7 @@ func apiIndicatorsChangeStatus(w http.ResponseWriter, r *http.Request, newStatus
 
 		err = db.UpdateIndicator(ioc)
 		if err != nil {
-			log.Warning("Failed to update indicator: ", err.Error())
+			log.Error().Err(err).Msg("Failed to update indicator")
 			continue
 		}
 

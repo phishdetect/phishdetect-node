@@ -20,14 +20,14 @@ import (
 	"encoding/json"
 	"net/http"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 func errorWithJSON(w http.ResponseWriter, message string, code int, err error) {
 	if err != nil {
-		log.Error(message, ": ", err.Error())
+		log.Error().Err(err).Str("message", message)
 	} else {
-		log.Error(message)
+		log.Error().Str("message", message)
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")

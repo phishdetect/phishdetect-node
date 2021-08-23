@@ -14,10 +14,9 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/manifoldco/promptui v0.8.0
-	github.com/mattn/go-colorable v0.1.8
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 	github.com/phishdetect/phishdetect v1.25.3
-	github.com/sirupsen/logrus v1.8.1
+	github.com/rs/zerolog v1.23.0
 	github.com/spf13/pflag v1.0.5
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
 	go.mongodb.org/mongo-driver v1.7.1
