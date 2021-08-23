@@ -24,7 +24,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/botherder/go-savetime/files"
+	"github.com/botherder/go-savetime/watch"
 	"github.com/gorilla/mux"
 	"github.com/mattn/go-colorable"
 	log "github.com/sirupsen/logrus"
@@ -155,7 +155,7 @@ func initServer() {
 		}
 		// Then we set up a fsnotify watcher in order to auto-reload Yara
 		// rules in case one is created, modified, or removed.
-		go files.WatchFolder(flagYaraPath, func() {
+		go watch.WatchFolder(flagYaraPath, func() {
 			phishdetect.LoadYaraRules(flagYaraPath)
 		})
 	}
@@ -170,7 +170,7 @@ func initServer() {
 		}
 		// Then we setup a fsnofity watcher in order to auto-reload brand
 		// definitions in case one is created, modified or removed.
-		go files.WatchFolder(customBrands.Path, func() {
+		go watch.WatchFolder(customBrands.Path, func() {
 			customBrands.CompileBrands()
 		})
 	}
