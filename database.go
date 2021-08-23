@@ -21,12 +21,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/phishdetect/phishdetect"
+	"github.com/phishdetect/phishdetect/browser"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/phishdetect/phishdetect"
-	"github.com/phishdetect/phishdetect/browser"
 )
 
 type Database struct {
