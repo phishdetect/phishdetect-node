@@ -112,6 +112,15 @@ func init() {
 	enforceUserAuth = !*flagDisableUserAuth
 }
 
+func initDatabase() error {
+	var err error
+	db, err = NewDatabase(flagMongoURL)
+	if err != nil {
+		return fmt.Errorf("failed to connect to database: %v", err)
+	}
+	return nil
+}
+
 func initLogging() {
 	if flagDebug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
@@ -120,13 +129,6 @@ func initLogging() {
 }
 
 func initServer() error {
-	// Initiate connection to database.
-	var err error
-	db, err = NewDatabase(flagMongoURL)
-	if err != nil {
-		return err
-	}
-
 	log.Info().Bool("value", enableAnalysis).Msg("Enable analysis")
 	log.Info().Bool("value", enforceUserAuth).Msg("Enforce user auth")
 
@@ -265,6 +267,12 @@ func startServer() {
 }
 
 func main() {
+	err := initDatabase()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Unable to initialize database")
+		return
+	}
+
 	if flagCreateNewUser {
 		createNewUser()
 		return
@@ -272,7 +280,7 @@ func main() {
 
 	initLogging()
 
-	err := initServer()
+	err = initServer()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Unable to initialize server")
 		return
