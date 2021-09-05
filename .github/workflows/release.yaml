@@ -1,0 +1,24 @@
+name: Build and release
+
+on: 
+  push:
+    tags:
+      - '*'
+
+jobs:
+  releases-matrix:
+    name: Release Go Binary
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: echo $(go env GOPATH)/bin >> $GITHUB_PATH
+    - name: Build Linux binary
+      run: make
+    - name: Upload Linux binary
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: build/phishdetect-node
+        asset_name: phishdetect-node_linux_amd64
+        tag: ${{ github.ref }}
+        overwrite: true        
