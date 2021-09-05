@@ -21,4 +21,4 @@ jobs:
         file: build/phishdetect-node
         asset_name: phishdetect-node_linux_amd64
         tag: ${{ github.ref }}
-        overwrite: true        
+        overwrite: true
