@@ -210,6 +210,9 @@ func startServer() {
 	router.HandleFunc("/api/indicators/fetch/all/",
 		authMiddleware(apiIndicatorsFetchAll, roleUser)).Methods("GET")
 	//--------------------------------------------------
+	router.HandleFunc("/api/safelist/fetch/",
+		authMiddleware(apiSafelistFetch, roleUser)).Methods("GET")
+	//--------------------------------------------------
 	router.HandleFunc("/api/alerts/add/",
 		authMiddleware(apiAlertsAdd, roleUser)).Methods("POST")
 	router.HandleFunc("/api/reports/add/",
