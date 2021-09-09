@@ -11,6 +11,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - run : |
+        sudo apt-get update
+        sudo apt-get install -y \
+          autoconf \
+          automake \
+          gcc-multilib \
+          libtool \
+          libjansson-dev \
+          libmagic-dev \
+          libssl-dev  \
+          protobuf-compiler \
+          protobuf-c-compiler \
+          libprotobuf-c-dev
+    -run: |
+        ./boostrap.sh \
+        ./configure
+    -run: make && sudo make install
     - run: echo $(go env GOPATH)/bin >> $GITHUB_PATH
     - name: Build Linux binary
       run: make
