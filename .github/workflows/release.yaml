@@ -10,12 +10,14 @@ jobs:
     name: Release Go Binary
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        repository: VirusTotal/yara
-        path: yara
+    - run: sudo apt-get update && sudo apt-get install wget
+    - name: Downloading Yara
+      run: |
+        wget https://github.com/VirusTotal/yara/archive/refs/tags/v4.1.2.tar.gz
+        tar -zxvf v4.1.2.tar.gz
+        mv yara-4.1.2 yara
     - name: Install yara dependencies
-      working-directory: ./yara
+      working-directory: yara
       run : |
         sudo apt-get update
         sudo apt-get install -y \
@@ -30,7 +32,7 @@ jobs:
           protobuf-c-compiler \
           libprotobuf-c-dev
     - name: Configure Yara
-      working-directory: ./yara
+      working-directory: yara
       run: |
         ./boostrap.sh \
         ./configure
