@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-        with:
-          repository: VirusTotal/yara
-          path: yara
+      with:
+        repository: VirusTotal/yara
+        path: yara
     - run : |
         sudo apt-get update
         sudo apt-get install -y \
