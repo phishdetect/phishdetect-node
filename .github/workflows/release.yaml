@@ -16,7 +16,7 @@ jobs:
         wget https://github.com/VirusTotal/yara/archive/refs/tags/v4.1.2.tar.gz
         tar -zxvf v4.1.2.tar.gz
     - name: Install yara dependencies
-      working-directory: yara-4.1.2
+      working-directory: ./yara-4.1.2
       run : |
         sudo apt-get update
         sudo apt-get install -y \
@@ -31,12 +31,12 @@ jobs:
           protobuf-c-compiler \
           libprotobuf-c-dev
     - name: Configure Yara
-      working-directory: yara-4.1.2
+      working-directory: ./yara-4.1.2
       run: |
         ./boostrap.sh
         ./configure
     - name: Compile Yara
-      working-directory: yara-4.1.2
+      working-directory: ./yara-4.1.2
       run: make && sudo make install
     - uses: actions/checkout@v2
     - run: echo $(go env GOPATH)/bin >> $GITHUB_PATH
