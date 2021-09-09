@@ -24,10 +24,10 @@ jobs:
           protobuf-compiler \
           protobuf-c-compiler \
           libprotobuf-c-dev
-    -run: |
+    - run: |
         ./boostrap.sh \
         ./configure
-    -run: make && sudo make install
+    - run: make && sudo make install
     - run: echo $(go env GOPATH)/bin >> $GITHUB_PATH
     - name: Build Linux binary
       run: make
