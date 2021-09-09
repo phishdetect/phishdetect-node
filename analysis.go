@@ -60,15 +60,12 @@ func checkIfBlocklisted(target string) (phishdetect.Warning, error) {
 
 // analyzeDomain is used to statically analyze a domain name.
 func analyzeDomain(domain string) (*AnalysisResults, error) {
-	urlNormalized := utils.NormalizeURL(domain)
-	finalURL := urlNormalized
-
-	if !validateURL(urlNormalized) {
-		log.Error().Str("domain", urlNormalized).Msg("Invalid domain format")
+	if !validateURL(domain) {
+		log.Error().Str("domain", domain).Msg("Invalid domain format")
 		return nil, errors.New(ErrorMsgInvalidDomain)
 	}
 
-	a := phishdetect.NewAnalysis(finalURL, "")
+	a := phishdetect.NewAnalysis(domain, "")
 	customBrands.LoadBrands(*a)
 
 	err := a.AnalyzeDomain()
@@ -80,7 +77,6 @@ func analyzeDomain(domain string) (*AnalysisResults, error) {
 
 	results := AnalysisResults{
 		URL:        domain,
-		FinalURL:   finalURL,
 		Safelisted: a.Safelisted,
 		Dangerous:  a.Dangerous,
 		Score:      a.Score,
