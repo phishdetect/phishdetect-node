@@ -10,7 +10,29 @@ jobs:
     name: Release Go Binary
     runs-on: ubuntu-latest
     steps:
-    - run: sudo apt-get update && sudo apt-get install libyara8 libyara-dev yara
+    - uses: actions/checkout@v2
+      with:
+        repository: VirusTotal/yara
+        path: yara
+    - run: cd yara
+    - run : |
+        sudo apt-get update
+        sudo apt-get install -y \
+          autoconf \
+          automake \
+          gcc-multilib \
+          libtool \
+          libjansson-dev \
+          libmagic-dev \
+          libssl-dev  \
+          protobuf-compiler \
+          protobuf-c-compiler \
+          libprotobuf-c-dev
+    - run: |
+        ./boostrap.sh \
+        ./configure
+    - run: make && sudo make install
+    - run: cd
     - uses: actions/checkout@v2
     - run: echo $(go env GOPATH)/bin >> $GITHUB_PATH
     - name: Build Linux binary
