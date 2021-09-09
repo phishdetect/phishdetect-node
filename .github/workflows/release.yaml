@@ -30,8 +30,7 @@ jobs:
         wget https://github.com/VirusTotal/yara/archive/refs/tags/v4.1.2.tar.gz
         tar -zxvf v4.1.2.tar.gz
         cd ./yara-4.1.2
-        ls -l
-        ./boostrap.sh
+        ./bootstrap.sh
         ./configure
         make && sudo make install
     - uses: actions/checkout@v2
