@@ -14,8 +14,9 @@ jobs:
       with:
         repository: VirusTotal/yara
         path: yara
-    - run: cd yara
-    - run : |
+    - name: Install yara dependencies
+      working-directory: ./yara
+      run : |
         sudo apt-get update
         sudo apt-get install -y \
           autoconf \
@@ -28,11 +29,14 @@ jobs:
           protobuf-compiler \
           protobuf-c-compiler \
           libprotobuf-c-dev
-    - run: |
+    - name: Configure Yara
+      working-directory: ./yara
+      run: |
         ./boostrap.sh \
         ./configure
-    - run: make && sudo make install
-    - run: cd
+    - name: Compile Yara
+      working-directory: ./yara
+      run: make && sudo make install
     - uses: actions/checkout@v2
     - run: echo $(go env GOPATH)/bin >> $GITHUB_PATH
     - name: Build Linux binary
