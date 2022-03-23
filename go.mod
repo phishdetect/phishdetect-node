@@ -1,13 +1,13 @@
 module github.com/phishdetect/phishdetect-node
 
-go 1.18
+go 1.15
 
 require (
 	github.com/botherder/go-savetime v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/phishdetect/phishdetect v1.25.9
+	github.com/phishdetect/phishdetect v1.25.10
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/pflag v1.0.5
 	go.mongodb.org/mongo-driver v1.8.4
